@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import Odometer from "react-odometerjs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Users } from "lucide-react";
 
 // TODO: support multiple platforms
 export default function User() {
@@ -57,6 +58,10 @@ export default function User() {
           className="text-5xl sm:text-7xl xl:text-9xl !leading-[1.2em]"
           value={counts?.[0].count ?? 0}
         />
+        <div className="flex items-center gap-1.5 text-sm text-zinc-400">
+          <Users className="w-4 h-4" />
+          Subscribers
+        </div>
       </div>
     </div>
   );
