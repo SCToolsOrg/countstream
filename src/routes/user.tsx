@@ -115,9 +115,11 @@ const countList = [
 // TODO: support multiple platforms
 export default function User() {
   const { id } = useParams();
+  const recommendedApi = "mixerno";
+
   const [api, setApi] = useQueryState(
     "api",
-    parseAsStringEnum(apis.map((api) => api.id)).withDefault("mixerno"),
+    parseAsStringEnum(apis.map((api) => api.id)).withDefault(recommendedApi),
   );
   const [count, setCount] = useQueryState(
     "count",
@@ -227,13 +229,18 @@ export default function User() {
       <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-600 text-center space-y-2">
         <h1 className="font-semibold">Select an API:</h1>
         <Select value={api} onValueChange={setApi}>
-          <SelectTrigger className="w-[240px]">
+          <SelectTrigger className="w-[280px]">
             <SelectValue placeholder="Select an API" />
           </SelectTrigger>
           <SelectContent>
             {apis.map((api) => (
               <SelectItem key={api.id} value={api.id}>
-                {api.name}
+                {api.name}{" "}
+                {api.id === recommendedApi && (
+                  <span className="px-2 bg-green-900 rounded-lg text-xs">
+                    Recommended
+                  </span>
+                )}
               </SelectItem>
             ))}
           </SelectContent>
