@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import Odometer from "react-odometerjs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users } from "lucide-react";
+import { Camera, Eye, Goal, Users } from "lucide-react";
 import { parseAsStringEnum, useQueryState } from "nuqs";
 import {
   Select,
@@ -19,6 +19,8 @@ interface API {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   parseData: (data: any) => {
     subscribers: number;
+    views: number;
+    videos: number;
   };
 }
 
@@ -29,6 +31,18 @@ const apis = [
     url: "https://mixerno.space/api/youtube-channel-counter/user/<id>",
     parseData: (data) => ({
       subscribers: data.counts[0].count,
+      views: data.counts[3].count,
+      videos: data.counts[5].count,
+    }),
+  },
+  {
+    id: "lcxyz",
+    name: "Livecounts.xyz",
+    url: "https://livecounts.xyz/api/youtube-live-subscriber-counter/user/<id>",
+    parseData: (data) => ({
+      subscribers: data.counts[0],
+      views: data.counts[1],
+      videos: data.counts[2],
     }),
   },
   {
@@ -37,6 +51,8 @@ const apis = [
     url: "https://axern.space/api/get?platform=youtube&type=channel&id=<id>",
     parseData: (data) => ({
       subscribers: data.estSubCount,
+      views: data.estViewCount,
+      videos: data.apiVideoCount,
     }),
   },
   {
@@ -45,6 +61,8 @@ const apis = [
     url: "https://axern.space/api/get?platform=youtube&type=channel&id=<id>",
     parseData: (data) => ({
       subscribers: data.estSubCount_linear,
+      views: data.estViewCount,
+      videos: data.apiVideoCount,
     }),
   },
   {
@@ -53,6 +71,8 @@ const apis = [
     url: "https://axern.space/api/get?platform=youtube&type=channel&id=<id>",
     parseData: (data) => ({
       subscribers: data.estSubCount_semilinear,
+      views: data.estViewCount,
+      videos: data.apiVideoCount,
     }),
   },
   {
@@ -61,6 +81,8 @@ const apis = [
     url: "https://api.communitrics.com/<id>",
     parseData: (data) => ({
       subscribers: data.channelDetails.linearEstSubscriberCount,
+      views: 0,
+      videos: 0,
     }),
   },
 ] satisfies API[];
@@ -96,6 +118,19 @@ export default function User() {
     refetchInterval: 2000,
   });
 
+  function getGoal(count: string | number) {
+    count = parseFloat(count.toString());
+    if (count == null) return 0;
+    if (10 > count) return 10 - count;
+    const e = "" + count;
+    return Math.abs(
+      count -
+        (e.length > 6
+          ? 1e6 * (Math.floor(count / 1e6) + 1)
+          : (parseInt(e.charAt(0)) + 1) * Math.pow(10, e.length - 1)),
+    );
+  }
+
   return (
     <div className="w-full max-w-7xl mx-auto p-4 flex flex-col items-center gap-4">
       <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-600 flex flex-col items-center justify-center text-center w-full">
@@ -125,10 +160,42 @@ export default function User() {
           Subscribers
         </div>
       </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
+        <div className="@container bg-zinc-900 border border-zinc-600 p-4 rounded-lg flex flex-col items-center justify-center gap-1 text-center">
+          <div className="flex items-center gap-1.5 text-sm text-zinc-400">
+            <Eye className="w-4 h-4" />
+            Views
+          </div>
+          <Odometer
+            className="text-3xl @md:text-4xl !leading-[1.2em]"
+            value={counts?.views ?? 0}
+          />
+        </div>
+        <div className="@container bg-zinc-900 border border-zinc-600 p-4 rounded-lg flex flex-col items-center justify-center gap-1 text-center">
+          <div className="flex items-center gap-1.5 text-sm text-zinc-400">
+            <Camera className="w-4 h-4" />
+            Videos
+          </div>
+          <Odometer
+            className="text-3xl @md:text-4xl !leading-[1.2em]"
+            value={counts?.videos ?? 0}
+          />
+        </div>
+        <div className="@container bg-zinc-900 border border-zinc-600 p-4 rounded-lg flex flex-col items-center justify-center gap-1 text-center">
+          <div className="flex items-center gap-1.5 text-sm text-zinc-400">
+            <Goal className="w-4 h-4" />
+            Goal
+          </div>
+          <Odometer
+            className="text-3xl @md:text-4xl !leading-[1.2em]"
+            value={getGoal(counts?.subscribers ?? 0)}
+          />
+        </div>
+      </div>
       <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-600 text-center space-y-2">
         <h1 className="font-semibold">Select an API:</h1>
         <Select value={api} onValueChange={setApi}>
-          <SelectTrigger className="w-[200px]">
+          <SelectTrigger className="w-[240px]">
             <SelectValue placeholder="Select an API" />
           </SelectTrigger>
           <SelectContent>
