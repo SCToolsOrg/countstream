@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { FC } from "react";
 
 interface API {
   id: string;
@@ -38,7 +39,7 @@ const apis = [
   {
     id: "lcxyz",
     name: "Livecounts.xyz",
-    url: "https://livecounts.xyz/api/youtube-live-subscriber-counter/user/<id>",
+    url: "https://livecounts.xyz/api/youtube-live-subscriber-count/live/<id>",
     parseData: (data) => ({
       subscribers: data.counts[0],
       views: data.counts[1],
@@ -87,6 +88,30 @@ const apis = [
   },
 ] satisfies API[];
 
+interface Count {
+  id: string;
+  name: string;
+  icon: FC;
+}
+
+const countList = [
+  {
+    id: "subscribers",
+    name: "Subscribers",
+    icon: Users,
+  },
+  {
+    id: "views",
+    name: "Views",
+    icon: Eye,
+  },
+  {
+    id: "videos",
+    name: "Videos",
+    icon: Camera,
+  },
+] satisfies Count[];
+
 // TODO: support multiple platforms
 export default function User() {
   const { id } = useParams();
@@ -94,6 +119,11 @@ export default function User() {
     "api",
     parseAsStringEnum(apis.map((api) => api.id)).withDefault("mixerno"),
   );
+  const [count, setCount] = useQueryState(
+    "count",
+    parseAsStringEnum(countList.map((c) => c.id)).withDefault("subscribers"),
+  );
+  const currentCount = countList.find((c) => c.id === count) ?? countList[0];
 
   const { data: user, isLoading } = useQuery({
     queryKey: ["user", id],
@@ -153,34 +183,36 @@ export default function User() {
         )}
         <Odometer
           className="text-5xl sm:text-7xl xl:text-9xl !leading-[1.2em]"
-          value={counts?.subscribers ?? 0}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          value={(counts as any)?.[currentCount.id] ?? 0}
         />
         <div className="flex items-center gap-1.5 text-sm text-zinc-400">
-          <Users className="w-4 h-4" />
-          Subscribers
+          <currentCount.icon className="w-4 h-4" />
+          {currentCount.name}
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
-        <div className="@container bg-zinc-900 border border-zinc-600 p-4 rounded-lg flex flex-col items-center justify-center gap-1 text-center">
-          <div className="flex items-center gap-1.5 text-sm text-zinc-400">
-            <Eye className="w-4 h-4" />
-            Views
-          </div>
-          <Odometer
-            className="text-3xl @md:text-4xl !leading-[1.2em]"
-            value={counts?.views ?? 0}
-          />
-        </div>
-        <div className="@container bg-zinc-900 border border-zinc-600 p-4 rounded-lg flex flex-col items-center justify-center gap-1 text-center">
-          <div className="flex items-center gap-1.5 text-sm text-zinc-400">
-            <Camera className="w-4 h-4" />
-            Videos
-          </div>
-          <Odometer
-            className="text-3xl @md:text-4xl !leading-[1.2em]"
-            value={counts?.videos ?? 0}
-          />
-        </div>
+        {countList
+          .filter((c) => c.id !== count)
+          .map((c) => (
+            <button
+              key={c.id}
+              onClick={() => {
+                setCount(c.id);
+              }}
+              className="@container bg-zinc-900 border border-zinc-600 p-4 rounded-lg flex flex-col items-center justify-center gap-1 text-center"
+            >
+              <div className="flex items-center gap-1.5 text-sm text-zinc-400">
+                <c.icon className="w-4 h-4" />
+                {c.name}
+              </div>
+              <Odometer
+                className="text-3xl @md:text-4xl !leading-[1.2em]"
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                value={(counts as any)?.[c.id] ?? 0}
+              />
+            </button>
+          ))}
         <div className="@container bg-zinc-900 border border-zinc-600 p-4 rounded-lg flex flex-col items-center justify-center gap-1 text-center">
           <div className="flex items-center gap-1.5 text-sm text-zinc-400">
             <Goal className="w-4 h-4" />
