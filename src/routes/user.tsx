@@ -272,8 +272,21 @@ export default function User() {
           />
         </div>
       </div>
-      <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-600 text-center space-y-2">
-        <h1 className="font-semibold">Select an API:</h1>
+      <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-600 space-y-2">
+        <div className="flex items-center justify-center text-center gap-1.5">
+          <h1 className="font-semibold">Select an API:</h1>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className="cursor-default">
+                <Info className="h-3 w-3" />
+              </TooltipTrigger>
+              <TooltipContent className="bg-card text-foreground border max-w-sm text-center">
+                The APIs listed here allow you to pick between different
+                estimations. Some are more accurate and stable than others.
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <DropdownMenu open={apiDropdownOpen} onOpenChange={setApiDropdownOpen}>
           <DropdownMenuTrigger className="flex items-center justify-between w-[240px] bg-card border px-3 py-2 rounded-lg text-sm">
             <span>{selectedApi.name}</span>
