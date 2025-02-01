@@ -2,21 +2,37 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import Odometer from "react-odometerjs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Camera, Eye, Goal, Users } from "lucide-react";
-import { parseAsStringEnum, useQueryState } from "nuqs";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { FC } from "react";
+  Camera,
+  ChevronDown,
+  ChevronUp,
+  Eye,
+  Goal,
+  Info,
+  Users,
+} from "lucide-react";
+import { parseAsStringEnum, useQueryState } from "nuqs";
+import { FC, useMemo, useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 
 interface API {
   id: string;
   name: string;
+  description: string;
   url: string;
+  stable: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   parseData: (data: any) => {
     subscribers: number;
@@ -29,7 +45,9 @@ const apis = [
   {
     id: "mixerno",
     name: "Mixerno.space",
+    description: "An extremely stable and popular API used by many streamers",
     url: "https://mixerno.space/api/youtube-channel-counter/user/<id>",
+    stable: true,
     parseData: (data) => ({
       subscribers: data.counts[0].count,
       views: data.counts[3].count,
@@ -39,7 +57,10 @@ const apis = [
   {
     id: "lcxyz",
     name: "Livecounts.xyz",
+    description:
+      "An API created by the same creator of Mixerno.space. A little more stable than Mixerno.space.",
     url: "https://livecounts.xyz/api/youtube-live-subscriber-count/live/<id>",
+    stable: true,
     parseData: (data) => ({
       subscribers: data.counts[0],
       views: data.counts[1],
@@ -49,7 +70,10 @@ const apis = [
   {
     id: "axern-realistic",
     name: "Axern.space (realistic)",
+    description:
+      "An API created by the same creator of Mixerno.space. A lot less stable than Mixerno.space.",
     url: "https://axern.space/api/get?platform=youtube&type=channel&id=<id>",
+    stable: false,
     parseData: (data) => ({
       subscribers: data.estSubCount,
       views: data.estViewCount,
@@ -59,7 +83,9 @@ const apis = [
   {
     id: "axern-linear",
     name: "Axern.space (linear)",
+    description: "Same as Axern.space but uses a linear estimation style.",
     url: "https://axern.space/api/get?platform=youtube&type=channel&id=<id>",
+    stable: false,
     parseData: (data) => ({
       subscribers: data.estSubCount_linear,
       views: data.estViewCount,
@@ -69,7 +95,9 @@ const apis = [
   {
     id: "axern-semilinear",
     name: "Axern.space (semi-linear)",
+    description: "Same as Axern.space but uses a semi-linear estimation style.",
     url: "https://axern.space/api/get?platform=youtube&type=channel&id=<id>",
+    stable: false,
     parseData: (data) => ({
       subscribers: data.estSubCount_semilinear,
       views: data.estViewCount,
@@ -79,7 +107,9 @@ const apis = [
   {
     id: "socialcounts",
     name: "SocialCounts.org",
+    description: "A decently popular and stable API",
     url: "https://api.socialcounts.org/youtube-live-subscriber-count/<id>",
+    stable: true,
     parseData: (data) => ({
       subscribers: data.est_sub,
       views: data.table[0].count,
@@ -89,7 +119,9 @@ const apis = [
   {
     id: "communitrics",
     name: "Communitrics",
+    description: "Very accurate estimations for channels like PewDiePie",
     url: "https://api.communitrics.com/<id>",
+    stable: false,
     parseData: (data) => ({
       subscribers: data.channelDetails.linearEstSubscriberCount,
       views: 0,
@@ -125,12 +157,19 @@ const countList = [
 // TODO: support multiple platforms
 export default function User() {
   const { id } = useParams();
-  const recommendedApi = "mixerno";
+  const recommendedApi = useMemo(
+    () => (id === "UC-lHJZR3Gqxm24_Vd_AJ5Yw" ? "communitrics" : "mixerno"),
+    [id],
+  );
 
   const [api, setApi] = useQueryState(
     "api",
     parseAsStringEnum(apis.map((api) => api.id)).withDefault(recommendedApi),
   );
+  const selectedApi = apis.find((a) => a.id === api) ?? apis[0];
+
+  const [apiDropdownOpen, setApiDropdownOpen] = useState(false);
+
   const [count, setCount] = useQueryState(
     "count",
     parseAsStringEnum(countList.map((c) => c.id)).withDefault("subscribers"),
@@ -150,12 +189,9 @@ export default function User() {
   const { data: counts } = useQuery({
     queryKey: ["counts", id],
     queryFn: async () => {
-      const apiConfig = apis.find((a) => a.id === api);
-      if (!apiConfig) throw new Error("Invalid state");
-
-      const res = await fetch(apiConfig.url.replace("<id>", id ?? ""));
+      const res = await fetch(selectedApi.url.replace("<id>", id ?? ""));
       const data = await res.json();
-      return apiConfig.parseData(data);
+      return selectedApi.parseData(data);
     },
     refetchInterval: 2000,
   });
@@ -238,24 +274,77 @@ export default function User() {
       </div>
       <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-600 text-center space-y-2">
         <h1 className="font-semibold">Select an API:</h1>
-        <Select value={api} onValueChange={setApi}>
-          <SelectTrigger className="w-[280px]">
-            <SelectValue placeholder="Select an API" />
-          </SelectTrigger>
-          <SelectContent>
-            {apis.map((api) => (
-              <SelectItem key={api.id} value={api.id}>
-                {api.name}{" "}
-                {api.id === recommendedApi && (
-                  <span className="px-2 bg-green-900 rounded-lg text-xs">
-                    Recommended
-                  </span>
-                )}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <DropdownMenu open={apiDropdownOpen} onOpenChange={setApiDropdownOpen}>
+          <DropdownMenuTrigger className="flex items-center justify-between w-[240px] bg-card border px-3 py-2 rounded-lg text-sm">
+            <span>{selectedApi.name}</span>
+            {apiDropdownOpen ? (
+              <ChevronUp className="h-4 w-4 text-muted-foreground" />
+            ) : (
+              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="sm:w-72">
+            <DropdownMenuLabel>Stable APIs</DropdownMenuLabel>
+            {apis
+              .filter((api) => api.stable)
+              .map((api) => (
+                <ApiItem
+                  key={api.id}
+                  api={api}
+                  setApi={setApi}
+                  recommendedApi={recommendedApi}
+                />
+              ))}
+            <DropdownMenuLabel>Unstable/Experimental APIs</DropdownMenuLabel>
+            {apis
+              .filter((api) => !api.stable)
+              .map((api) => (
+                <ApiItem
+                  key={api.id}
+                  api={api}
+                  setApi={setApi}
+                  recommendedApi={recommendedApi}
+                />
+              ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
+  );
+}
+
+function ApiItem({
+  api,
+  setApi,
+  recommendedApi,
+}: {
+  api: API;
+  setApi: (id: string) => void;
+  recommendedApi: string;
+}) {
+  return (
+    <DropdownMenuItem
+      onClick={() => setApi(api.id)}
+      className="justify-between gap-0"
+    >
+      <div className="flex items-center gap-1.5">
+        <p>{api.name}</p>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger className="cursor-default">
+              <Info className="h-3 w-3" />
+            </TooltipTrigger>
+            <TooltipContent className="bg-card text-foreground border max-w-sm text-center">
+              {api.description}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+      {recommendedApi === api.id && (
+        <span className="text-xs px-2 bg-green-900 rounded-full">
+          Recommended
+        </span>
+      )}
+    </DropdownMenuItem>
   );
 }
