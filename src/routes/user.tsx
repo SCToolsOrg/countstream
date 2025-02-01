@@ -77,6 +77,16 @@ const apis = [
     }),
   },
   {
+    id: "socialcounts",
+    name: "SocialCounts.org",
+    url: "https://api.socialcounts.org/youtube-live-subscriber-count/<id>",
+    parseData: (data) => ({
+      subscribers: data.est_sub,
+      views: data.table[0].count,
+      videos: data.table[1].count,
+    }),
+  },
+  {
     id: "communitrics",
     name: "Communitrics",
     url: "https://api.communitrics.com/<id>",
