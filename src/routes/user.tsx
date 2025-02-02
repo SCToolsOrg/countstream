@@ -4,11 +4,13 @@ import Odometer from "react-odometerjs";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Camera,
+  ChartLine,
   ChevronDown,
   ChevronUp,
   Eye,
   Goal,
   Info,
+  Sparkles,
   Users,
 } from "lucide-react";
 import { parseAsStringEnum, useQueryState } from "nuqs";
@@ -33,6 +35,7 @@ interface API {
   description: string;
   url: string;
   stable: boolean;
+  accurate: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   parseData: (data: any) => {
     subscribers: number;
@@ -48,6 +51,7 @@ const apis = [
     description: "An extremely stable and popular API used by many streamers",
     url: "https://mixerno.space/api/youtube-channel-counter/user/<id>",
     stable: true,
+    accurate: true,
     parseData: (data) => ({
       subscribers: data.counts[0].count,
       views: data.counts[3].count,
@@ -61,6 +65,7 @@ const apis = [
       "An API created by the same creator of Mixerno.space. A little more stable than Mixerno.space.",
     url: "https://livecounts.xyz/api/youtube-live-subscriber-count/live/<id>",
     stable: true,
+    accurate: false,
     parseData: (data) => ({
       subscribers: data.counts[0],
       views: data.counts[1],
@@ -74,6 +79,7 @@ const apis = [
       "An API created by the same creator of Mixerno.space. A lot less stable than Mixerno.space.",
     url: "https://axern.space/api/get?platform=youtube&type=channel&id=<id>",
     stable: false,
+    accurate: true,
     parseData: (data) => ({
       subscribers: data.estSubCount,
       views: data.estViewCount,
@@ -86,6 +92,7 @@ const apis = [
     description: "Same as Axern.space but uses a linear estimation style.",
     url: "https://axern.space/api/get?platform=youtube&type=channel&id=<id>",
     stable: false,
+    accurate: false,
     parseData: (data) => ({
       subscribers: data.estSubCount_linear,
       views: data.estViewCount,
@@ -98,6 +105,7 @@ const apis = [
     description: "Same as Axern.space but uses a semi-linear estimation style.",
     url: "https://axern.space/api/get?platform=youtube&type=channel&id=<id>",
     stable: false,
+    accurate: false,
     parseData: (data) => ({
       subscribers: data.estSubCount_semilinear,
       views: data.estViewCount,
@@ -110,6 +118,7 @@ const apis = [
     description: "A decently popular and stable API",
     url: "https://api.socialcounts.org/youtube-live-subscriber-count/<id>",
     stable: true,
+    accurate: false,
     parseData: (data) => ({
       subscribers: data.est_sub,
       views: data.table[0].count,
@@ -122,6 +131,7 @@ const apis = [
     description: "Very accurate estimations for channels like PewDiePie",
     url: "https://api.communitrics.com/<id>",
     stable: false,
+    accurate: true,
     parseData: (data) => ({
       subscribers: data.channelDetails.linearEstSubscriberCount,
       views: 0,
@@ -296,13 +306,14 @@ export default function User() {
               <ChevronDown className="h-4 w-4 text-muted-foreground" />
             )}
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="sm:w-72">
+          <DropdownMenuContent className="sm:w-64">
             <DropdownMenuLabel>Stable APIs</DropdownMenuLabel>
             {apis
               .filter((api) => api.stable)
               .map((api) => (
                 <ApiItem
                   key={api.id}
+                  name={user.title}
                   api={api}
                   setApi={setApi}
                   recommendedApi={recommendedApi}
@@ -314,6 +325,7 @@ export default function User() {
               .map((api) => (
                 <ApiItem
                   key={api.id}
+                  name={user.title}
                   api={api}
                   setApi={setApi}
                   recommendedApi={recommendedApi}
@@ -327,10 +339,12 @@ export default function User() {
 }
 
 function ApiItem({
+  name,
   api,
   setApi,
   recommendedApi,
 }: {
+  name: string;
   api: API;
   setApi: (id: string) => void;
   recommendedApi: string;
@@ -353,11 +367,32 @@ function ApiItem({
           </Tooltip>
         </TooltipProvider>
       </div>
-      {recommendedApi === api.id && (
-        <span className="text-xs px-2 bg-green-900 rounded-full">
-          Recommended
-        </span>
-      )}
+      <div className="flex items-center gap-1">
+        {api.accurate && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className="cursor-default p-1 bg-yellow-950 text-yellow-500 rounded-sm">
+                <ChartLine className="w-3 h-3" />
+              </TooltipTrigger>
+              <TooltipContent className="bg-card text-foreground border max-w-sm text-center">
+                Very accurate estimations
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+        {recommendedApi === api.id && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className="cursor-default p-1 bg-green-950 text-green-500 rounded-sm">
+                <Sparkles className="w-3 h-3" />
+              </TooltipTrigger>
+              <TooltipContent className="bg-card text-foreground border max-w-sm text-center">
+                Recommended API for {name}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+      </div>
     </DropdownMenuItem>
   );
 }
