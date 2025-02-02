@@ -7,6 +7,7 @@ import {
   ChartLine,
   ChevronDown,
   ChevronUp,
+  Cog,
   Eye,
   Goal,
   Info,
@@ -33,6 +34,7 @@ import HighchartsReact, {
   HighchartsReactRefObject,
 } from "highcharts-react-official";
 import { graphOptions } from "@/lib/graph-options";
+import { cn } from "@/lib/utils";
 
 interface API {
   id: string;
@@ -41,6 +43,7 @@ interface API {
   url: string;
   stable: boolean;
   accurate: boolean;
+  down?: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   parseData: (data: any) => {
     subscribers: number;
@@ -133,12 +136,29 @@ const apis = [
   {
     id: "communitrics",
     name: "Communitrics",
-    description: "Very accurate estimations for channels like PewDiePie",
+    description:
+      "Very accurate estimations for channels like PewDiePie. Doesn't support views or videos though.",
     url: "https://api.communitrics.com/<id>",
     stable: false,
     accurate: true,
     parseData: (data) => ({
       subscribers: data.channelDetails.linearEstSubscriberCount,
+      views: 0,
+      videos: 0,
+    }),
+  },
+  {
+    id: "nia-studio",
+    name: "Nia's Studio System",
+    description:
+      "A website built by Nia. Counts coming directly from the channel's YouTube Studio.",
+    stable: true,
+    accurate: true,
+    down: true,
+    // TODO
+    url: "",
+    parseData: (data) => ({
+      subscribers: data.channels.counts[2].count,
       views: 0,
       videos: 0,
     }),
@@ -379,8 +399,8 @@ function ApiItem({
 }) {
   return (
     <DropdownMenuItem
-      onClick={() => setApi(api.id)}
-      className="justify-between gap-0"
+      onClick={() => !api.down && setApi(api.id)}
+      className={cn("justify-between gap-0", api.down && "opacity-50")}
     >
       <div className="flex items-center gap-1.5">
         <p>{api.name}</p>
@@ -396,6 +416,18 @@ function ApiItem({
         </TooltipProvider>
       </div>
       <div className="flex items-center gap-1">
+        {!api.stable && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className="cursor-default p-1 bg-red-950 text-red-500 rounded-sm">
+                <Cog className="w-3 h-3" />
+              </TooltipTrigger>
+              <TooltipContent className="bg-card text-foreground border max-w-sm text-center">
+                Not very stable. May not work or be slow sometimes.
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
         {api.accurate && (
           <TooltipProvider>
             <Tooltip>
