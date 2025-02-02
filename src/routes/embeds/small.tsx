@@ -1,4 +1,4 @@
-import { apis, useUser } from "@/hooks/use-user";
+import { apis, useLiveUser } from "@/hooks/use-user";
 import { useParams, useSearchParams } from "react-router";
 import Odometer from "react-odometerjs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,7 +10,7 @@ export default function SmallEmbed() {
   const selectedApi =
     apis.find((a) => a.id === searchParams.get("api")) ?? apis[0];
 
-  const { user, isLoading, counts } = useUser({
+  const { user, isLoading, counts } = useLiveUser({
     id: id!,
     api: selectedApi,
   });

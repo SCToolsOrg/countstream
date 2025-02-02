@@ -10,6 +10,7 @@ import { Layout } from "./components/layout.tsx";
 import App from "./routes/home.tsx";
 import SmallEmbed from "./routes/embeds/small.tsx";
 import User from "./routes/user.tsx";
+import EmbedCustomizer from "./routes/embeds/customizer.tsx";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,10 @@ createRoot(document.getElementById("root")!).render(
             <Route element={<Layout />}>
               <Route path="/" element={<App />} />
               <Route path="/youtube/channel/:id" element={<User />} />
+              <Route
+                path="/embed/youtube/channel/:id"
+                element={<EmbedCustomizer />}
+              />
             </Route>
             <Route path="/embed">
               <Route

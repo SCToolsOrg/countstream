@@ -143,7 +143,24 @@ export const apis = [
   },
 ] satisfies API[];
 
-export function useUser(options: {
+export function useUser(id: string) {
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["user", id],
+    queryFn: async () => {
+      const res = await fetch(
+        `https://yt-api.tca-tech.workers.dev/channels/${id}`,
+      );
+      const data = await res.json();
+      return data.user;
+    },
+  });
+  return {
+    user,
+    isLoading,
+  };
+}
+
+export function useLiveUser(options: {
   id: string;
   api: API;
   onRequest?: (data: {
@@ -152,18 +169,9 @@ export function useUser(options: {
     videos: number;
   }) => void;
 }) {
-  const { data: user, isLoading } = useQuery({
-    queryKey: ["user", options.id],
-    queryFn: async () => {
-      const res = await fetch(
-        `https://yt-api.tca-tech.workers.dev/channels/${options.id}`,
-      );
-      const data = await res.json();
-      return data.user;
-    },
-  });
+  const { user, isLoading } = useUser(options.id);
   const { data: counts } = useQuery({
-    queryKey: ["counts", options.id],
+    queryKey: ["counts", options.id, options.api.id],
     queryFn: async () => {
       const res = await fetch(
         options.api.url.replace("<id>", options.id ?? ""),
