@@ -67,6 +67,20 @@ const apis = [
     }),
   },
   {
+    id: "mixerno-v4",
+    name: "Mixerno.space (v4)",
+    description:
+      "Mixerno.space's experimental estimations. Only supports a handful of channels.",
+    url: "https://estv4.mixerno.space/api/v1/get/<id>",
+    stable: false,
+    accurate: true,
+    parseData: (data) => ({
+      subscribers: Math.floor(data.data.estCounts[0]),
+      views: data.data.apiCounts[1],
+      videos: data.data.apiCounts[2],
+    }),
+  },
+  {
     id: "lcxyz",
     name: "Livecounts.xyz",
     description:
@@ -228,7 +242,20 @@ export default function User() {
     queryFn: async () => {
       const res = await fetch(selectedApi.url.replace("<id>", id ?? ""));
       const data = await res.json();
-      return selectedApi.parseData(data);
+      const parsedData = selectedApi.parseData(data);
+
+      if (!chartRef.current) return parsedData;
+      if (chartRef.current.chart.series[0].points.length >= 3600)
+        chartRef.current.chart.series[0].data[0].remove();
+      chartRef.current?.chart.series[0].addPoint([
+        Date.now(),
+        Number(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (parsedData as any)?.[currentCount.id],
+        ),
+      ]);
+
+      return parsedData;
     },
     refetchInterval: 2000,
   });
@@ -245,20 +272,6 @@ export default function User() {
           : (parseInt(e.charAt(0)) + 1) * Math.pow(10, e.length - 1)),
     );
   }
-
-  useEffect(() => {
-    if (!chartRef.current || !counts) return;
-
-    if (chartRef.current.chart.series[0].points.length >= 3600)
-      chartRef.current.chart.series[0].data[0].remove();
-    chartRef.current?.chart.series[0].addPoint([
-      Date.now(),
-      Number(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (counts as any)?.[currentCount.id],
-      ),
-    ]);
-  }, [counts, currentCount]);
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4 flex flex-col items-center gap-4">
