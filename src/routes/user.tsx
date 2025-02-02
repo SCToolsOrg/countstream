@@ -313,7 +313,7 @@ export default function User() {
               .map((api) => (
                 <ApiItem
                   key={api.id}
-                  name={user.title}
+                  name={user?.title}
                   api={api}
                   setApi={setApi}
                   recommendedApi={recommendedApi}
@@ -325,7 +325,7 @@ export default function User() {
               .map((api) => (
                 <ApiItem
                   key={api.id}
-                  name={user.title}
+                  name={user?.title}
                   api={api}
                   setApi={setApi}
                   recommendedApi={recommendedApi}
@@ -339,12 +339,12 @@ export default function User() {
 }
 
 function ApiItem({
-  name,
+  name = "",
   api,
   setApi,
   recommendedApi,
 }: {
-  name: string;
+  name?: string;
   api: API;
   setApi: (id: string) => void;
   recommendedApi: string;
