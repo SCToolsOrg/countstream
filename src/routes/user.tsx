@@ -14,7 +14,7 @@ import {
   Users,
 } from "lucide-react";
 import { parseAsStringEnum, useQueryState } from "nuqs";
-import { FC, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +28,11 @@ import {
   TooltipContent,
   TooltipProvider,
 } from "@/components/ui/tooltip";
+import Highcharts from "highcharts";
+import HighchartsReact, {
+  HighchartsReactRefObject,
+} from "highcharts-react-official";
+import { graphOptions } from "@/lib/graph-options";
 
 interface API {
   id: string;
@@ -186,6 +191,8 @@ export default function User() {
   );
   const currentCount = countList.find((c) => c.id === count) ?? countList[0];
 
+  const chartRef = useRef<HighchartsReactRefObject>(null);
+
   const { data: user, isLoading } = useQuery({
     queryKey: ["user", id],
     queryFn: async () => {
@@ -218,6 +225,20 @@ export default function User() {
           : (parseInt(e.charAt(0)) + 1) * Math.pow(10, e.length - 1)),
     );
   }
+
+  useEffect(() => {
+    if (!chartRef.current || !counts) return;
+
+    if (chartRef.current.chart.series[0].points.length >= 3600)
+      chartRef.current.chart.series[0].data[0].remove();
+    chartRef.current?.chart.series[0].addPoint([
+      Date.now(),
+      Number(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (counts as any)?.[currentCount.id],
+      ),
+    ]);
+  }, [counts, currentCount]);
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4 flex flex-col items-center gap-4">
@@ -281,6 +302,13 @@ export default function User() {
             value={getGoal(counts?.subscribers ?? 0)}
           />
         </div>
+      </div>
+      <div className="bg-zinc-900 border border-zinc-600 p-4 py-6 rounded-lg w-full">
+        <HighchartsReact
+          highcharts={Highcharts}
+          options={graphOptions(user?.title ?? "")}
+          ref={chartRef}
+        />
       </div>
       <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-600 space-y-2">
         <div className="flex items-center justify-center text-center gap-1.5">
