@@ -7,7 +7,6 @@ export interface API {
   url: string;
   stable: boolean;
   accurate: boolean;
-  down?: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   parseData: (data: any) => {
     subscribers: number;
@@ -59,46 +58,6 @@ export const apis = [
     }),
   },
   {
-    id: "axern-realistic",
-    name: "Axern.space (realistic)",
-    description:
-      "An API created by the same creator of Mixerno.space. A lot less stable than Mixerno.space.",
-    url: "https://axern.space/api/get?platform=youtube&type=channel&id=<id>",
-    stable: false,
-    accurate: true,
-    parseData: (data) => ({
-      subscribers: data.estSubCount,
-      views: data.estViewCount,
-      videos: data.apiVideoCount,
-    }),
-  },
-  {
-    id: "axern-linear",
-    name: "Axern.space (linear)",
-    description: "Same as Axern.space but uses a linear estimation style.",
-    url: "https://axern.space/api/get?platform=youtube&type=channel&id=<id>",
-    stable: false,
-    accurate: false,
-    parseData: (data) => ({
-      subscribers: data.estSubCount_linear,
-      views: data.estViewCount,
-      videos: data.apiVideoCount,
-    }),
-  },
-  {
-    id: "axern-semilinear",
-    name: "Axern.space (semi-linear)",
-    description: "Same as Axern.space but uses a semi-linear estimation style.",
-    url: "https://axern.space/api/get?platform=youtube&type=channel&id=<id>",
-    stable: false,
-    accurate: false,
-    parseData: (data) => ({
-      subscribers: data.estSubCount_semilinear,
-      views: data.estViewCount,
-      videos: data.apiVideoCount,
-    }),
-  },
-  {
     id: "socialcounts",
     name: "SocialCounts.org",
     description: "A decently popular and stable API",
@@ -121,22 +80,6 @@ export const apis = [
     accurate: true,
     parseData: (data) => ({
       subscribers: data.channelDetails.linearEstSubscriberCount,
-      views: 0,
-      videos: 0,
-    }),
-  },
-  {
-    id: "nia-studio",
-    name: "Nia's Studio System",
-    description:
-      "A website built by Nia. Counts coming directly from the channel's YouTube Studio.",
-    stable: true,
-    accurate: true,
-    down: true,
-    // TODO
-    url: "",
-    parseData: (data) => ({
-      subscribers: data.channels.counts[2].count,
       views: 0,
       videos: 0,
     }),

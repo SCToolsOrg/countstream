@@ -89,8 +89,8 @@ function ApiItem({
 }) {
   return (
     <DropdownMenuItem
-      onClick={() => !api.down && setApi(api.id)}
-      className={cn("justify-between gap-0", api.down && "opacity-50")}
+      onClick={() => setApi(api.id)}
+      className="justify-between gap-0"
     >
       <div className="flex items-center gap-1.5">
         <p>{api.name}</p>
