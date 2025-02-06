@@ -48,13 +48,8 @@ export default function EmbedCustomizer() {
   );
   const currentEmbed = embeds.find((e) => e.id === embedType) ?? embeds[0];
 
-  // const { user } = useLiveUser({
-  //   id: id!,
-  //   api: selectedApi,
-  // });
-
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const user = useUser(id!);
+  const { user } = useUser(id!);
   const [height, setHeight] = useState("0px");
 
   const onLoad = useCallback(() => {
