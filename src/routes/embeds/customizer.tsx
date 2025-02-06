@@ -1,7 +1,7 @@
 import { parseAsStringEnum, useQueryState } from "nuqs";
-import { FC, useMemo } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router";
-import { apis, useLiveUser } from "@/hooks/use-user";
+import { apis, useLiveUser, useUser } from "@/hooks/use-user";
 import {
   Tooltip,
   TooltipTrigger,
@@ -48,16 +48,33 @@ export default function EmbedCustomizer() {
   );
   const currentEmbed = embeds.find((e) => e.id === embedType) ?? embeds[0];
 
-  const { user } = useLiveUser({
-    id: id!,
-    api: selectedApi,
-  });
+  // const { user } = useLiveUser({
+  //   id: id!,
+  //   api: selectedApi,
+  // });
+
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const user = useUser(id!);
+  const [height, setHeight] = useState("0px");
+
+  const onLoad = useCallback(() => {
+    setHeight(
+      iframeRef.current!.contentWindow!.document.body.scrollHeight + "px",
+    );
+  }, []);
+  useEffect(() => {
+    onLoad();
+  }, [onLoad]);
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4 flex flex-col items-center gap-4">
-      <div className="w-full">
-        <currentEmbed.component />
-      </div>
+      <iframe
+        src={`/embed/small/youtube/channel/${id}?api=${api}`}
+        height={height}
+        onLoad={onLoad}
+        ref={iframeRef}
+        className="w-full"
+      />
       <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-600 flex flex-col items-center justify-center text-center w-full gap-2">
         <h1 className="font-semibold">Embed type:</h1>
         <RadioGroup value={embedType} onValueChange={setEmbedType}>
