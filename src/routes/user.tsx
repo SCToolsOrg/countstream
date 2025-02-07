@@ -93,7 +93,7 @@ export default function User() {
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-4 flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-4">
       <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-600 flex flex-col items-center justify-center text-center w-full">
         {isLoading ? (
           <>

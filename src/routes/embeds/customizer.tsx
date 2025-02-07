@@ -91,7 +91,7 @@ export default function EmbedCustomizer() {
   });
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-4 flex flex-col gap-4">
+    <div className="flex flex-col gap-4">
       <div id="embed" className="w-full" />
       {document.getElementById("embed") &&
         createPortal(
