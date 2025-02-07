@@ -1,4 +1,4 @@
-import { apis, useLiveUser } from "@/hooks/use-user";
+import { apis, useLiveUser, useRecommendedApi } from "@/hooks/use-user";
 import { useParams } from "react-router";
 import Odometer from "react-odometerjs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -6,8 +6,11 @@ import { useEmbedState } from "./state";
 
 export default function SmallEmbed() {
   const { id } = useParams();
+  if (!id) throw new Error("Invalid state?");
 
-  const api = useEmbedState("api", apis[0].id);
+  const recommendedApi = useRecommendedApi(id);
+
+  const api = useEmbedState("api", recommendedApi);
   const selectedApi = apis.find((a) => a.id === api) ?? apis[0];
 
   const { user, isLoading, counts } = useLiveUser({

@@ -15,7 +15,7 @@ import HighchartsReact, {
   HighchartsReactRefObject,
 } from "highcharts-react-official";
 import { graphOptions } from "@/lib/graph-options";
-import { apis, useLiveUser } from "@/hooks/use-user";
+import { apis, useLiveUser, useRecommendedApi } from "@/hooks/use-user";
 import ApiDropdown from "@/components/api-dropdown";
 
 interface Count {
@@ -45,10 +45,9 @@ const countList = [
 // TODO: support multiple platforms
 export default function User() {
   const { id } = useParams();
-  const recommendedApi = useMemo(
-    () => (id === "UC-lHJZR3Gqxm24_Vd_AJ5Yw" ? "communitrics" : "mixerno"),
-    [id],
-  );
+  if (!id) throw new Error("Invalid state?");
+
+  const recommendedApi = useRecommendedApi(id);
 
   const [api, setApi] = useQueryState(
     "api",
@@ -65,7 +64,7 @@ export default function User() {
   const chartRef = useRef<HighchartsReactRefObject>(null);
 
   const { user, isLoading, counts } = useLiveUser({
-    id: id!,
+    id,
     api: selectedApi,
     onRequest: (data) => {
       if (!chartRef.current) return data;

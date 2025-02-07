@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 export interface API {
   id: string;
@@ -84,6 +85,13 @@ export const apis = [
     }),
   },
 ] satisfies API[];
+
+export function useRecommendedApi(id: string) {
+  return useMemo(
+    () => (id === "UC-lHJZR3Gqxm24_Vd_AJ5Yw" ? "communitrics" : "mixerno"),
+    [id],
+  );
+}
 
 export function useUser(id: string) {
   const { data: user, isLoading } = useQuery({

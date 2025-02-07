@@ -1,7 +1,7 @@
 import { parseAsStringEnum, useQueryState } from "nuqs";
-import { FC, useMemo } from "react";
+import { FC } from "react";
 import { useParams, useSearchParams } from "react-router";
-import { apis, useLiveUser } from "@/hooks/use-user";
+import { apis, useLiveUser, useRecommendedApi } from "@/hooks/use-user";
 import {
   Tooltip,
   TooltipTrigger,
@@ -13,9 +13,6 @@ import { Label } from "@/components/ui/label";
 import { Clipboard, Info } from "lucide-react";
 import ApiDropdown from "@/components/api-dropdown";
 import { createPortal } from "react-dom";
-
-import SmallEmbed from "./small";
-import CountEmbed from "./count";
 import { getEmbedState, setEmbedState } from "./state";
 import {
   Select,
@@ -26,6 +23,9 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+
+import SmallEmbed from "./small";
+import CountEmbed from "./count";
 
 interface Embed {
   id: string;
@@ -70,10 +70,9 @@ export default function EmbedCustomizer() {
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const recommendedApi = useMemo(
-    () => (id === "UC-lHJZR3Gqxm24_Vd_AJ5Yw" ? "communitrics" : "mixerno"),
-    [id],
-  );
+  if (!id) throw new Error("Invalid state?");
+
+  const recommendedApi = useRecommendedApi(id);
   const [api, setApi] = useQueryState(
     "api",
     parseAsStringEnum(apis.map((api) => api.id)).withDefault(recommendedApi),
