@@ -1,4 +1,4 @@
-import { useParams, useSearchParams } from "react-router";
+import { Link, useParams, useSearchParams } from "react-router";
 import Odometer from "react-odometerjs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Camera, Eye, Goal, Info, Users } from "lucide-react";
@@ -132,7 +132,7 @@ export default function User() {
               <a
                 key={c.id}
                 href={`/youtube/channel/${id}${params}`}
-                className="flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center @container"
+                className="flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center transition-colors @container hover:bg-zinc-800"
               >
                 <div className="flex items-center gap-1.5 text-sm text-zinc-400">
                   <c.icon className="h-4 w-4" />
@@ -163,6 +163,12 @@ export default function User() {
           ref={chartRef}
         />
       </div>
+      <Link
+        to={`/embed/youtube/channel/${id}?api=${api}`}
+        className="rounded-lg border border-zinc-600 bg-zinc-900 px-4 py-2 transition-colors hover:bg-zinc-800"
+      >
+        Embed
+      </Link>
       <div className="space-y-2 rounded-lg border border-zinc-600 bg-zinc-900 p-4">
         <div className="flex items-center justify-center gap-1.5 text-center">
           <h1 className="font-semibold">Select an API:</h1>
