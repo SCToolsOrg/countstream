@@ -156,41 +156,62 @@ export default function EmbedCustomizer() {
           recommendedApi={recommendedApi}
         />
       </div>
-      {currentEmbed.options && (
-        <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-600 flex flex-col md:flex-row md:flex-wrap items-center justify-center gap-4 text-center">
-          {currentEmbed.options.map((option) => (
-            <div key={option.id} className="space-y-2">
-              <p className="font-bold">{option.name}:</p>
-              <Select
-                defaultValue={
-                  searchParams.get(option.id) ??
-                  option.default ??
-                  option.options[0]
-                }
-                onValueChange={(value) => {
-                  setEmbedState(option.id, value);
-                  setSearchParams((prev) => {
-                    prev.set(option.id, value);
-                    prev.set("type", currentEmbed.id);
-                    return prev;
-                  });
-                }}
-              >
-                <SelectTrigger className="w-[210px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {option.options.map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {option}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          ))}
+      <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-600 flex flex-col md:flex-row md:flex-wrap items-center justify-center gap-4 text-center">
+        <div className="space-y-2">
+          <p className="font-bold">Count:</p>
+          <Select
+            defaultValue={searchParams.get("count") ?? "subscribers"}
+            onValueChange={(value) => {
+              setEmbedState("count", value);
+              setSearchParams((prev) => {
+                prev.set("count", value);
+                prev.set("type", currentEmbed.id);
+                return prev;
+              });
+            }}
+          >
+            <SelectTrigger className="w-[210px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="subscribers">Subscribers</SelectItem>
+              <SelectItem value="views">Views</SelectItem>
+              <SelectItem value="videos">Videos</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-      )}
+        {currentEmbed.options?.map((option) => (
+          <div key={option.id} className="space-y-2">
+            <p className="font-bold">{option.name}:</p>
+            <Select
+              defaultValue={
+                searchParams.get(option.id) ??
+                option.default ??
+                option.options[0]
+              }
+              onValueChange={(value) => {
+                setEmbedState(option.id, value);
+                setSearchParams((prev) => {
+                  prev.set(option.id, value);
+                  prev.set("type", currentEmbed.id);
+                  return prev;
+                });
+              }}
+            >
+              <SelectTrigger className="w-[210px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {option.options.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

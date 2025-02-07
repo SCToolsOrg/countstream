@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { apis, useLiveUser, useRecommendedApi } from "@/hooks/use-user";
 import { useParams } from "react-router";
 import Odometer from "react-odometerjs";
@@ -35,9 +37,10 @@ export default function CountEmbed() {
   const selectedApi = apis.find((a) => a.id === api) ?? apis[0];
   const size = useEmbedState("size", "medium");
   const align = useEmbedState("align", alignments[0]);
+  const count = useEmbedState("count", "subscribers");
 
   const { counts } = useLiveUser({
-    id: id!,
+    id,
     api: selectedApi,
   });
 
@@ -48,11 +51,10 @@ export default function CountEmbed() {
         sizes.find((s) => s.id === size)?.class,
       )}
       style={{
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         textAlign: align as any,
       }}
     >
-      <Odometer value={counts.subscribers} id="count" />
+      <Odometer value={(counts as any)[count]} id="count" />
     </div>
   );
 }

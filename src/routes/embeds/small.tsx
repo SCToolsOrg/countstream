@@ -12,9 +12,10 @@ export default function SmallEmbed() {
 
   const api = useEmbedState("api", recommendedApi);
   const selectedApi = apis.find((a) => a.id === api) ?? apis[0];
+  const count = useEmbedState("count", "subscribers");
 
   const { user, isLoading, counts } = useLiveUser({
-    id: id!,
+    id,
     api: selectedApi,
   });
 
@@ -38,7 +39,8 @@ export default function SmallEmbed() {
           <p>{user.title}</p>
         )}
         <Odometer
-          value={counts.subscribers}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          value={(counts as any)[count]}
           className="text-[50px] !leading-[1.2em]"
         />
       </div>
