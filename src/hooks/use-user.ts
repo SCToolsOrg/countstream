@@ -73,15 +73,14 @@ export const apis = [
   {
     id: "communitrics",
     name: "Communitrics",
-    description:
-      "Very accurate estimations for channels like PewDiePie. Doesn't support views or videos though.",
+    description: "Very accurate estimations for channels like PewDiePie",
     url: "https://api.communitrics.com/<id>",
     stable: false,
     accurate: true,
     parseData: (data) => ({
       subscribers: data.channelDetails.linearEstSubscriberCount,
-      views: 0,
-      videos: 0,
+      views: data.channelDetails.viewCount,
+      videos: data.channelDetails.videoCount,
     }),
   },
 ] satisfies API[];
