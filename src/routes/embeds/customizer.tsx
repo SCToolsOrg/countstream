@@ -1,6 +1,6 @@
 import { parseAsStringEnum, useQueryState } from "nuqs";
 import { FC, useMemo } from "react";
-import { useLocation, useParams, useSearchParams } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 import { apis, useLiveUser } from "@/hooks/use-user";
 import {
   Tooltip,
