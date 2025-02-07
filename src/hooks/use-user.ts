@@ -114,7 +114,7 @@ export function useLiveUser(options: {
 }) {
   const { user, isLoading } = useUser(options.id);
   const { data: counts } = useQuery({
-    queryKey: ["counts", options.id, options.api.id],
+    queryKey: ["counts", options.id],
     queryFn: async () => {
       const res = await fetch(
         options.api.url.replace("<id>", options.id ?? ""),
