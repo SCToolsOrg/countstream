@@ -1,3 +1,4 @@
+import { Info } from "lucide-react";
 import { Link, Outlet } from "react-router";
 
 export function Layout() {
@@ -12,6 +13,11 @@ export function Layout() {
         </header>
       </div>
       <main className="mx-auto w-full max-w-7xl p-3">
+        <div className="mb-4 rounded-lg border border-yellow-300 bg-yellow-700/50 px-3 pb-2 pt-3 text-center text-sm text-yellow-300">
+          <Info className="mb-1 mr-1.5 inline size-4" />
+          CountStream is currently in beta. Expect some bugs and missing
+          features.
+        </div>
         <Outlet />
       </main>
     </>
