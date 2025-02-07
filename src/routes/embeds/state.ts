@@ -14,8 +14,8 @@ export function useEmbedState(key: string, defaultValue: string) {
   } else return store[key];
 }
 
-export function getEmbedState(key: string) {
-  return $globalState.get()[key];
+export function getEmbedState() {
+  return $globalState.get();
 }
 
 export function setEmbedState(key: string, value: string) {

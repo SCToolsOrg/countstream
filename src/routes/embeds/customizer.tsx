@@ -1,6 +1,6 @@
 import { parseAsStringEnum, useQueryState } from "nuqs";
 import { FC, useMemo } from "react";
-import { useParams, useSearchParams } from "react-router";
+import { useLocation, useParams, useSearchParams } from "react-router";
 import { apis, useLiveUser } from "@/hooks/use-user";
 import {
   Tooltip,
@@ -10,13 +10,13 @@ import {
 } from "@/components/ui/tooltip";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Info } from "lucide-react";
+import { Clipboard, Info } from "lucide-react";
 import ApiDropdown from "@/components/api-dropdown";
 import { createPortal } from "react-dom";
 
 import SmallEmbed from "./small";
 import CountEmbed from "./count";
-import { setEmbedState } from "./state";
+import { getEmbedState, setEmbedState } from "./state";
 import {
   Select,
   SelectContent,
@@ -24,6 +24,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface Embed {
   id: string;
@@ -97,20 +99,38 @@ export default function EmbedCustomizer() {
           <currentEmbed.component />,
           document.getElementById("embed")!,
         )}
-      <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-600 flex flex-col items-center justify-center text-center gap-2">
-        <h1 className="font-semibold">Embed type:</h1>
-        <RadioGroup
-          value={embedType}
-          onValueChange={setEmbedType}
-          className="flex items-center flex-wrap gap-2"
-        >
-          {embeds.map((embed) => (
-            <div key={embed.id} className="flex items-center space-x-2">
-              <RadioGroupItem value={embed.id} id={embed.id} />
-              <Label htmlFor={embed.id}>{embed.name}</Label>
-            </div>
-          ))}
-        </RadioGroup>
+      <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-600 flex flex-col items-center justify-center text-center gap-4">
+        <div className="flex flex-col items-center justify-center text-center gap-2">
+          <h1 className="font-semibold">Embed type:</h1>
+          <RadioGroup
+            value={embedType}
+            onValueChange={setEmbedType}
+            className="flex items-center flex-wrap gap-2"
+          >
+            {embeds.map((embed) => (
+              <div key={embed.id} className="flex items-center space-x-2">
+                <RadioGroupItem value={embed.id} id={embed.id} />
+                <Label htmlFor={embed.id}>{embed.name}</Label>
+              </div>
+            ))}
+          </RadioGroup>
+        </div>
+        <div className="flex items-center gap-2 w-full">
+          <Input
+            value={`${window.location.origin}/embed/${currentEmbed.id}/youtube/channel/${id}?${new URLSearchParams(getEmbedState())}`}
+            readOnly
+          />
+          <Button
+            size="icon"
+            onClick={() => {
+              navigator.clipboard.writeText(
+                `${window.location.origin}/embed/${currentEmbed.id}/youtube/channel/${id}?${new URLSearchParams(getEmbedState())}`,
+              );
+            }}
+          >
+            <Clipboard />
+          </Button>
+        </div>
       </div>
       <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-600 flex flex-col items-center justify-center text-center gap-2">
         <div className="flex items-center justify-center text-center gap-1.5">
@@ -152,6 +172,7 @@ export default function EmbedCustomizer() {
                   setEmbedState(option.id, value);
                   setSearchParams((prev) => {
                     prev.set(option.id, value);
+                    prev.set("type", currentEmbed.id);
                     return prev;
                   });
                 }}
