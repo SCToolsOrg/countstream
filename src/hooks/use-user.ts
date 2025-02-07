@@ -8,7 +8,7 @@ export interface API {
   url: string;
   stable: boolean;
   accurate: boolean;
-   
+
   parseData: (data: any) => {
     subscribers: number;
     views: number;

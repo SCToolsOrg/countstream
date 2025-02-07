@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 import Odometer from "react-odometerjs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Camera, Eye, Goal, Info, Users } from "lucide-react";
@@ -45,6 +45,8 @@ const countList = [
 // TODO: support multiple platforms
 export default function User() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+
   if (!id) throw new Error("Invalid state?");
 
   const recommendedApi = useRecommendedApi(id);
@@ -55,10 +57,7 @@ export default function User() {
   );
   const selectedApi = apis.find((a) => a.id === api) ?? apis[0];
 
-  const [count, setCount] = useQueryState(
-    "count",
-    parseAsStringEnum(countList.map((c) => c.id)).withDefault("subscribers"),
-  );
+  const count = searchParams.get("count") ?? countList[0].id;
   const currentCount = countList.find((c) => c.id === count) ?? countList[0];
 
   const chartRef = useRef<HighchartsReactRefObject>(null);
@@ -67,7 +66,7 @@ export default function User() {
     id,
     api: selectedApi,
     onRequest: (data) => {
-      if (!chartRef.current) return data;
+      if (!chartRef.current) return;
       if (chartRef.current.chart.series[0].points.length >= 3600)
         chartRef.current.chart.series[0].data[0].remove();
       chartRef.current?.chart.series[0].addPoint([
@@ -121,24 +120,31 @@ export default function User() {
       <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         {countList
           .filter((c) => c.id !== count)
-          .map((c) => (
-            <button
-              key={c.id}
-              onClick={() => {
-                setCount(c.id);
-              }}
-              className="flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center @container"
-            >
-              <div className="flex items-center gap-1.5 text-sm text-zinc-400">
-                <c.icon className="h-4 w-4" />
-                {c.name}
-              </div>
-              <Odometer
-                className="text-3xl !leading-[1.2em] @md:text-4xl"
-                value={(counts as any)?.[c.id] ?? 0}
-              />
-            </button>
-          ))}
+          .map((c) => {
+            const newSearchParams = new URLSearchParams(searchParams);
+            if (c.id === countList[0].id) newSearchParams.delete("count");
+            else newSearchParams.set("count", c.id);
+
+            const length = [...newSearchParams.entries()].length;
+            const params = length === 0 ? "" : "?" + newSearchParams.toString();
+
+            return (
+              <a
+                key={c.id}
+                href={`/youtube/channel/${id}${params}`}
+                className="flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center @container"
+              >
+                <div className="flex items-center gap-1.5 text-sm text-zinc-400">
+                  <c.icon className="h-4 w-4" />
+                  {c.name}
+                </div>
+                <Odometer
+                  className="text-3xl !leading-[1.2em] @md:text-4xl"
+                  value={(counts as any)?.[c.id] ?? 0}
+                />
+              </a>
+            );
+          })}
         <div className="flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center @container">
           <div className="flex items-center gap-1.5 text-sm text-zinc-400">
             <Goal className="h-4 w-4" />
@@ -152,7 +158,6 @@ export default function User() {
       </div>
       <div className="w-full rounded-lg border border-zinc-600 bg-zinc-900 p-4 py-6">
         <HighchartsReact
-          key={currentCount.id}
           highcharts={Highcharts}
           options={graphOptions(user?.title ?? "")}
           ref={chartRef}
