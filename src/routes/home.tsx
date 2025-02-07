@@ -6,15 +6,15 @@ export default function Home() {
       <div className="space-y-2">
         <div className="flex items-end justify-center gap-1 text-center">
           <h1 className="text-4xl font-semibold">CountStream</h1>
-          <sub className="text-purple-500 mb-3.5">by SCTools</sub>
+          <sub className="mb-3.5 text-purple-500">by SCTools</sub>
         </div>
         <p className="text-center text-sm">
           A live counts website made by livestreamers for livestreamers.
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-        <div className="bg-zinc-900 border border-zinc-600 p-4 rounded-lg text-center flex flex-col items-center justify-center gap-2">
-          <div className="flex items-center justify-center text-center gap-3">
+        <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center">
+          <div className="flex items-center justify-center gap-3 text-center">
             <svg
               viewBox="0 0 256 180"
               width="256"

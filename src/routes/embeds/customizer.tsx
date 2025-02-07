@@ -98,13 +98,13 @@ export default function EmbedCustomizer() {
           <currentEmbed.component />,
           document.getElementById("embed")!,
         )}
-      <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-600 flex flex-col items-center justify-center text-center gap-4">
-        <div className="flex flex-col items-center justify-center text-center gap-2">
+      <div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center">
+        <div className="flex flex-col items-center justify-center gap-2 text-center">
           <h1 className="font-semibold">Embed type:</h1>
           <RadioGroup
             value={embedType}
             onValueChange={setEmbedType}
-            className="flex items-center flex-wrap gap-2"
+            className="flex flex-wrap items-center gap-2"
           >
             {embeds.map((embed) => (
               <div key={embed.id} className="flex items-center space-x-2">
@@ -114,7 +114,7 @@ export default function EmbedCustomizer() {
             ))}
           </RadioGroup>
         </div>
-        <div className="flex items-center gap-2 w-full">
+        <div className="flex w-full items-center gap-2">
           <Input
             value={`${window.location.origin}/embed/${currentEmbed.id}/youtube/channel/${id}?${new URLSearchParams(getEmbedState())}`}
             readOnly
@@ -131,15 +131,15 @@ export default function EmbedCustomizer() {
           </Button>
         </div>
       </div>
-      <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-600 flex flex-col items-center justify-center text-center gap-2">
-        <div className="flex items-center justify-center text-center gap-1.5">
+      <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center">
+        <div className="flex items-center justify-center gap-1.5 text-center">
           <h1 className="font-semibold">Select an API:</h1>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger className="cursor-default">
                 <Info className="h-3 w-3" />
               </TooltipTrigger>
-              <TooltipContent className="bg-card text-foreground border max-w-sm text-center">
+              <TooltipContent className="max-w-sm border bg-card text-center text-foreground">
                 The APIs listed here allow you to pick between different
                 estimations. Some are more accurate and stable than others.
               </TooltipContent>
@@ -156,7 +156,7 @@ export default function EmbedCustomizer() {
           recommendedApi={recommendedApi}
         />
       </div>
-      <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-600 flex flex-col md:flex-row md:flex-wrap items-center justify-center gap-4 text-center">
+      <div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center md:flex-row md:flex-wrap">
         <div className="space-y-2">
           <p className="font-bold">Count:</p>
           <Select

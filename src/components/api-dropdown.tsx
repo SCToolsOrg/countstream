@@ -38,7 +38,7 @@ export default function ApiDropdown({
 
   return (
     <DropdownMenu open={apiDropdownOpen} onOpenChange={setApiDropdownOpen}>
-      <DropdownMenuTrigger className="flex items-center justify-between w-[240px] bg-card border px-3 py-2 rounded-lg text-sm">
+      <DropdownMenuTrigger className="flex w-[240px] items-center justify-between rounded-lg border bg-card px-3 py-2 text-sm">
         <span>{selectedApi.name}</span>
         {apiDropdownOpen ? (
           <ChevronUp className="h-4 w-4 text-muted-foreground" />
@@ -99,7 +99,7 @@ function ApiItem({
             <TooltipTrigger className="cursor-default">
               <Info className="h-3 w-3" />
             </TooltipTrigger>
-            <TooltipContent className="bg-card text-foreground border max-w-sm text-center">
+            <TooltipContent className="max-w-sm border bg-card text-center text-foreground">
               {api.description}
             </TooltipContent>
           </Tooltip>
@@ -109,10 +109,10 @@ function ApiItem({
         {!api.stable && (
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger className="cursor-default p-1 bg-red-950 text-red-500 rounded-sm">
-                <Cog className="w-3 h-3" />
+              <TooltipTrigger className="cursor-default rounded-sm bg-red-950 p-1 text-red-500">
+                <Cog className="h-3 w-3" />
               </TooltipTrigger>
-              <TooltipContent className="bg-card text-foreground border max-w-sm text-center">
+              <TooltipContent className="max-w-sm border bg-card text-center text-foreground">
                 Not very stable. May not work or be slow sometimes.
               </TooltipContent>
             </Tooltip>
@@ -121,10 +121,10 @@ function ApiItem({
         {api.accurate && (
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger className="cursor-default p-1 bg-yellow-950 text-yellow-500 rounded-sm">
-                <ChartLine className="w-3 h-3" />
+              <TooltipTrigger className="cursor-default rounded-sm bg-yellow-950 p-1 text-yellow-500">
+                <ChartLine className="h-3 w-3" />
               </TooltipTrigger>
-              <TooltipContent className="bg-card text-foreground border max-w-sm text-center">
+              <TooltipContent className="max-w-sm border bg-card text-center text-foreground">
                 Very accurate estimations
               </TooltipContent>
             </Tooltip>
@@ -133,10 +133,10 @@ function ApiItem({
         {recommendedApi === api.id && (
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger className="cursor-default p-1 bg-green-950 text-green-500 rounded-sm">
-                <Sparkles className="w-3 h-3" />
+              <TooltipTrigger className="cursor-default rounded-sm bg-green-950 p-1 text-green-500">
+                <Sparkles className="h-3 w-3" />
               </TooltipTrigger>
-              <TooltipContent className="bg-card text-foreground border max-w-sm text-center">
+              <TooltipContent className="max-w-sm border bg-card text-center text-foreground">
                 Recommended API for {name}
               </TooltipContent>
             </Tooltip>

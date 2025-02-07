@@ -34,7 +34,7 @@ export default function SmallEmbed() {
       )}
       <div className="flex flex-col">
         {isLoading ? (
-          <Skeleton className="h-4 my-1 rounded-md w-48" />
+          <Skeleton className="my-1 h-4 w-48 rounded-md" />
         ) : (
           <p>{user.title}</p>
         )}
