@@ -39,7 +39,7 @@ export default function SmallEmbed() {
           <p>{user.title}</p>
         )}
         <Odometer
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+           
           value={(counts as any)[count]}
           className="text-[50px] !leading-[1.2em]"
         />

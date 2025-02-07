@@ -35,7 +35,7 @@ export default function Home() {
             <h1 className="text-2xl font-bold">YouTube</h1>
           </div>
           <Link to="/youtube/channel" className="hover:underline">
-            YouTube Channel
+            YouTube Live Subscriber Counter
           </Link>
         </div>
       </div>

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 
 import { apis, useLiveUser, useRecommendedApi } from "@/hooks/use-user";
 import { useParams } from "react-router";

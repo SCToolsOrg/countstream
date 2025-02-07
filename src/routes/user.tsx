@@ -3,7 +3,7 @@ import Odometer from "react-odometerjs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Camera, Eye, Goal, Info, Users } from "lucide-react";
 import { parseAsStringEnum, useQueryState } from "nuqs";
-import { FC, useMemo, useRef } from "react";
+import { FC, useRef } from "react";
 import {
   Tooltip,
   TooltipTrigger,
@@ -72,10 +72,7 @@ export default function User() {
         chartRef.current.chart.series[0].data[0].remove();
       chartRef.current?.chart.series[0].addPoint([
         Date.now(),
-        Number(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (data as any)?.[currentCount.id],
-        ),
+        Number((data as any)?.[currentCount.id]),
       ]);
     },
   });
@@ -114,7 +111,6 @@ export default function User() {
         )}
         <Odometer
           className="text-5xl !leading-[1.2em] sm:text-7xl xl:text-9xl"
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           value={(counts as any)?.[currentCount.id] ?? 0}
         />
         <div className="flex items-center gap-1.5 text-sm text-zinc-400">
@@ -139,7 +135,6 @@ export default function User() {
               </div>
               <Odometer
                 className="text-3xl !leading-[1.2em] @md:text-4xl"
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 value={(counts as any)?.[c.id] ?? 0}
               />
             </button>
@@ -151,12 +146,13 @@ export default function User() {
           </div>
           <Odometer
             className="text-3xl !leading-[1.2em] @md:text-4xl"
-            value={getGoal(counts?.subscribers ?? 0)}
+            value={getGoal((counts as any)[currentCount.id] ?? 0)}
           />
         </div>
       </div>
       <div className="w-full rounded-lg border border-zinc-600 bg-zinc-900 p-4 py-6">
         <HighchartsReact
+          key={currentCount.id}
           highcharts={Highcharts}
           options={graphOptions(user?.title ?? "")}
           ref={chartRef}
