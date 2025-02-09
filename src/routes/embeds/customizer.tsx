@@ -1,7 +1,7 @@
 import { parseAsStringEnum, useQueryState } from "nuqs";
 import { FC } from "react";
 import { useParams, useSearchParams } from "react-router";
-import { apis, useLiveUser, useRecommendedApi } from "@/hooks/use-user";
+import { apis, useRecommendedApi, useUser } from "@/hooks/use-user";
 import {
   Tooltip,
   TooltipTrigger,
@@ -85,10 +85,7 @@ export default function EmbedCustomizer() {
   );
   const currentEmbed = embeds.find((e) => e.id === embedType) ?? embeds[0];
 
-  const { user } = useLiveUser({
-    id: id!,
-    api: selectedApi,
-  });
+  const { user } = useUser(id);
 
   return (
     <div className="flex flex-col gap-4">
