@@ -17,6 +17,7 @@ import HighchartsReact, {
 import { graphOptions } from "@/lib/graph-options";
 import { apis, useLiveUser, useRecommendedApi } from "@/hooks/use-user";
 import ApiDropdown from "@/components/api-dropdown";
+import { Card } from "@/components/ui/card";
 
 interface Count {
   id: string;
@@ -90,7 +91,7 @@ export default function User() {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="flex w-full flex-col items-center justify-center rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center">
+      <Card className="flex w-full flex-col items-center justify-center text-center">
         {isLoading ? (
           <>
             <Skeleton className="h-20 w-20 rounded-full" />
@@ -116,7 +117,7 @@ export default function User() {
           <currentCount.icon className="h-4 w-4" />
           {currentCount.name}
         </div>
-      </div>
+      </Card>
       <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         {countList
           .filter((c) => c.id !== count)
@@ -145,7 +146,7 @@ export default function User() {
               </a>
             );
           })}
-        <div className="flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center @container">
+        <Card className="flex flex-col items-center justify-center gap-1 text-center @container">
           <div className="flex items-center gap-1.5 text-sm text-zinc-400">
             <Goal className="h-4 w-4" />
             Goal
@@ -154,22 +155,22 @@ export default function User() {
             className="text-3xl !leading-[1.2em] @md:text-4xl"
             value={getGoal((counts as any)[currentCount.id] ?? 0)}
           />
-        </div>
+        </Card>
       </div>
-      <div className="w-full rounded-lg border border-zinc-600 bg-zinc-900 p-4 py-6">
+      <Card className="w-full py-6">
         <HighchartsReact
           highcharts={Highcharts}
           options={graphOptions(user?.title ?? "")}
           ref={chartRef}
         />
-      </div>
+      </Card>
       <Link
         to={`/embed/youtube/channel/${id}?api=${api}`}
         className="rounded-lg border border-zinc-600 bg-zinc-900 px-4 py-2 transition-colors hover:bg-zinc-800"
       >
         Embed
       </Link>
-      <div className="space-y-2 rounded-lg border border-zinc-600 bg-zinc-900 p-4">
+      <Card className="space-y-2 p-4">
         <div className="flex items-center justify-center gap-1.5 text-center">
           <h1 className="font-semibold">Select an API:</h1>
           <TooltipProvider>
@@ -190,7 +191,7 @@ export default function User() {
           setApi={setApi}
           recommendedApi={recommendedApi}
         />
-      </div>
+      </Card>
     </div>
   );
 }

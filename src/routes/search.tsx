@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { abbreviate } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
@@ -32,7 +33,7 @@ export default function Search() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-zinc-600 bg-zinc-900 p-4">
+      <Card className="flex flex-col items-center justify-center gap-4">
         <div className="flex flex-col items-center justify-center gap-1.5 text-center">
           <svg
             viewBox="0 0 256 180"
@@ -78,7 +79,7 @@ export default function Search() {
             )}
           </Button>
         </form>
-      </div>
+      </Card>
       <div className="mx-auto flex w-full max-w-xl flex-col items-center justify-center gap-4 text-center">
         {status === "pending" ? (
           <Loader2 className="h-10 w-10 animate-spin" />
@@ -90,7 +91,7 @@ export default function Search() {
             <Link
               key={result.id}
               to={`/youtube/channel/${result.id}`}
-              className="flex w-full items-center gap-3 rounded-lg border bg-zinc-900 p-4 transition-colors hover:bg-zinc-800"
+              className="flex w-full items-center gap-3 rounded-lg border bg-zinc-900 p-4 shadow transition-colors hover:bg-zinc-800"
             >
               <img
                 src={result.avatar}

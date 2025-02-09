@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 
 import SmallEmbed from "./small";
 import CountEmbed from "./count";
+import { Card } from "@/components/ui/card";
 
 interface Embed {
   id: string;
@@ -95,7 +96,7 @@ export default function EmbedCustomizer() {
           <currentEmbed.component />,
           document.getElementById("embed")!,
         )}
-      <div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center">
+      <Card className="flex flex-col items-center justify-center gap-4 text-center">
         <div className="flex flex-col items-center justify-center gap-2 text-center">
           <h1 className="font-semibold">Embed type:</h1>
           <RadioGroup
@@ -127,8 +128,8 @@ export default function EmbedCustomizer() {
             <Clipboard />
           </Button>
         </div>
-      </div>
-      <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center">
+      </Card>
+      <Card className="flex flex-col items-center justify-center gap-2 text-center">
         <div className="flex items-center justify-center gap-1.5 text-center">
           <h1 className="font-semibold">Select an API:</h1>
           <TooltipProvider>
@@ -152,8 +153,8 @@ export default function EmbedCustomizer() {
           }}
           recommendedApi={recommendedApi}
         />
-      </div>
-      <div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center md:flex-row md:flex-wrap">
+      </Card>
+      <Card className="flex flex-col items-center justify-center gap-4 text-center md:flex-row md:flex-wrap">
         <div className="space-y-2">
           <p className="font-bold">Count:</p>
           <Select
@@ -208,7 +209,7 @@ export default function EmbedCustomizer() {
             </Select>
           </div>
         ))}
-      </div>
+      </Card>
     </div>
   );
 }

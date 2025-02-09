@@ -37,7 +37,7 @@ export default function ApiDropdown({
 
   return (
     <DropdownMenu open={apiDropdownOpen} onOpenChange={setApiDropdownOpen}>
-      <DropdownMenuTrigger className="flex w-[240px] items-center justify-between rounded-lg border bg-card px-3 py-2 text-sm">
+      <DropdownMenuTrigger className="flex w-[240px] items-center justify-between rounded-lg border bg-background px-3 py-2 text-sm">
         <span>{selectedApi.name}</span>
         {apiDropdownOpen ? (
           <ChevronUp className="h-4 w-4 text-muted-foreground" />

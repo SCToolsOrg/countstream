@@ -1,3 +1,4 @@
+import { Card } from "@/components/ui/card";
 import { Link } from "react-router";
 
 export default function Home() {
@@ -13,7 +14,7 @@ export default function Home() {
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-        <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center">
+        <Card className="flex flex-col items-center justify-center gap-2 text-center">
           <div className="flex items-center justify-center gap-3 text-center">
             <svg
               viewBox="0 0 256 180"
@@ -37,7 +38,7 @@ export default function Home() {
           <Link to="/youtube/channel" className="hover:underline">
             YouTube Live Subscriber Counter
           </Link>
-        </div>
+        </Card>
       </div>
     </div>
   );
