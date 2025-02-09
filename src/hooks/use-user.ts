@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export interface API {
   id: string;
@@ -120,21 +120,59 @@ export function useLiveUser(options: {
   }) => void;
 }) {
   const { user, isLoading } = useUser(options.id);
-  const { data: counts } = useQuery({
-    queryKey: ["counts", options.id],
-    queryFn: async () => {
-      const res = await fetch(
-        options.api.url.replace("<id>", options.id ?? ""),
-      );
-      const data = await res.json();
-      const parsedData = options.api.parseData(data);
-
-      options.onRequest?.(parsedData);
-
-      return parsedData;
-    },
-    refetchInterval: 2000,
+  // const { data: counts } = useQuery({
+  //   queryKey: ["counts", options.id],
+  //   queryFn: async () => {
+  //     const res = await fetch(
+  //       options.api.url.replace("<id>", options.id ?? ""),
+  //     );
+  //     const data = await res.json();
+  //     const parsedData = options.api.parseData(data);
+  //
+  //     options.onRequest?.(parsedData);
+  //
+  //     return parsedData;
+  //   },
+  //   refetchInterval: 2000,
+  // });
+  const [counts, setCounts] = useState<{
+    subscribers: number;
+    views: number;
+    videos: number;
+  }>({
+    subscribers: 0,
+    views: 0,
+    videos: 0,
   });
+
+  useEffect(() => {
+    const controller = new AbortController();
+    async function fetchData() {
+      try {
+        const res = await fetch(
+          options.api.url.replace("<id>", options.id ?? ""),
+          {
+            signal: controller.signal,
+          },
+        );
+        const data = await res.json();
+        const parsedData = options.api.parseData(data);
+
+        options.onRequest?.(parsedData);
+
+        setCounts(parsedData);
+      } catch {
+        // do nothing
+      }
+    }
+
+    const interval = setInterval(fetchData, 2000);
+    return () => {
+      clearInterval(interval);
+      controller.abort();
+    };
+  }, [options]);
+
   return {
     user,
     isLoading,
