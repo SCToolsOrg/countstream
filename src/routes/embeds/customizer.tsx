@@ -90,12 +90,7 @@ export default function EmbedCustomizer() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div id="embed" className="w-full" />
-      {document.getElementById("embed") &&
-        createPortal(
-          <currentEmbed.component />,
-          document.getElementById("embed")!,
-        )}
+      <currentEmbed.component />
       <Card className="flex flex-col items-center justify-center gap-4 text-center">
         <div className="flex flex-col items-center justify-center gap-2 text-center">
           <h1 className="font-semibold">Embed type:</h1>
