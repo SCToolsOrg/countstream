@@ -22,10 +22,11 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 import SmallEmbed from "./small";
 import CountEmbed from "./count";
-import { Card } from "@/components/ui/card";
+import LargeEmbed from "./large";
 
 interface Embed {
   id: string;
@@ -44,6 +45,11 @@ const embeds = [
     id: "small",
     name: "Small",
     component: SmallEmbed,
+  },
+  {
+    id: "large",
+    name: "Large",
+    component: LargeEmbed,
   },
   {
     id: "count",

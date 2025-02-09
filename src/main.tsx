@@ -13,6 +13,7 @@ import User from "./routes/user.tsx";
 import EmbedCustomizer from "./routes/embeds/customizer.tsx";
 import CountEmbed from "./routes/embeds/count.tsx";
 import Search from "./routes/search.tsx";
+import LargeEmbed from "./routes/embeds/large.tsx";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,10 @@ createRoot(document.getElementById("root")!).render(
               <Route
                 path="small/youtube/channel/:id"
                 element={<SmallEmbed />}
+              />
+              <Route
+                path="large/youtube/channel/:id"
+                element={<LargeEmbed />}
               />
               <Route
                 path="count/youtube/channel/:id"

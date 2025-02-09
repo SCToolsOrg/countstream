@@ -1,7 +1,20 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { Info } from "lucide-react";
-import { Link, Outlet } from "react-router";
+import { useEffect } from "react";
+import { Link, Outlet, useLocation } from "react-router";
 
 export function Layout() {
+  const queryClient = useQueryClient();
+  const location = useLocation();
+
+  useEffect(() => {
+    return () => {
+      queryClient.removeQueries({
+        queryKey: ["counts"],
+      });
+    };
+  }, [location.pathname, queryClient]);
+
   return (
     <>
       <div className="border-b border-zinc-600">

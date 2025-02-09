@@ -112,17 +112,6 @@ export function useUser(id: string) {
   };
 }
 
-const $cache = map<
-  Record<
-    string,
-    {
-      subscribers: number;
-      views: number;
-      videos: number;
-    }
-  >
->();
-
 export function useLiveUser(options: {
   id: string;
   api: API;
@@ -154,17 +143,6 @@ export function useLiveUser(options: {
     refetchOnMount: "always",
     refetchInterval: 2000,
   });
-
-  const queryClient = useQueryClient();
-  const location = useLocation();
-
-  useEffect(() => {
-    return () => {
-      queryClient.removeQueries({
-        queryKey: ["counts", options.id],
-      });
-    };
-  }, [location, queryClient, options.id]);
 
   return {
     user,
