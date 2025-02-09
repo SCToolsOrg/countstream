@@ -1,7 +1,7 @@
 import { parseAsStringEnum, useQueryState } from "nuqs";
 import { FC } from "react";
 import { useParams, useSearchParams } from "react-router";
-import { apis, useRecommendedApi, useUser } from "@/hooks/use-user";
+import { apis, useLiveUser, useRecommendedApi } from "@/hooks/use-user";
 import {
   Tooltip,
   TooltipTrigger,
@@ -12,7 +12,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Clipboard, Info } from "lucide-react";
 import ApiDropdown from "@/components/api-dropdown";
-import { createPortal } from "react-dom";
 import { getEmbedState, setEmbedState } from "./state";
 import {
   Select,
@@ -86,7 +85,10 @@ export default function EmbedCustomizer() {
   );
   const currentEmbed = embeds.find((e) => e.id === embedType) ?? embeds[0];
 
-  const { user } = useUser(id);
+  const { user } = useLiveUser({
+    id,
+    api: selectedApi,
+  });
 
   return (
     <div className="flex flex-col gap-4">
