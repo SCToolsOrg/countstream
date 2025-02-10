@@ -27,6 +27,7 @@ import { Card } from "@/components/ui/card";
 import SmallEmbed from "./small";
 import CountEmbed from "./count";
 import LargeEmbed from "./large";
+import GraphEmbed from "./graph";
 
 interface Embed {
   id: string;
@@ -70,6 +71,11 @@ const embeds = [
       },
     ],
   },
+  {
+    id: "graph",
+    name: "Graph",
+    component: GraphEmbed,
+  },
 ] satisfies Embed[];
 
 export default function EmbedCustomizer() {
@@ -98,7 +104,9 @@ export default function EmbedCustomizer() {
 
   return (
     <div className="flex flex-col gap-4">
-      <currentEmbed.component />
+      <div className="[&>div]:h-fit">
+        <currentEmbed.component />
+      </div>
       <Card className="flex flex-col items-center justify-center gap-4 text-center">
         <div className="flex flex-col items-center justify-center gap-2 text-center">
           <h1 className="font-semibold">Embed type:</h1>

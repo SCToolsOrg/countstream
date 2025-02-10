@@ -8,12 +8,13 @@ import { NuqsAdapter } from "nuqs/adapters/react-router/v7";
 
 import { Layout } from "./components/layout.tsx";
 import Home from "./routes/home.tsx";
-import SmallEmbed from "./routes/embeds/small.tsx";
 import User from "./routes/user.tsx";
-import EmbedCustomizer from "./routes/embeds/customizer.tsx";
-import CountEmbed from "./routes/embeds/count.tsx";
 import Search from "./routes/search.tsx";
+import EmbedCustomizer from "./routes/embeds/customizer.tsx";
+import SmallEmbed from "./routes/embeds/small.tsx";
+import CountEmbed from "./routes/embeds/count.tsx";
 import LargeEmbed from "./routes/embeds/large.tsx";
+import GraphEmbed from "./routes/embeds/graph.tsx";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,10 @@ createRoot(document.getElementById("root")!).render(
               <Route
                 path="count/youtube/channel/:id"
                 element={<CountEmbed />}
+              />
+              <Route
+                path="graph/youtube/channel/:id"
+                element={<GraphEmbed />}
               />
             </Route>
           </Routes>
