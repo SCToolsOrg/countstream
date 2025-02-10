@@ -9,9 +9,10 @@ export function Layout() {
 
   useEffect(() => {
     return () => {
-      queryClient.removeQueries({
-        queryKey: ["counts"],
-      });
+      if (!location.pathname.includes("youtube/channel"))
+        queryClient.removeQueries({
+          queryKey: ["counts"],
+        });
     };
   }, [location.pathname, queryClient]);
 
