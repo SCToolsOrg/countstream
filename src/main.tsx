@@ -15,7 +15,6 @@ import SmallEmbed from "./routes/embeds/small.tsx";
 import CountEmbed from "./routes/embeds/count.tsx";
 import LargeEmbed from "./routes/embeds/large.tsx";
 import GraphEmbed from "./routes/embeds/graph.tsx";
-import YTStudio from "./routes/yt-studio/page.tsx";
 
 const queryClient = new QueryClient();
 
@@ -34,10 +33,6 @@ createRoot(document.getElementById("root")!).render(
                 element={<EmbedCustomizer />}
               />
             </Route>
-            <Route
-              path="yt-studio/youtube/channel/:id"
-              element={<YTStudio />}
-            />
             <Route path="/embed">
               <Route
                 path="small/youtube/channel/:id"
