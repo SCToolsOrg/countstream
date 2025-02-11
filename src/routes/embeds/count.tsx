@@ -1,3 +1,5 @@
+ 
+
 import { apis, useLiveUser, useRecommendedApi } from "@/hooks/use-user";
 import { useParams } from "react-router";
 import Odometer from "react-odometerjs";
@@ -52,11 +54,7 @@ export default function CountEmbed() {
         textAlign: align as any,
       }}
     >
-      <Odometer
-        value={(counts as any)[count]}
-        id="count"
-        className="font-semibold tabular-nums"
-      />
+      <Odometer value={(counts as any)[count]} id="count" />
     </div>
   );
 }

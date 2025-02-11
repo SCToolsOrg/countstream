@@ -39,8 +39,9 @@ export default function SmallEmbed() {
           <p>{user.title}</p>
         )}
         <Odometer
+           
           value={(counts as any)[count]}
-          className="text-[50px] font-semibold tabular-nums !leading-[1.2em]"
+          className="text-[50px] !leading-[1.2em]"
         />
       </div>
     </div>

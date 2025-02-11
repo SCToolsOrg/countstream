@@ -6,7 +6,7 @@ export default function Home() {
     <div className="space-y-4">
       <div className="space-y-2">
         <div className="flex items-end justify-center gap-1 text-center">
-          <h1 className="text-4xl font-bold">CountStream</h1>
+          <h1 className="text-4xl font-semibold">CountStream</h1>
           <sub className="mb-3.5 text-purple-500">by SCTools</sub>
         </div>
         <p className="text-center text-sm">

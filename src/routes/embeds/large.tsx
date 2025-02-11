@@ -66,7 +66,7 @@ export default function LargeEmbed() {
         </>
       )}
       <Odometer
-        className="text-5xl font-semibold tabular-nums !leading-[1.2em] sm:text-7xl xl:text-9xl"
+        className="text-5xl !leading-[1.2em] sm:text-7xl xl:text-9xl"
         value={(counts as any)?.[currentCount.id] ?? 0}
       />
       <div className="flex items-center gap-1.5 text-sm text-zinc-400">
