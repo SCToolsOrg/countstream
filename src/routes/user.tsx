@@ -110,7 +110,7 @@ export default function User() {
           </>
         )}
         <Odometer
-          className="text-5xl !leading-[1.2em] sm:text-7xl xl:text-9xl"
+          className="text-5xl font-semibold tabular-nums !leading-[1.2em] sm:text-7xl xl:text-9xl"
           value={(counts as any)?.[currentCount.id] ?? 0}
         />
         <div className="flex items-center gap-1.5 text-sm text-zinc-400">
@@ -140,7 +140,7 @@ export default function User() {
                   {c.name}
                 </div>
                 <Odometer
-                  className="text-3xl !leading-[1.2em] @md:text-4xl"
+                  className="text-3xl font-semibold tabular-nums !leading-[1.2em] @md:text-4xl"
                   value={(counts as any)?.[c.id] ?? 0}
                 />
               </a>
@@ -152,7 +152,7 @@ export default function User() {
             Goal
           </div>
           <Odometer
-            className="text-3xl !leading-[1.2em] @md:text-4xl"
+            className="text-3xl font-semibold tabular-nums !leading-[1.2em] @md:text-4xl"
             value={getGoal((counts as any)[currentCount.id] ?? 0)}
           />
         </Card>
