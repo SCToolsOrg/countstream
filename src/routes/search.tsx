@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { abbreviate } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
-import { useMemo, useRef } from "react";
+import { useRef } from "react";
 import { Link } from "react-router";
 
 export default function Search() {
