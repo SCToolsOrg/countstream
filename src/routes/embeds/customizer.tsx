@@ -148,7 +148,7 @@ export default function EmbedCustomizer() {
               <TooltipTrigger className="cursor-default">
                 <Info className="h-3 w-3" />
               </TooltipTrigger>
-              <TooltipContent className="max-w-sm border bg-card text-center text-foreground">
+              <TooltipContent className="max-w-sm border text-center text-foreground">
                 The APIs listed here allow you to pick between different
                 estimations. Some are more accurate and stable than others.
               </TooltipContent>

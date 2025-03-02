@@ -98,7 +98,7 @@ function ApiItem({
             <TooltipTrigger className="cursor-default">
               <Info className="h-3 w-3" />
             </TooltipTrigger>
-            <TooltipContent className="max-w-sm border bg-card text-center text-foreground">
+            <TooltipContent className="max-w-sm border text-center text-foreground">
               {api.description}
             </TooltipContent>
           </Tooltip>
@@ -111,7 +111,7 @@ function ApiItem({
               <TooltipTrigger className="cursor-default rounded-sm bg-red-950 p-1 text-red-500">
                 <Cog className="h-3 w-3" />
               </TooltipTrigger>
-              <TooltipContent className="max-w-sm border bg-card text-center text-foreground">
+              <TooltipContent className="max-w-sm border text-center text-foreground">
                 Not very stable. May not work or be slow sometimes.
               </TooltipContent>
             </Tooltip>
@@ -123,7 +123,7 @@ function ApiItem({
               <TooltipTrigger className="cursor-default rounded-sm bg-yellow-950 p-1 text-yellow-500">
                 <ChartLine className="h-3 w-3" />
               </TooltipTrigger>
-              <TooltipContent className="max-w-sm border bg-card text-center text-foreground">
+              <TooltipContent className="max-w-sm border text-center text-foreground">
                 Very accurate estimations
               </TooltipContent>
             </Tooltip>
@@ -135,7 +135,7 @@ function ApiItem({
               <TooltipTrigger className="cursor-default rounded-sm bg-green-950 p-1 text-green-500">
                 <Sparkles className="h-3 w-3" />
               </TooltipTrigger>
-              <TooltipContent className="max-w-sm border bg-card text-center text-foreground">
+              <TooltipContent className="max-w-sm border text-center text-foreground">
                 Recommended API for {name}
               </TooltipContent>
             </Tooltip>
