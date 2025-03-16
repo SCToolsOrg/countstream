@@ -1,7 +1,5 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { map } from "nanostores";
-import { useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 export interface API {
   id: string;
