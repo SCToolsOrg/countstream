@@ -184,7 +184,9 @@
       window.location.href = `/youtube/channel?id=${id}`;
     }
 
-    const api = params.get("api") ?? apis[0].id;
+    const recommendedApi =
+      id === "UC-lHJZR3Gqxm24_Vd_AJ5Yw" ? "communitrics" : "mixerno";
+    const api = params.get("api") ?? recommendedApi;
 
     const chart = Highcharts.chart("chart", {
       chart: {
@@ -341,7 +343,9 @@
     apiEl.value = api;
     apiEl.addEventListener("change", (e) => {
       const newSearchParams = new URLSearchParams(window.location.search);
-      newSearchParams.set("api", e.target.value);
+      if (e.target.value === recommendedApi) newSearchParams.delete("api");
+      else newSearchParams.set("api", e.target.value);
+
       const length = [...newSearchParams.entries()].length;
       const params = length === 0 ? "" : "?" + newSearchParams.toString();
       window.location.href = `/youtube/channel${params}`;
