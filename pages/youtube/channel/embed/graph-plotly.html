@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CountStream by SCTools</title>
     <link rel="stylesheet" href="@lib/styles.css" />
-    <script src="https://code.highcharts.com/12.1/highcharts.js"></script>
-    <script src="https://code.highcharts.com/12.1/modules/boost.js"></script>
-    <script src="https://code.highcharts.com/12.1/modules/accessibility.js"></script>
+    <script defer src="https://cdn.plot.ly/plotly-2.4.2.min.js"></script>
   </head>
   <body>
     <div id="chart" class="w-screen h-screen"></div>
@@ -117,111 +115,9 @@
     const recommendedApi =
       id === "UC-lHJZR3Gqxm24_Vd_AJ5Yw" ? "communitrics" : "mixerno";
     const api = params.get("api") ?? recommendedApi;
-
     const cleanModeEnabled = (params.get("clean") ?? "false") === "true";
-    const chart = Highcharts.chart("chart", {
-        chart: {
-          renderTo: "chart",
-          type: "line",
-          backgroundColor: "transparent",
-          plotBorderColor: "transparent",
-          animation: false,
-        },
-        title: {
-          text: "",
-        },
-        xAxis: cleanModeEnabled
-          ? {
-              visible: false,
-            }
-          : {
-              type: "datetime",
-              tickPixelInterval: 500,
-              labels: {
-                style: {
-                  color: "#858585",
-                },
-              },
-              gridLineColor: "#858585",
-              lineColor: "#858585",
-              minorGridLineColor: "#858585",
-              tickColor: "#858585",
-              title: {
-                style: {
-                  color: "#858585",
-                },
-              },
-            },
-        yAxis: cleanModeEnabled
-          ? {
-              visible: false,
-            }
-          : {
-              title: {
-                text: "",
-              },
-              labels: {
-                style: {
-                  color: "#858585",
-                },
-              },
-              gridLineColor: "#858585",
-              lineColor: "#858585",
-              minorGridLineColor: "#858585",
-              tickColor: "#858585",
-            },
-        credits: {
-          enabled: !cleanModeEnabled,
-          text: "CountStream by SCTools",
-          href: "/",
-        },
-        tooltip: {
-          shared: true,
-          formatter: function () {
-            // @ts-expect-error runs on client
-            const index = this.points[0].series.data.findIndex(
-              (p) => p.x === this.x,
-            );
-            // @ts-expect-error runs on client
-            const lastY = this.points[0].series.data[index - 1]?.y;
-            // @ts-expect-error runs on client
-            const dif = this.y - lastY;
-            let r =
-              // @ts-expect-error runs on client
-              Highcharts.dateFormat("%A %b %e, %H:%M:%S", new Date(this.x)) +
-              '<br><span style="color:black">\u25CF </span>' +
-              // @ts-expect-error runs on client
-              this.points[0].series.name +
-              ": <b>" +
-              // @ts-expect-error runs on client
-              Highcharts.numberFormat(this.y, 0);
-            if (dif < 0) {
-              r +=
-                '<span style="color:#ff0000;font-weight:bold;"> (' +
-                Highcharts.numberFormat(dif, 0) +
-                ")</span>";
-            }
-            if (dif > 0) {
-              r +=
-                '<span style="color:#00bb00;font-weight:bold;"> (+' +
-                Highcharts.numberFormat(dif, 0) +
-                ")</span>";
-            }
-            return r;
-          },
-        },
-        series: [
-          {
-            showInLegend: false,
-            marker: { enabled: false },
-            color: "#a855f7",
-            lineWidth: 3,
-            type: "line",
-            name: counts.find((c) => c.id === count).name,
-          },
-        ],
-      });
-    });
+
+    const history = [];
 
     setInterval(() => {
       const apiInfo = apis.find((a) => a.id === api);
@@ -229,9 +125,59 @@
         .then((res) => res.json())
         .then((data) => {
           const parsedData = apiInfo.parseData(data, counts);
-          if (chart.series[0].points.length >= 3600)
-            charts.series[0].data[0].remove();
-          chart.series[0].addPoint([Date.now(), parseInt(parsedData[count])]);
+
+          history.push([new Date(), parsedData[count]]);
+          if (history.length > 1800) history.shift();
+
+          Plotly.newPlot(
+            document.getElementById("chart"),
+            [
+              {
+                x: history.map((d) => d[0]),
+                y: history.map((d) => d[1]),
+                type: "line",
+                marker: {
+                  opacity: 0,
+                },
+                line: {
+                  width: 4,
+                  color: "#a855f7",
+                },
+              },
+            ],
+            {
+              autosize: true,
+              xaxis: cleanModeEnabled
+                ? {
+                    visible: false,
+                  }
+                : {
+                    showgrid: false,
+                  },
+              yaxis: cleanModeEnabled
+                ? {
+                    visible: false,
+                  }
+                : {
+                    automargin: true,
+                    autorange: true,
+                    showgrid: false,
+                  },
+              paper_bgcolor: "transparent",
+              plot_bgcolor: "transparent",
+              margin: cleanModeEnabled
+                ? {
+                    t: 0,
+                    b: 0,
+                    l: 0,
+                    r: 0,
+                  }
+                : undefined,
+            },
+            {
+              displayModeBar: false,
+            },
+          );
         });
     }, 2000);
   </script>
