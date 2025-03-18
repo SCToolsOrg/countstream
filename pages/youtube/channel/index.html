@@ -186,9 +186,9 @@
 
     const recommendedApi =
       id === "UC-lHJZR3Gqxm24_Vd_AJ5Yw" ? "communitrics" : "mixerno";
-    const api = params.get("api") ?? recommendedApi;
+    let api = params.get("api") ?? recommendedApi;
 
-    const chart = Highcharts.chart("chart", {
+    const chartOptions = {
       chart: {
         renderTo: "chart",
         type: "line",
@@ -281,7 +281,8 @@
           name: counts.find((c) => c.id === count).name,
         },
       ],
-    });
+    };
+    let chart = Highcharts.chart("chart", chartOptions);
 
     document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("main-count-subtitle").innerHTML = `
@@ -308,17 +309,17 @@
           const params = length === 0 ? "" : "?" + newSearchParams.toString();
 
           return `
-                <a
-                  href="/youtube/channel${params}"
-                  class="flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center transition-colors @container hover:bg-zinc-800"
-                >
-                  <div class="flex items-center gap-1.5 text-sm text-zinc-400">
-                    <i data-lucide="${c.icon}" class="h-4 w-4"></i>
-                    ${c.name}
-                  </div>
-                  <span id="${c.id}" class="text-3xl !leading-[1.2em] @md:text-4xl">0</span>
-                </a>
-              `;
+            <a
+              href="/youtube/channel${params}"
+              class="flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center transition-colors @container hover:bg-zinc-800"
+            >
+              <div class="flex items-center gap-1.5 text-sm text-zinc-400">
+                <i data-lucide="${c.icon}" class="h-4 w-4"></i>
+                ${c.name}
+              </div>
+              <span id="${c.id}" class="text-3xl !leading-[1.2em] @md:text-4xl">0</span>
+            </a>
+          `;
         })
         .join("");
 
@@ -348,7 +349,18 @@
 
       const length = [...newSearchParams.entries()].length;
       const params = length === 0 ? "" : "?" + newSearchParams.toString();
-      window.location.href = `/youtube/channel${params}`;
+
+      api = e.target.value;
+      chart = Highcharts.chart("chart", chartOptions);
+
+      const newUrl = `${window.location.origin}${window.location.pathname}${params}`;
+      window.history.pushState(
+        {
+          path: newUrl,
+        },
+        "",
+        newUrl,
+      );
     });
 
     function getGoal(count) {
