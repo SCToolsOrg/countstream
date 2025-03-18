@@ -3,9 +3,70 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="tailwindcss" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
+      });
+    </script>
   </head>
   <body>
-    <h1 class="text-4xl font-bold">hello world!</h1>
+    <div class="border-b border-zinc-600">
+      <header class="mx-auto flex w-full max-w-7xl justify-between px-4 py-3">
+        <a href="/" class="flex items-center gap-1">
+          <h1 class="text-xl font-semibold">CountStream</h1>
+          <sub class="text-purple-500">by SCTools</sub>
+        </a>
+      </header>
+    </div>
+    <main class="mx-auto w-full max-w-7xl p-3">
+      <div
+        class="mb-4 rounded-lg border border-yellow-300 bg-yellow-700/50 px-3 pb-2 pt-3 text-center text-sm text-yellow-300"
+      >
+        <i data-lucide="info" class="mb-1 mr-0.5 inline size-4"></i>
+        CountStream is currently in beta. Expect some bugs and missing features.
+      </div>
+      <div class="space-y-4">
+        <div class="space-y-2">
+          <div class="flex items-end justify-center gap-1 text-center">
+            <h1 class="text-4xl font-semibold">CountStream</h1>
+            <sub class="mb-3.5 text-purple-500">by SCTools</sub>
+          </div>
+          <p class="text-center text-sm">
+            A live counts website made by livestreamers for livestreamers.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+          <div
+            class="bg-card border p-4 rounded-lg shadow flex flex-col items-center justify-center gap-2 text-center"
+          >
+            <div class="flex items-center justify-center gap-3 text-center">
+              <svg
+                viewBox="0 0 256 180"
+                width="256"
+                height="180"
+                xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="xMidYMid"
+                class="size-16"
+              >
+                <path
+                  d="M250.346 28.075A32.18 32.18 0 0 0 227.69 5.418C207.824 0 127.87 0 127.87 0S47.912.164 28.046 5.582A32.18 32.18 0 0 0 5.39 28.24c-6.009 35.298-8.34 89.084.165 122.97a32.18 32.18 0 0 0 22.656 22.657c19.866 5.418 99.822 5.418 99.822 5.418s79.955 0 99.82-5.418a32.18 32.18 0 0 0 22.657-22.657c6.338-35.348 8.291-89.1-.164-123.134Z"
+                  fill="red"
+                />
+                <path
+                  fill="#FFF"
+                  d="m102.421 128.06 66.328-38.418-66.328-38.418z"
+                />
+              </svg>
+              <h1 class="text-2xl font-bold">YouTube</h1>
+            </div>
+            <a href="/youtube/channel" class="hover:underline">
+              YouTube Live Subscriber Counter
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
   </body>
 </html>
