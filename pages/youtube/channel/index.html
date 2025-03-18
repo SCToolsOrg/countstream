@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="@lib/styles.css" />
     <link rel="stylesheet" href="@lib/odometer.css" />
-    <script src="@lib/odometer.js"></script>
+    <script src="https://unpkg.com/odometer@0.4.8/odometer.js"></script>
     <script src="https://code.highcharts.com/12.1/highcharts.js"></script>
     <script src="https://code.highcharts.com/12.1/modules/boost.js"></script>
     <script src="https://code.highcharts.com/12.1/modules/accessibility.js"></script>
@@ -194,14 +194,17 @@
           <i data-lucide="${counts.find((c) => c.id === count).icon}" class="h-4 w-4"></i>
           ${counts.find((c) => c.id === count).name}
         `;
-      document.getElementById("side-counts").innerHTML = [
+
+      const tempCounts = [
         ...counts.filter((c) => c.id !== count),
         {
           id: "goal",
           name: "Goal",
           icon: "party-popper",
         },
-      ]
+      ];
+
+      document.getElementById("side-counts").innerHTML = tempCounts
         .map((c) => {
           const newSearchParams = new URLSearchParams(window.location.search);
           if (c.id === counts[0].id) newSearchParams.delete("count");
@@ -211,19 +214,25 @@
           const params = length === 0 ? "" : "?" + newSearchParams.toString();
 
           return `
-              <a
-                href="/youtube/channel${params}"
-                class="flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center transition-colors @container hover:bg-zinc-800"
-              >
-                <div class="flex items-center gap-1.5 text-sm text-zinc-400">
-                  <i data-lucide="${c.icon}" class="h-4 w-4"></i>
-                  ${c.name}
-                </div>
-                <span id="${c.id}" class="odometer text-3xl !leading-[1.2em] @md:text-4xl">0</span>
-              </a>
-            `;
+            <a
+              href="/youtube/channel${params}"
+              class="flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center transition-colors @container hover:bg-zinc-800"
+            >
+              <div class="flex items-center gap-1.5 text-sm text-zinc-400">
+                <i data-lucide="${c.icon}" class="h-4 w-4"></i>
+                ${c.name}
+              </div>
+              <span id="${c.id}" class="text-3xl !leading-[1.2em] @md:text-4xl">0</span>
+            </a>
+          `;
         })
         .join("");
+
+      for (const c of tempCounts) {
+        new Odometer({
+          el: document.getElementById(c.id),
+        });
+      }
 
       lucide.createIcons();
 

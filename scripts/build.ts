@@ -11,7 +11,6 @@ for await (const file of glob.scan()) {
   await Bun.build({
     entrypoints: [file],
     outdir: `./dist/${folders.join("/")}`,
-    minify: true,
     plugins: [tailwindcss],
   });
 }
