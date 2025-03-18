@@ -43,37 +43,129 @@
           >
             0
           </span>
-          <div class="flex items-center gap-1.5 text-sm text-zinc-400">
+          <div
+            id="main-count-subtitle"
+            class="flex items-center gap-1.5 text-sm text-zinc-400"
+          >
             <i data-lucide="users" class="h-4 w-4"></i>
             Subscribers
           </div>
         </div>
+        <div
+          id="side-counts"
+          class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3"
+        ></div>
       </div>
     </main>
   </body>
   <script>
+    const counts = [
+      {
+        id: "subscribers",
+        name: "Subscribers",
+        icon: "users",
+      },
+      {
+        id: "views",
+        name: "Views",
+        icon: "eye",
+      },
+      {
+        id: "videos",
+        name: "Videos",
+        icon: "camera",
+      },
+    ];
+
     const params = new URLSearchParams(window.location.search);
+
     const id = params.get("id");
     if (!id) {
       window.location.href = "/youtube/channel/search";
     }
 
+    const count = params.get("count") ?? counts[0].id;
+    if (!counts.some((c) => c.id === count)) {
+      window.location.href = `/youtube/channel?id=${id}`;
+    }
+
     document.addEventListener("DOMContentLoaded", async () => {
-      const res = await fetch(
-        `https://yt-api.tca-tech.workers.dev/channels/${id}`,
-      );
-      const data = await res.json();
-      document.getElementById("avatar").src = data.user.avatar;
-      document.getElementById("name").innerHTML = data.user.title;
-      document.getElementById("handle").innerHTML = `${data.user.handle}`;
+      document.getElementById("main-count-subtitle").innerHTML = `
+          <i data-lucide="${counts.find((c) => c.id === count).icon}" class="h-4 w-4"></i>
+          ${counts.find((c) => c.id === count).name}
+        `;
+      document.getElementById("side-counts").innerHTML = [
+        ...counts.filter((c) => c.id !== count),
+        {
+          id: "goal",
+          name: "Goal",
+          icon: "party-popper",
+        },
+      ]
+        .map((c) => {
+          const newSearchParams = new URLSearchParams(window.location.search);
+          if (c.id === counts[0].id) newSearchParams.delete("count");
+          else newSearchParams.set("count", c.id);
+
+          const length = [...newSearchParams.entries()].length;
+          const params = length === 0 ? "" : "?" + newSearchParams.toString();
+
+          return `
+              <a
+                href="/youtube/channel${params}"
+                class="flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center transition-colors @container hover:bg-zinc-800"
+              >
+                <div class="flex items-center gap-1.5 text-sm text-zinc-400">
+                  <i data-lucide="${c.icon}" class="h-4 w-4"></i>
+                  ${c.name}
+                </div>
+                <span id="${c.id}" class="odometer text-3xl !leading-[1.2em] @md:text-4xl">0</span>
+              </a>
+            `;
+        })
+        .join("");
+
+      lucide.createIcons();
+
+      fetch(`https://yt-api.tca-tech.workers.dev/channels/${id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          document.getElementById("avatar").src = data.user.avatar;
+          document.getElementById("name").innerHTML = data.user.title;
+          document.getElementById("handle").innerHTML = `${data.user.handle}`;
+        });
     });
+
+    function getGoal(count) {
+      count = parseFloat(count.toString());
+      if (10 > count) return 10 - count;
+      const e = "" + count;
+      return Math.abs(
+        count -
+          (e.length > 6
+            ? 1e6 * (Math.floor(count / 1e6) + 1)
+            : (parseInt(e.charAt(0)) + 1) * Math.pow(10, e.length - 1)),
+      );
+    }
 
     setInterval(() => {
       fetch(`https://mixerno.space/api/youtube-channel-counter/user/${id}`)
         .then((res) => res.json())
         .then((data) => {
-          document.getElementById("main-count").innerHTML =
-            data.counts[0].count;
+          const parsedData = {
+            subscribers: data.counts[0].count,
+            views: data.counts[3].count,
+            videos: data.counts[5].count,
+          };
+
+          document.getElementById("main-count").innerHTML = parsedData[count];
+          for (const c of counts.filter((c) => c.id !== count)) {
+            document.getElementById(c.id).innerHTML = parsedData[c.id];
+          }
+
+          document.getElementById("goal").innerHTML = getGoal(
+            parsedData[count],
+          );
         });
     }, 2000);
   </script>
