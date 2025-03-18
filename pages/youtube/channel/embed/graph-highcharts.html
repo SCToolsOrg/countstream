@@ -131,8 +131,11 @@
         title: {
           text: "",
         },
-        xAxis: cleanModeEnabled
+        xAxis: !cleanModeEnabled
           ? {
+              visible: false,
+            }
+          : {
               type: "datetime",
               tickPixelInterval: 500,
               labels: {
@@ -149,12 +152,12 @@
                   color: "#858585",
                 },
               },
-            }
-          : {
-              visible: false,
             },
         yAxis: cleanModeEnabled
           ? {
+              visible: false,
+            }
+          : {
               title: {
                 text: "",
               },
@@ -167,12 +170,9 @@
               lineColor: "#858585",
               minorGridLineColor: "#858585",
               tickColor: "#858585",
-            }
-          : {
-              visible: false,
             },
         credits: {
-          enabled: cleanModeEnabled,
+          enabled: !cleanModeEnabled,
           text: "CountStream by SCTools",
           href: "/",
         },
