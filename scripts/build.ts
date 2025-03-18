@@ -4,12 +4,14 @@ import tailwindcss from "bun-plugin-tailwind";
 const glob = new Glob("pages/**/*.html");
 const files = [];
 for await (const file of glob.scan()) {
-  files.push(file);
-}
+  const folders = file.split("/");
+  folders.shift();
+  folders.pop();
 
-await Bun.build({
-  entrypoints: files,
-  outdir: "./dist",
-  minify: true,
-  plugins: [tailwindcss],
-});
+  await Bun.build({
+    entrypoints: [file],
+    outdir: `./dist/${folders.join("/")}`,
+    minify: true,
+    plugins: [tailwindcss],
+  });
+}
