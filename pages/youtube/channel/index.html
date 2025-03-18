@@ -60,6 +60,25 @@
         <div class="card w-full py-6">
           <div id="chart"></div>
         </div>
+        <div class="card space-y-2 text-center">
+          <p class="font-semibold">Select an API:</p>
+          <select
+            name="api"
+            id="api"
+            default="volvo"
+            class="bg-background p-2 rounded-lg"
+          >
+            <optgroup label="Stable APIs">
+              <option value="mixerno">Mixerno.space</option>
+              <option value="lcxyz">Livecounts.xyz</option>
+              <option value="socialcounts">SocialCounts.org</option>
+            </optgroup>
+            <optgroup label="Unstable APIs">
+              <option value="mixerno-v4">Mixerno.space (v4)</option>
+              <option value="communitrics">Communitrics</option>
+            </optgroup>
+          </select>
+        </div>
       </div>
     </main>
   </body>
@@ -82,6 +101,77 @@
       },
     ];
 
+    const apis = [
+      {
+        id: "mixerno",
+        name: "Mixerno.space",
+        description:
+          "An extremely stable and popular API used by many streamers",
+        url: "https://mixerno.space/api/youtube-channel-counter/user/<id>",
+        stable: true,
+        accurate: true,
+        parseData: (data) => ({
+          subscribers: data.counts[0].count,
+          views: data.counts[3].count,
+          videos: data.counts[5].count,
+        }),
+      },
+      {
+        id: "mixerno-v4",
+        name: "Mixerno.space (v4)",
+        description:
+          "Mixerno.space's experimental estimations. Only supports a handful of channels.",
+        url: "https://estv4.mixerno.space/api/v1/get/<id>",
+        stable: false,
+        accurate: true,
+        parseData: (data) => ({
+          subscribers: Math.floor(data.data.estCounts[0]),
+          views: data.data.apiCounts[1],
+          videos: data.data.apiCounts[2],
+        }),
+      },
+      {
+        id: "lcxyz",
+        name: "Livecounts.xyz",
+        description:
+          "An API created by the same creator of Mixerno.space. A little more stable than Mixerno.space.",
+        url: "https://livecounts.xyz/api/youtube-live-subscriber-count/live/<id>",
+        stable: true,
+        accurate: false,
+        parseData: (data) => ({
+          subscribers: data.counts[0],
+          views: data.counts[1],
+          videos: data.counts[2],
+        }),
+      },
+      {
+        id: "socialcounts",
+        name: "SocialCounts.org",
+        description: "A decently popular and stable API",
+        url: "https://api.socialcounts.org/youtube-live-subscriber-count/<id>",
+        stable: true,
+        accurate: false,
+        parseData: (data) => ({
+          subscribers: data.est_sub,
+          views: data.table[0].count,
+          videos: data.table[1].count,
+        }),
+      },
+      {
+        id: "communitrics",
+        name: "Communitrics",
+        description: "Very accurate estimations for channels like PewDiePie",
+        url: "https://api.communitrics.com/<id>",
+        stable: false,
+        accurate: true,
+        parseData: (data) => ({
+          subscribers: data.channelDetails.linearEstSubscriberCount,
+          views: data.channelDetails.viewCount,
+          videos: data.channelDetails.videoCount,
+        }),
+      },
+    ];
+
     const params = new URLSearchParams(window.location.search);
 
     const id = params.get("id");
@@ -93,6 +183,8 @@
     if (!counts.some((c) => c.id === count)) {
       window.location.href = `/youtube/channel?id=${id}`;
     }
+
+    const api = params.get("api") ?? apis[0].id;
 
     const chart = Highcharts.chart("chart", {
       chart: {
@@ -191,9 +283,9 @@
 
     document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("main-count-subtitle").innerHTML = `
-          <i data-lucide="${counts.find((c) => c.id === count).icon}" class="h-4 w-4"></i>
-          ${counts.find((c) => c.id === count).name}
-        `;
+              <i data-lucide="${counts.find((c) => c.id === count).icon}" class="h-4 w-4"></i>
+              ${counts.find((c) => c.id === count).name}
+            `;
 
       const tempCounts = [
         ...counts.filter((c) => c.id !== count),
@@ -214,17 +306,17 @@
           const params = length === 0 ? "" : "?" + newSearchParams.toString();
 
           return `
-            <a
-              href="/youtube/channel${params}"
-              class="flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center transition-colors @container hover:bg-zinc-800"
-            >
-              <div class="flex items-center gap-1.5 text-sm text-zinc-400">
-                <i data-lucide="${c.icon}" class="h-4 w-4"></i>
-                ${c.name}
-              </div>
-              <span id="${c.id}" class="text-3xl !leading-[1.2em] @md:text-4xl">0</span>
-            </a>
-          `;
+                <a
+                  href="/youtube/channel${params}"
+                  class="flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center transition-colors @container hover:bg-zinc-800"
+                >
+                  <div class="flex items-center gap-1.5 text-sm text-zinc-400">
+                    <i data-lucide="${c.icon}" class="h-4 w-4"></i>
+                    ${c.name}
+                  </div>
+                  <span id="${c.id}" class="text-3xl !leading-[1.2em] @md:text-4xl">0</span>
+                </a>
+              `;
         })
         .join("");
 
@@ -245,7 +337,18 @@
         });
     });
 
+    const apiEl = document.getElementById("api");
+    apiEl.value = api;
+    apiEl.addEventListener("change", (e) => {
+      const newSearchParams = new URLSearchParams(window.location.search);
+      newSearchParams.set("api", e.target.value);
+      const length = [...newSearchParams.entries()].length;
+      const params = length === 0 ? "" : "?" + newSearchParams.toString();
+      window.location.href = `/youtube/channel${params}`;
+    });
+
     function getGoal(count) {
+      if (!count) return 0;
       count = parseFloat(count.toString());
       if (10 > count) return 10 - count;
       const e = "" + count;
@@ -258,14 +361,11 @@
     }
 
     setInterval(() => {
-      fetch(`https://mixerno.space/api/youtube-channel-counter/user/${id}`)
+      const apiInfo = apis.find((a) => a.id === api);
+      fetch(apiInfo.url.replace("<id>", id))
         .then((res) => res.json())
         .then((data) => {
-          const parsedData = {
-            subscribers: data.counts[0].count,
-            views: data.counts[3].count,
-            videos: data.counts[5].count,
-          };
+          const parsedData = apiInfo.parseData(data);
 
           document.getElementById("main-count").innerHTML = parsedData[count];
           for (const c of counts.filter((c) => c.id !== count)) {
