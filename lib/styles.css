@@ -78,4 +78,7 @@
   .btn {
     @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-background border shadow hover:bg-zinc-800 h-9 px-4 py-2 w-full disabled:cursor-not-allowed disabled:opacity-50 md:w-24;
   }
+  .card {
+    @apply bg-card border p-4 rounded-lg shadow;
+  }
 }

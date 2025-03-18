@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="@lib/styles.css" />
+    <link rel="stylesheet" href="@lib/odometer.css" />
+    <script src="@lib/odometer.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
+      });
+    </script>
+  </head>
+  <body>
+    <div class="border-b border-zinc-600">
+      <header class="mx-auto flex w-full max-w-7xl justify-between px-4 py-3">
+        <a href="/" class="flex items-center gap-1">
+          <h1 class="text-xl font-semibold">CountStream</h1>
+          <sub class="text-purple-500">by SCTools</sub>
+        </a>
+      </header>
+    </div>
+    <main class="mx-auto w-full max-w-7xl p-3">
+      <div
+        class="mb-4 rounded-lg border border-yellow-300 bg-yellow-700/50 px-3 pb-2 pt-3 text-center text-sm text-yellow-300"
+      >
+        <i data-lucide="info" class="mb-1 mr-0.5 inline size-4"></i>
+        CountStream is currently in beta. Expect some bugs and missing features.
+      </div>
+      <div class="space-y-4"></div>
+      <div class="flex flex-col items-center gap-4">
+        <div
+          class="card flex w-full flex-col items-center justify-center text-center"
+        >
+          <img src="" alt="" id="avatar" class="h-20 w-20 rounded-full" />
+          <h1 id="name" class="mt-2 text-2xl">Loading...</h1>
+          <p id="handle" class="text-sm text-zinc-400">@loading</p>
+          <span
+            id="main-count"
+            class="odometer text-5xl !leading-[1.2em] sm:text-7xl xl:text-9xl"
+          >
+            0
+          </span>
+          <div class="flex items-center gap-1.5 text-sm text-zinc-400">
+            <i data-lucide="users" class="h-4 w-4"></i>
+            Subscribers
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    if (!id) {
+      window.location.href = "/youtube/channel/search";
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const res = await fetch(
+        `https://yt-api.tca-tech.workers.dev/channels/${id}`,
+      );
+      const data = await res.json();
+      document.getElementById("avatar").src = data.user.avatar;
+      document.getElementById("name").innerHTML = data.user.title;
+      document.getElementById("handle").innerHTML = `${data.user.handle}`;
+    });
+
+    setInterval(() => {
+      fetch(`https://mixerno.space/api/youtube-channel-counter/user/${id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          document.getElementById("main-count").innerHTML =
+            data.counts[0].count;
+        });
+    }, 2000);
+  </script>
+</html>

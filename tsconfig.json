@@ -26,7 +26,8 @@
 
     "baseUrl": ".",
     "paths": {
-      "@pages/*": ["./pages/*"]
+      "@pages/*": ["./pages/*"],
+      "@lib/*": ["./lib/*"]
     }
   }
 }
