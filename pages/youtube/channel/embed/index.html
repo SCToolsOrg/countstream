@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CountStream by SCTools</title>
+    <link rel="stylesheet" href="@lib/styles.css" />
+    <link rel="stylesheet" href="@lib/odometer.css" />
+    <script src="https://unpkg.com/odometer@0.4.8/odometer.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
+      });
+    </script>
+  </head>
+  <body>
+    <div class="border-b border-zinc-600">
+      <header class="mx-auto flex w-full max-w-7xl justify-between px-4 py-3">
+        <a href="/" class="flex items-center gap-1">
+          <h1 class="text-xl font-semibold">CountStream</h1>
+          <sub class="text-purple-500">by SCTools</sub>
+        </a>
+      </header>
+    </div>
+    <main class="mx-auto w-full max-w-7xl p-3">
+      <div
+        class="mb-4 rounded-lg border border-yellow-300 bg-yellow-700/50 px-3 pb-2 pt-3 text-center text-sm text-yellow-300"
+      >
+        <i data-lucide="info" class="mb-1 mr-0.5 inline size-4"></i>
+        CountStream is currently in beta. Expect some bugs and missing features.
+      </div>
+      <div class="space-y-4">
+        <iframe src="" class="w-full" scrolling="no"></iframe>
+        <div class="card space-y-2">
+          <p class="font-semibold">Customized embed URL:</p>
+          <div class="relative">
+            <input id="embed-url" readonly class="input w-full py-5" />
+            <button
+              id="copy-btn"
+              onclick="copyEmbedUrl()"
+              class="btn absolute right-1.5 bottom-[5px] h-8 rounded-md px-3 text-xs cursor-pointer w-[53.81px]"
+            >
+              Copy
+            </button>
+          </div>
+        </div>
+        <div class="card flex flex-col gap-4">
+          <div class="space-y-2 text-center">
+            <p class="font-semibold">Embed type</p>
+            <div class="flex flex-wrap items-center justify-center gap-3">
+              <div class="flex items-center gap-2">
+                <input
+                  type="radio"
+                  value="small"
+                  id="embed-small"
+                  name="embed"
+                />
+                <label for="embed-small">Small</label>
+              </div>
+              <div class="flex items-center gap-2">
+                <input
+                  type="radio"
+                  value="large"
+                  id="embed-large"
+                  name="embed"
+                />
+                <label for="embed-large">Large</label>
+              </div>
+              <div class="flex items-center gap-2">
+                <input
+                  type="radio"
+                  value="count"
+                  id="embed-count"
+                  name="embed"
+                />
+                <label for="embed-count">Count</label>
+              </div>
+              <div class="flex items-center gap-2">
+                <input
+                  type="radio"
+                  value="graph/highcharts"
+                  id="embed-graph/highcharts"
+                  name="embed"
+                />
+                <label for="embed-graph/highcharts">Graph (Highcharts)</label>
+              </div>
+              <div class="flex items-center gap-2">
+                <input
+                  type="radio"
+                  value="graph/plotly"
+                  id="embed-graph/plotly"
+                  name="embed"
+                />
+                <label for="embed-graph/plotly">Graph (Plotly)</label>
+              </div>
+            </div>
+          </div>
+          <div class="space-y-2 text-center">
+            <p class="font-semibold">API</p>
+            <select
+              name="api"
+              id="api"
+              default="mixerno"
+              class="bg-background p-2 rounded-lg"
+            >
+              <optgroup label="Stable APIs">
+                <option value="mixerno">Mixerno.space</option>
+                <option value="lcxyz">Livecounts.xyz</option>
+                <option value="socialcounts">SocialCounts.org</option>
+              </optgroup>
+              <optgroup label="Unstable APIs">
+                <option value="mixerno-v4">Mixerno.space (v4)</option>
+                <option value="communitrics">Communitrics</option>
+              </optgroup>
+            </select>
+          </div>
+          <div id="embed-options" class="space-y-4 empty:hidden"></div>
+        </div>
+      </div>
+    </main>
+  </body>
+  <script>
+    const counts = [
+      {
+        id: "subscribers",
+        name: "Subscribers",
+        icon: "users",
+      },
+      {
+        id: "views",
+        name: "Views",
+        icon: "eye",
+      },
+      {
+        id: "videos",
+        name: "Videos",
+        icon: "camera",
+      },
+    ];
+
+    const apis = [
+      {
+        id: "mixerno",
+        name: "Mixerno.space",
+        description:
+          "An extremely stable and popular API used by many streamers",
+        url: "https://mixerno.space/api/youtube-channel-counter/user/<id>",
+        stable: true,
+        accurate: true,
+        parseData: (data) => ({
+          subscribers: data.counts[0].count,
+          views: data.counts[3].count,
+          videos: data.counts[5].count,
+        }),
+      },
+      {
+        id: "mixerno-v4",
+        name: "Mixerno.space (v4)",
+        description:
+          "Mixerno.space's experimental estimations. Only supports a handful of channels.",
+        url: "https://estv4.mixerno.space/api/v1/get/<id>",
+        stable: false,
+        accurate: true,
+        parseData: (data) => ({
+          subscribers: Math.floor(data.data.estCounts[0]),
+          views: data.data.apiCounts[1],
+          videos: data.data.apiCounts[2],
+        }),
+      },
+      {
+        id: "lcxyz",
+        name: "Livecounts.xyz",
+        description:
+          "An API created by the same creator of Mixerno.space. A little more stable than Mixerno.space.",
+        url: "https://livecounts.xyz/api/youtube-live-subscriber-count/live/<id>",
+        stable: true,
+        accurate: false,
+        parseData: (data) => ({
+          subscribers: data.counts[0],
+          views: data.counts[1],
+          videos: data.counts[2],
+        }),
+      },
+      {
+        id: "socialcounts",
+        name: "SocialCounts.org",
+        description: "A decently popular and stable API",
+        url: "https://api.socialcounts.org/youtube-live-subscriber-count/<id>",
+        stable: true,
+        accurate: false,
+        parseData: (data) => ({
+          subscribers: data.est_sub,
+          views: data.table[0].count,
+          videos: data.table[1].count,
+        }),
+      },
+      {
+        id: "communitrics",
+        name: "Communitrics",
+        description: "Very accurate estimations for channels like PewDiePie",
+        url: "https://api.communitrics.com/<id>",
+        stable: false,
+        accurate: true,
+        parseData: (data) => ({
+          subscribers: data.channelDetails.linearEstSubscriberCount,
+          views: data.channelDetails.viewCount,
+          videos: data.channelDetails.videoCount,
+        }),
+      },
+    ];
+
+    const embeds = [
+      {
+        id: "small",
+      },
+      {
+        id: "large",
+      },
+      {
+        id: "count",
+        options: [
+          {
+            id: "size",
+            name: "Size",
+            options: ["small", "medium", "large", "extra-large"],
+            default: "medium",
+          },
+          {
+            id: "align",
+            name: "Align",
+            options: ["left", "center", "right"],
+            default: "left",
+          },
+        ],
+      },
+      {
+        id: "graph/highcharts",
+        height: 400,
+      },
+      {
+        id: "graph/plotly",
+        height: 400,
+      },
+    ];
+
+    const iframe = document.querySelector("iframe");
+
+    const params = new URLSearchParams(window.location.search);
+
+    const id = params.get("id");
+    if (!id) {
+      window.location.href = "/youtube/channel/search";
+    }
+
+    const count = params.get("count") ?? counts[0].id;
+    if (!counts.some((c) => c.id === count)) {
+      window.location.href = `/youtube/channel?id=${id}`;
+    }
+
+    const recommendedApi =
+      id === "UC-lHJZR3Gqxm24_Vd_AJ5Yw" ? "communitrics" : "mixerno";
+    let api = params.get("api") ?? recommendedApi;
+
+    const embed = params.get("embed") ?? embeds[0].id;
+    let lastEmbed;
+    const options = {};
+
+    function getEmbedUrl(embed) {
+      return `/youtube/channel/embed/${embed.id}?id=${id}`;
+    }
+
+    function capitalizeWord(word) {
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    }
+
+    function capitalize(inputString) {
+      const words = inputString.split("-");
+      const capitalizedWords = words.map(capitalizeWord);
+      return capitalizedWords.join(" ");
+    }
+
+    function updateEmbedUrl(embed) {
+      const embedUrl = getEmbedUrl(embed);
+
+      const paramsWithoutDefaults = new URLSearchParams(window.location.search);
+      paramsWithoutDefaults.delete("id");
+      paramsWithoutDefaults.delete("api");
+      paramsWithoutDefaults.delete("count");
+      paramsWithoutDefaults.delete("embed");
+
+      document.getElementById("embed-url").value =
+        window.location.origin +
+        embedUrl +
+        `${api !== recommendedApi ? `&api=${api}` : ""}` +
+        `${count !== counts[0].id ? `&count=${count}` : ""}` +
+        `${paramsWithoutDefaults.size > 0 ? "&" : ""}${paramsWithoutDefaults}`;
+    }
+
+    function updateEmbed(embed) {
+      const embedData = embeds.find((e) => e.id === embed);
+      const embedUrl = getEmbedUrl(embedData);
+      iframe.src = embedUrl;
+
+      if (embedData.height) {
+        iframe.height = embedData.height;
+      } else {
+        iframe.addEventListener("load", () => {
+          iframe.contentWindow.api = api;
+          iframe.height = iframe.contentDocument.body.scrollHeight;
+        });
+      }
+
+      if (embedData.options) {
+        const options = document.getElementById("embed-options");
+
+        for (const option of embedData.options) {
+          const wrapper = document.createElement("div");
+          wrapper.className = "flex flex-col gap-2";
+
+          const title = document.createElement("p");
+          title.className = "font-semibold text-center";
+          title.textContent = option.name;
+          wrapper.appendChild(title);
+
+          const radioGroup = document.createElement("div");
+          radioGroup.className =
+            "flex flex-wrap items-center justify-center gap-3";
+
+          const value = params.get(option.id) ?? option.default;
+          iframe.addEventListener("load", () => {
+            iframe.contentWindow.postMessage({
+              type: "option-update",
+              data: {
+                option: option.id,
+                value,
+              },
+            });
+            setTimeout(() => {
+              iframe.height = iframe.contentDocument.body.scrollHeight;
+            }, 10);
+          });
+
+          for (const o of option.options) {
+            const div = document.createElement("div");
+            div.className = "flex items-center gap-2";
+
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.name = option.id;
+            radio.id = `${option.id}-${o}`;
+            radio.value = o;
+            radio.checked = o === value;
+            radio.addEventListener("change", () => {
+              updateSearchParam(option.id, o, option.default);
+              iframe.contentWindow.postMessage({
+                type: "option-update",
+                data: {
+                  option: option.id,
+                  value: o,
+                },
+              });
+              setTimeout(() => {
+                iframe.height = iframe.contentDocument.body.scrollHeight;
+              }, 10);
+              updateEmbedUrl(embed);
+            });
+
+            const label = document.createElement("label");
+            label.htmlFor = `${option.id}-${o}`;
+            label.textContent = capitalize(o);
+
+            div.appendChild(radio);
+            div.appendChild(label);
+
+            radioGroup.appendChild(div);
+          }
+          wrapper.appendChild(radioGroup);
+
+          options.appendChild(wrapper);
+        }
+      } else if (lastEmbed && embeds.find((e) => e.id === lastEmbed).options) {
+        const lastEmbedOptions = embeds.find((e) => e.id === lastEmbed).options;
+        for (const option of lastEmbedOptions) {
+          updateSearchParam(option.id, undefined, option.default);
+        }
+        document.getElementById("embed-options").innerHTML = "";
+      }
+
+      updateEmbedUrl(embed);
+
+      lastEmbed = embed;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateEmbed(embed);
+
+      for (const e of embeds) {
+        const radio = document.getElementById(`embed-${e.id}`);
+        if (!radio) continue;
+
+        radio.checked = e.id === embed;
+        radio.addEventListener("change", () => {
+          updateSearchParam("embed", e.id, embeds[0]);
+          updateEmbed(e.id);
+        });
+      }
+    });
+
+    function copyEmbedUrl() {
+      navigator.clipboard.writeText(document.getElementById("embed-url").value);
+
+      const btn = document.getElementById("copy-btn");
+      btn.innerHTML = `<i data-lucide="check"></i>`;
+
+      lucide.createIcons();
+
+      setTimeout(() => {
+        btn.innerHTML = `Copy`;
+      }, 1000);
+    }
+
+    function updateSearchParam(key, value, defaultValue) {
+      const newSearchParams = new URLSearchParams(window.location.search);
+      if (!value || value === defaultValue) newSearchParams.delete(key);
+      else newSearchParams.set(key, value);
+
+      const length = [...newSearchParams.entries()].length;
+      const params = length === 0 ? "" : "?" + newSearchParams.toString();
+
+      const newUrl = `${window.location.origin}${window.location.pathname}${params}`;
+      window.history.pushState(
+        {
+          path: newUrl,
+        },
+        "",
+        newUrl,
+      );
+    }
+
+    const apiEl = document.getElementById("api");
+    apiEl.value = api;
+    apiEl.addEventListener("change", (e) => {
+      updateSearchParam("api", e.target.value, recommendedApi);
+
+      api = e.target.value;
+      iframe.contentWindow.api = e.target.value;
+
+      document.getElementById("embed-url").value =
+        window.location.origin +
+        getEmbedUrl(embed) +
+        `${api !== recommendedApi ? `&api=${api}` : ""}`;
+    });
+  </script>
+</html>

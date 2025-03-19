@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CountStream by SCTools</title>
+    <link rel="stylesheet" href="@lib/styles.css" />
+    <script src="https://cdn.plot.ly/plotly-2.4.2.min.js"></script>
+  </head>
+  <body>
+    <div id="chart" class="w-screen h-screen"></div>
+  </body>
+  <script>
+    const counts = [
+      {
+        id: "subscribers",
+        name: "Subscribers",
+        icon: "users",
+      },
+      {
+        id: "views",
+        name: "Views",
+        icon: "eye",
+      },
+      {
+        id: "videos",
+        name: "Videos",
+        icon: "camera",
+      },
+    ];
+
+    const apis = [
+      {
+        id: "mixerno",
+        name: "Mixerno.space",
+        description:
+          "An extremely stable and popular API used by many streamers",
+        url: "https://mixerno.space/api/youtube-channel-counter/user/<id>",
+        stable: true,
+        accurate: true,
+        parseData: (data) => ({
+          subscribers: data.counts[0].count,
+          views: data.counts[3].count,
+          videos: data.counts[5].count,
+        }),
+      },
+      {
+        id: "mixerno-v4",
+        name: "Mixerno.space (v4)",
+        description:
+          "Mixerno.space's experimental estimations. Only supports a handful of channels.",
+        url: "https://estv4.mixerno.space/api/v1/get/<id>",
+        stable: false,
+        accurate: true,
+        parseData: (data) => ({
+          subscribers: Math.floor(data.data.estCounts[0]),
+          views: data.data.apiCounts[1],
+          videos: data.data.apiCounts[2],
+        }),
+      },
+      {
+        id: "lcxyz",
+        name: "Livecounts.xyz",
+        description:
+          "An API created by the same creator of Mixerno.space. A little more stable than Mixerno.space.",
+        url: "https://livecounts.xyz/api/youtube-live-subscriber-count/live/<id>",
+        stable: true,
+        accurate: false,
+        parseData: (data) => ({
+          subscribers: data.counts[0],
+          views: data.counts[1],
+          videos: data.counts[2],
+        }),
+      },
+      {
+        id: "socialcounts",
+        name: "SocialCounts.org",
+        description: "A decently popular and stable API",
+        url: "https://api.socialcounts.org/youtube-live-subscriber-count/<id>",
+        stable: true,
+        accurate: false,
+        parseData: (data) => ({
+          subscribers: data.est_sub,
+          views: data.table[0].count,
+          videos: data.table[1].count,
+        }),
+      },
+      {
+        id: "communitrics",
+        name: "Communitrics",
+        description: "Very accurate estimations for channels like PewDiePie",
+        url: "https://api.communitrics.com/<id>",
+        stable: false,
+        accurate: true,
+        parseData: (data) => ({
+          subscribers: data.channelDetails.linearEstSubscriberCount,
+          views: data.channelDetails.viewCount,
+          videos: data.channelDetails.videoCount,
+        }),
+      },
+    ];
+
+    const params = new URLSearchParams(window.location.search);
+
+    const id = params.get("id");
+    if (!id) {
+      window.location.href = "/youtube/channel/search";
+    }
+
+    const count = params.get("count") ?? counts[0].id;
+    if (!counts.some((c) => c.id === count)) {
+      window.location.href = `/youtube/channel?id=${id}`;
+    }
+
+    const recommendedApi =
+      id === "UC-lHJZR3Gqxm24_Vd_AJ5Yw" ? "communitrics" : "mixerno";
+    var api = params.get("api") ?? recommendedApi;
+    const cleanModeEnabled = (params.get("clean") ?? "false") === "true";
+
+    const history = [];
+
+    setInterval(() => {
+      const apiInfo = apis.find((a) => a.id === api);
+      fetch(apiInfo.url.replace("<id>", id))
+        .then((res) => res.json())
+        .then((data) => {
+          const parsedData = apiInfo.parseData(data, counts);
+
+          history.push([new Date(), parsedData[count]]);
+          if (history.length > 1800) history.shift();
+
+          Plotly.newPlot(
+            document.getElementById("chart"),
+            [
+              {
+                x: history.map((d) => d[0]),
+                y: history.map((d) => d[1]),
+                type: "line",
+                marker: {
+                  opacity: 0,
+                },
+                line: {
+                  width: 4,
+                  color: "#a855f7",
+                },
+              },
+            ],
+            {
+              autosize: true,
+              xaxis: cleanModeEnabled
+                ? {
+                    visible: false,
+                  }
+                : {
+                    showgrid: false,
+                  },
+              yaxis: cleanModeEnabled
+                ? {
+                    visible: false,
+                  }
+                : {
+                    automargin: true,
+                    autorange: true,
+                    showgrid: false,
+                  },
+              paper_bgcolor: "transparent",
+              plot_bgcolor: "transparent",
+              margin: cleanModeEnabled
+                ? {
+                    t: 0,
+                    b: 0,
+                    l: 0,
+                    r: 0,
+                  }
+                : undefined,
+            },
+            {
+              displayModeBar: false,
+            },
+          );
+        });
+    }, 2000);
+  </script>
+</html>

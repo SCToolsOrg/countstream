@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CountStream by SCTools</title>
+    <link rel="stylesheet" href="@lib/styles.css" />
+    <link rel="stylesheet" href="@lib/odometer.css" />
+    <script src="https://unpkg.com/odometer@0.4.8/odometer.js"></script>
+    <script src="https://code.highcharts.com/12.1/highcharts.js"></script>
+    <script src="https://code.highcharts.com/12.1/modules/boost.js"></script>
+    <script src="https://code.highcharts.com/12.1/modules/accessibility.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
+      });
+    </script>
+  </head>
+  <body>
+    <div class="border-b border-zinc-600">
+      <header class="mx-auto flex w-full max-w-7xl justify-between px-4 py-3">
+        <a href="/" class="flex items-center gap-1">
+          <h1 class="text-xl font-semibold">CountStream</h1>
+          <sub class="text-purple-500">by SCTools</sub>
+        </a>
+      </header>
+    </div>
+    <main class="mx-auto w-full max-w-7xl p-3">
+      <div
+        class="mb-4 rounded-lg border border-yellow-300 bg-yellow-700/50 px-3 pb-2 pt-3 text-center text-sm text-yellow-300"
+      >
+        <i data-lucide="info" class="mb-1 mr-0.5 inline size-4"></i>
+        CountStream is currently in beta. Expect some bugs and missing features.
+      </div>
+      <div class="flex flex-col items-center gap-4">
+        <div
+          class="card flex w-full flex-col items-center justify-center text-center"
+        >
+          <img src="" alt="" id="avatar" class="h-20 w-20 rounded-full" />
+          <h1 id="name" class="mt-2 text-2xl">Loading...</h1>
+          <p id="handle" class="text-sm text-zinc-400">@loading</p>
+          <span
+            id="main-count"
+            class="odometer text-5xl !leading-[1.2em] sm:text-7xl xl:text-9xl"
+          >
+            0
+          </span>
+          <div
+            id="main-count-subtitle"
+            class="flex items-center gap-1.5 text-sm text-zinc-400"
+          >
+            <i data-lucide="users" class="h-4 w-4"></i>
+            Subscribers
+          </div>
+        </div>
+        <div
+          id="side-counts"
+          class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3"
+        ></div>
+        <div class="card w-full py-6">
+          <div id="chart"></div>
+        </div>
+        <a
+          id="embed"
+          href=""
+          class="rounded-lg border border-zinc-600 bg-zinc-900 px-4 py-2 transition-colors hover:bg-zinc-800"
+        >
+          Embed
+        </a>
+        <div class="card space-y-2 text-center">
+          <p class="font-semibold">Select an API:</p>
+          <select
+            name="api"
+            id="api"
+            default="volvo"
+            class="bg-background p-2 rounded-lg"
+          >
+            <optgroup label="Stable APIs">
+              <option value="mixerno">Mixerno.space</option>
+              <option value="lcxyz">Livecounts.xyz</option>
+              <option value="socialcounts">SocialCounts.org</option>
+            </optgroup>
+            <optgroup label="Unstable APIs">
+              <option value="mixerno-v4">Mixerno.space (v4)</option>
+              <option value="communitrics">Communitrics</option>
+            </optgroup>
+          </select>
+        </div>
+      </div>
+    </main>
+  </body>
+  <script>
+    const counts = [
+      {
+        id: "subscribers",
+        name: "Subscribers",
+        icon: "users",
+      },
+      {
+        id: "views",
+        name: "Views",
+        icon: "eye",
+      },
+      {
+        id: "videos",
+        name: "Videos",
+        icon: "camera",
+      },
+    ];
+
+    const apis = [
+      {
+        id: "mixerno",
+        name: "Mixerno.space",
+        description:
+          "An extremely stable and popular API used by many streamers",
+        url: "https://mixerno.space/api/youtube-channel-counter/user/<id>",
+        stable: true,
+        accurate: true,
+        parseData: (data) => ({
+          subscribers: data.counts[0].count,
+          views: data.counts[3].count,
+          videos: data.counts[5].count,
+        }),
+      },
+      {
+        id: "mixerno-v4",
+        name: "Mixerno.space (v4)",
+        description:
+          "Mixerno.space's experimental estimations. Only supports a handful of channels.",
+        url: "https://estv4.mixerno.space/api/v1/get/<id>",
+        stable: false,
+        accurate: true,
+        parseData: (data) => ({
+          subscribers: Math.floor(data.data.estCounts[0]),
+          views: data.data.apiCounts[1],
+          videos: data.data.apiCounts[2],
+        }),
+      },
+      {
+        id: "lcxyz",
+        name: "Livecounts.xyz",
+        description:
+          "An API created by the same creator of Mixerno.space. A little more stable than Mixerno.space.",
+        url: "https://livecounts.xyz/api/youtube-live-subscriber-count/live/<id>",
+        stable: true,
+        accurate: false,
+        parseData: (data) => ({
+          subscribers: data.counts[0],
+          views: data.counts[1],
+          videos: data.counts[2],
+        }),
+      },
+      {
+        id: "socialcounts",
+        name: "SocialCounts.org",
+        description: "A decently popular and stable API",
+        url: "https://api.socialcounts.org/youtube-live-subscriber-count/<id>",
+        stable: true,
+        accurate: false,
+        parseData: (data) => ({
+          subscribers: data.est_sub,
+          views: data.table[0].count,
+          videos: data.table[1].count,
+        }),
+      },
+      {
+        id: "communitrics",
+        name: "Communitrics",
+        description: "Very accurate estimations for channels like PewDiePie",
+        url: "https://api.communitrics.com/<id>",
+        stable: false,
+        accurate: true,
+        parseData: (data) => ({
+          subscribers: data.channelDetails.linearEstSubscriberCount,
+          views: data.channelDetails.viewCount,
+          videos: data.channelDetails.videoCount,
+        }),
+      },
+    ];
+
+    const params = new URLSearchParams(window.location.search);
+
+    const id = params.get("id");
+    if (!id) {
+      window.location.href = "/youtube/channel/search";
+    }
+
+    const count = params.get("count") ?? counts[0].id;
+    if (!counts.some((c) => c.id === count)) {
+      window.location.href = `/youtube/channel?id=${id}`;
+    }
+
+    const recommendedApi =
+      id === "UC-lHJZR3Gqxm24_Vd_AJ5Yw" ? "communitrics" : "mixerno";
+    let api = params.get("api") ?? recommendedApi;
+
+    const chartOptions = {
+      chart: {
+        renderTo: "chart",
+        type: "line",
+        backgroundColor: "transparent",
+        plotBorderColor: "transparent",
+        animation: false,
+      },
+      title: {
+        text: "",
+      },
+      xAxis: {
+        type: "datetime",
+        tickPixelInterval: 500,
+        labels: {
+          style: {
+            color: "#858585",
+          },
+        },
+        gridLineColor: "#858585",
+        lineColor: "#858585",
+        minorGridLineColor: "#858585",
+        tickColor: "#858585",
+        title: {
+          style: {
+            color: "#858585",
+          },
+        },
+      },
+      yAxis: {
+        title: {
+          text: "",
+        },
+        labels: {
+          style: {
+            color: "#858585",
+          },
+        },
+        gridLineColor: "#858585",
+        lineColor: "#858585",
+        minorGridLineColor: "#858585",
+        tickColor: "#858585",
+      },
+      credits: {
+        enabled: true,
+        text: "CountStream by SCTools",
+        href: "/",
+      },
+      tooltip: {
+        shared: true,
+        formatter: function () {
+          // @ts-expect-error runs on client
+          const index = this.points[0].series.data.findIndex(
+            (p) => p.x === this.x,
+          );
+          // @ts-expect-error runs on client
+          const lastY = this.points[0].series.data[index - 1]?.y;
+          // @ts-expect-error runs on client
+          const dif = this.y - lastY;
+          let r =
+            // @ts-expect-error runs on client
+            Highcharts.dateFormat("%A %b %e, %H:%M:%S", new Date(this.x)) +
+            '<br><span style="color:black">\u25CF </span>' +
+            // @ts-expect-error runs on client
+            this.points[0].series.name +
+            ": <b>" +
+            // @ts-expect-error runs on client
+            Highcharts.numberFormat(this.y, 0);
+          if (dif < 0) {
+            r +=
+              '<span style="color:#ff0000;font-weight:bold;"> (' +
+              Highcharts.numberFormat(dif, 0) +
+              ")</span>";
+          }
+          if (dif > 0) {
+            r +=
+              '<span style="color:#00bb00;font-weight:bold;"> (+' +
+              Highcharts.numberFormat(dif, 0) +
+              ")</span>";
+          }
+          return r;
+        },
+      },
+      series: [
+        {
+          showInLegend: false,
+          marker: { enabled: false },
+          color: "#a855f7",
+          lineWidth: 3,
+          type: "line",
+          name: counts.find((c) => c.id === count).name,
+        },
+      ],
+    };
+    let chart = Highcharts.chart("chart", chartOptions);
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      document.getElementById("embed").href =
+        `/youtube/channel/embed?id=${id}${api !== recommendedApi ? `&api=${api}` : ""}`;
+
+      document.getElementById("main-count-subtitle").innerHTML = `
+        <i data-lucide="${counts.find((c) => c.id === count).icon}" class="h-4 w-4"></i>
+        ${counts.find((c) => c.id === count).name}
+      `;
+
+      const tempCounts = [
+        ...counts.filter((c) => c.id !== count),
+        {
+          id: "goal",
+          name: "Goal",
+          icon: "party-popper",
+        },
+      ];
+
+      document.getElementById("side-counts").innerHTML = tempCounts
+        .map((c) => {
+          const newSearchParams = new URLSearchParams(window.location.search);
+          if (c.id === counts[0].id) newSearchParams.delete("count");
+          else newSearchParams.set("count", c.id);
+
+          const length = [...newSearchParams.entries()].length;
+          const params = length === 0 ? "" : "?" + newSearchParams.toString();
+
+          return `
+            <a
+              href="/youtube/channel${params}"
+              class="flex flex-col items-center justify-center gap-1 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center transition-colors @container hover:bg-zinc-800"
+            >
+              <div class="flex items-center gap-1.5 text-sm text-zinc-400">
+                <i data-lucide="${c.icon}" class="h-4 w-4"></i>
+                ${c.name}
+              </div>
+              <span id="${c.id}" class="text-3xl !leading-[1.2em] @md:text-4xl">0</span>
+            </a>
+          `;
+        })
+        .join("");
+
+      for (const c of tempCounts) {
+        new Odometer({
+          el: document.getElementById(c.id),
+        });
+      }
+
+      lucide.createIcons();
+
+      fetch(`https://yt-api.tca-tech.workers.dev/channels/${id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          document.getElementById("avatar").src = data.user.avatar;
+          document.getElementById("name").innerHTML = data.user.title;
+          document.getElementById("handle").innerHTML = `${data.user.handle}`;
+        });
+    });
+
+    const apiEl = document.getElementById("api");
+    apiEl.value = api;
+    apiEl.addEventListener("change", (e) => {
+      const newSearchParams = new URLSearchParams(window.location.search);
+      if (e.target.value === recommendedApi) newSearchParams.delete("api");
+      else newSearchParams.set("api", e.target.value);
+
+      const length = [...newSearchParams.entries()].length;
+      const params = length === 0 ? "" : "?" + newSearchParams.toString();
+
+      api = e.target.value;
+      document.getElementById("embed").href =
+        `/youtube/channel/embed?id=${id}${api !== recommendedApi ? `&api=${api}` : ""}`;
+      chart = Highcharts.chart("chart", chartOptions);
+
+      const newUrl = `${window.location.origin}${window.location.pathname}${params}`;
+      window.history.pushState(
+        {
+          path: newUrl,
+        },
+        "",
+        newUrl,
+      );
+    });
+
+    function getGoal(count) {
+      if (!count) return 0;
+      count = parseFloat(count.toString());
+      if (10 > count) return 10 - count;
+      const e = "" + count;
+      return Math.abs(
+        count -
+          (e.length > 6
+            ? 1e6 * (Math.floor(count / 1e6) + 1)
+            : (parseInt(e.charAt(0)) + 1) * Math.pow(10, e.length - 1)),
+      );
+    }
+
+    setInterval(() => {
+      const apiInfo = apis.find((a) => a.id === api);
+      fetch(apiInfo.url.replace("<id>", id))
+        .then((res) => res.json())
+        .then((data) => {
+          const parsedData = apiInfo.parseData(data);
+
+          document.getElementById("main-count").innerHTML = parsedData[count];
+          for (const c of counts.filter((c) => c.id !== count)) {
+            document.getElementById(c.id).innerHTML = parsedData[c.id];
+          }
+
+          document.getElementById("goal").innerHTML = getGoal(
+            parsedData[count],
+          );
+
+          if (chart.series[0].points.length >= 3600)
+            charts.series[0].data[0].remove();
+          chart.series[0].addPoint([Date.now(), parseInt(parsedData[count])]);
+        });
+    }, 2000);
+  </script>
+</html>
