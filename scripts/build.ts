@@ -2,7 +2,6 @@ import { Glob } from "bun";
 import tailwindcss from "bun-plugin-tailwind";
 
 const glob = new Glob("pages/**/*.html");
-const files = [];
 for await (const file of glob.scan()) {
   const folders = file.split("/");
   folders.shift();

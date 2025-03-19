@@ -129,7 +129,7 @@
 
     const recommendedApi =
       id === "UC-lHJZR3Gqxm24_Vd_AJ5Yw" ? "communitrics" : "mixerno";
-    const api = params.get("api") ?? recommendedApi;
+    var api = params.get("api") ?? recommendedApi;
 
     document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("count-subtitle").innerHTML = `

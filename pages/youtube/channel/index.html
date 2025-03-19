@@ -61,6 +61,13 @@
         <div class="card w-full py-6">
           <div id="chart"></div>
         </div>
+        <a
+          id="embed"
+          href=""
+          class="rounded-lg border border-zinc-600 bg-zinc-900 px-4 py-2 transition-colors hover:bg-zinc-800"
+        >
+          Embed
+        </a>
         <div class="card space-y-2 text-center">
           <p class="font-semibold">Select an API:</p>
           <select
@@ -286,10 +293,13 @@
     let chart = Highcharts.chart("chart", chartOptions);
 
     document.addEventListener("DOMContentLoaded", async () => {
+      document.getElementById("embed").href =
+        `/youtube/channel/embed?id=${id}${api !== recommendedApi ? `&api=${api}` : ""}`;
+
       document.getElementById("main-count-subtitle").innerHTML = `
-              <i data-lucide="${counts.find((c) => c.id === count).icon}" class="h-4 w-4"></i>
-              ${counts.find((c) => c.id === count).name}
-            `;
+        <i data-lucide="${counts.find((c) => c.id === count).icon}" class="h-4 w-4"></i>
+        ${counts.find((c) => c.id === count).name}
+      `;
 
       const tempCounts = [
         ...counts.filter((c) => c.id !== count),
@@ -352,6 +362,8 @@
       const params = length === 0 ? "" : "?" + newSearchParams.toString();
 
       api = e.target.value;
+      document.getElementById("embed").href =
+        `/youtube/channel/embed?id=${id}${api !== recommendedApi ? `&api=${api}` : ""}`;
       chart = Highcharts.chart("chart", chartOptions);
 
       const newUrl = `${window.location.origin}${window.location.pathname}${params}`;
