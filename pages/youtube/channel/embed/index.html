@@ -363,7 +363,7 @@
               setTimeout(() => {
                 iframe.height = iframe.contentDocument.body.scrollHeight;
               }, 10);
-              updateEmbedUrl(embed);
+              updateEmbedUrl(embedData);
             });
 
             const label = document.createElement("label");
@@ -387,7 +387,7 @@
         document.getElementById("embed-options").innerHTML = "";
       }
 
-      updateEmbedUrl(embed);
+      updateEmbedUrl(embedData);
 
       lastEmbed = embed;
     }
