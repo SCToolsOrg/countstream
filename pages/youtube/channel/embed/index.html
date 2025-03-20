@@ -346,7 +346,7 @@
     function updateEmbed(embed) {
       const embedData = embeds.find((e) => e.id === embed);
       const embedUrl = getEmbedUrl(embedData);
-      iframe.src = embedUrl;
+      iframe.src = embedUrl + `&count=${count}`;
 
       if (embedData.height) {
         iframe.height = embedData.height;
