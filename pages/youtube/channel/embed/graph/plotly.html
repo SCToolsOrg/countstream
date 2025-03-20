@@ -181,6 +181,10 @@
       }
     });
 
+    window.addEventListener("resize", () => {
+      updateChart();
+    });
+
     setInterval(() => {
       const apiInfo = apis.find((a) => a.id === api);
       fetch(apiInfo.url.replace("<id>", id))
