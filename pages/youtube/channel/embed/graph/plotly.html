@@ -115,9 +115,71 @@
     const recommendedApi =
       id === "UC-lHJZR3Gqxm24_Vd_AJ5Yw" ? "communitrics" : "mixerno";
     var api = params.get("api") ?? recommendedApi;
-    const cleanModeEnabled = (params.get("clean") ?? "false") === "true";
+
+    const options = {
+      clean: (params.get("clean") ?? "false") === "true",
+    };
 
     const history = [];
+
+    function updateChart() {
+      Plotly.newPlot(
+        document.getElementById("chart"),
+        [
+          {
+            x: history.map((d) => d[0]),
+            y: history.map((d) => d[1]),
+            type: "line",
+            marker: {
+              opacity: 0,
+            },
+            line: {
+              width: 4,
+              color: "#a855f7",
+            },
+          },
+        ],
+        {
+          autosize: true,
+          xaxis: options.clean
+            ? {
+                visible: false,
+              }
+            : {
+                showgrid: false,
+              },
+          yaxis: options.clean
+            ? {
+                visible: false,
+              }
+            : {
+                automargin: true,
+                autorange: true,
+                showgrid: false,
+              },
+          paper_bgcolor: "transparent",
+          plot_bgcolor: "transparent",
+          margin: options.clean
+            ? {
+                t: 0,
+                b: 0,
+                l: 0,
+                r: 0,
+              }
+            : undefined,
+        },
+        {
+          displayModeBar: false,
+        },
+      );
+    }
+
+    window.addEventListener("message", (event) => {
+      if (event.data.type === "option-update") {
+        options[event.data.data.option] = event.data.data.value;
+        updateChart();
+      }
+    });
 
     setInterval(() => {
       const apiInfo = apis.find((a) => a.id === api);
@@ -129,55 +191,7 @@
           history.push([new Date(), parsedData[count]]);
           if (history.length > 1800) history.shift();
 
-          Plotly.newPlot(
-            document.getElementById("chart"),
-            [
-              {
-                x: history.map((d) => d[0]),
-                y: history.map((d) => d[1]),
-                type: "line",
-                marker: {
-                  opacity: 0,
-                },
-                line: {
-                  width: 4,
-                  color: "#a855f7",
-                },
-              },
-            ],
-            {
-              autosize: true,
-              xaxis: cleanModeEnabled
-                ? {
-                    visible: false,
-                  }
-                : {
-                    showgrid: false,
-                  },
-              yaxis: cleanModeEnabled
-                ? {
-                    visible: false,
-                  }
-                : {
-                    automargin: true,
-                    autorange: true,
-                    showgrid: false,
-                  },
-              paper_bgcolor: "transparent",
-              plot_bgcolor: "transparent",
-              margin: cleanModeEnabled
-                ? {
-                    t: 0,
-                    b: 0,
-                    l: 0,
-                    r: 0,
-                  }
-                : undefined,
-            },
-            {
-              displayModeBar: false,
-            },
-          );
+          updateChart();
         });
     }, 2000);
   </script>
