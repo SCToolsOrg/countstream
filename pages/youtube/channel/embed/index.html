@@ -525,11 +525,11 @@
 
       lastEmbed = embed;
       embed = embedData.id;
+
+      updateCounts();
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      updateEmbed(embed);
-
+    function updateCounts() {
       document.getElementById("counts").innerHTML = counts
         .map((c) => {
           const newSearchParams = new URLSearchParams(window.location.search);
@@ -562,6 +562,10 @@
         .join("");
 
       lucide.createIcons();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateEmbed(embed);
 
       for (const e of embeds) {
         const div = document.createElement("div");
@@ -626,6 +630,7 @@
 
       api = e.target.value;
       iframe.contentWindow.api = e.target.value;
+      updateCounts();
 
       document.getElementById("embed-url").value =
         window.location.origin +
