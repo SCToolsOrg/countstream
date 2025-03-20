@@ -74,6 +74,10 @@
           </div>
           <div id="embed-options" class="space-y-4 empty:hidden"></div>
         </div>
+        <div
+          id="counts"
+          class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3"
+        ></div>
       </div>
     </main>
   </body>
@@ -526,12 +530,38 @@
     document.addEventListener("DOMContentLoaded", () => {
       updateEmbed(embed);
 
-      // for (const e of embeds) {
-      //   const radio = document.getElementById(`embed-${e.id}`);
-      //   if (!radio) continue;
-      //
-      //
-      // }
+      document.getElementById("counts").innerHTML = counts
+        .map((c) => {
+          const newSearchParams = new URLSearchParams(window.location.search);
+          if (c.id === counts[0].id) newSearchParams.delete("count");
+          else newSearchParams.set("count", c.id);
+
+          const length = [...newSearchParams.entries()].length;
+          const params = length === 0 ? "" : "?" + newSearchParams.toString();
+
+          if (c.id === count)
+            return `
+              <div
+                class="flex items-center justify-center gap-1.5 rounded-lg border border-zinc-600 bg-zinc-800 p-4 text-center @container"
+              >
+                <i data-lucide="${c.icon}" class="h-4 w-4"></i>
+                ${c.name}
+              </div>
+            `;
+
+          return `
+            <a
+              href="/youtube/channel/embed${params}"
+              class="flex items-center justify-center gap-1.5 rounded-lg border border-zinc-600 bg-zinc-900 p-4 text-center transition-colors @container hover:bg-zinc-800"
+            >
+              <i data-lucide="${c.icon}" class="h-4 w-4"></i>
+              ${c.name}
+            </a>
+          `;
+        })
+        .join("");
+
+      lucide.createIcons();
 
       for (const e of embeds) {
         const div = document.createElement("div");
