@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CountStream by SCTools</title>
     <link rel="stylesheet" href="@lib/styles.css" />
+    <script src="https://unpkg.com/dompurify@3.2.4/dist/purify.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -104,7 +105,7 @@
                 class="size-12 rounded-full"
               />
               <div class="text-left">
-                <h1 class="text-2xl font-bold">${result[0]}</h1>
+                <h1 class="text-2xl font-bold">${DOMPurify.sanitize(result[0])}</h1>
               </div>
             </a>  
           `;

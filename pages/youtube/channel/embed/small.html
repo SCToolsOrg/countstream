@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="@lib/styles.css" />
     <link rel="stylesheet" href="@lib/odometer.css" />
     <script src="https://unpkg.com/odometer@0.4.8/odometer.js"></script>
+    <script src="https://unpkg.com/dompurify@3.2.4/dist/purify.min.js"></script>
   </head>
   <body>
     <div class="flex items-center gap-2">
@@ -135,7 +136,9 @@
         .then((res) => res.json())
         .then((data) => {
           document.getElementById("avatar").src = data.user.avatar;
-          document.getElementById("name").innerHTML = data.user.title;
+          document.getElementById("name").innerHTML = DOMPurify.sanitize(
+            data.user.title,
+          );
         });
     });
 

@@ -10,6 +10,7 @@
     <script src="https://code.highcharts.com/12.1/highcharts.js"></script>
     <script src="https://code.highcharts.com/12.1/modules/boost.js"></script>
     <script src="https://code.highcharts.com/12.1/modules/accessibility.js"></script>
+    <script src="https://unpkg.com/dompurify@3.2.4/dist/purify.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -346,8 +347,12 @@
         .then((res) => res.json())
         .then((data) => {
           document.getElementById("avatar").src = data.user.avatar;
-          document.getElementById("name").innerHTML = data.user.title;
-          document.getElementById("handle").innerHTML = `${data.user.handle}`;
+          document.getElementById("name").innerHTML = DOMPurify.sanitize(
+            data.user.title,
+          );
+          document.getElementById("handle").innerHTML = DOMPurify.sanitize(
+            data.user.handle,
+          );
         });
     });
 
