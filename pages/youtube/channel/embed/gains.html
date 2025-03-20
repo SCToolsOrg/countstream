@@ -129,6 +129,7 @@
 
     const options = {
       ["time-types"]: params.get("time-types") ?? "24h",
+      align: params.get("align") ?? "left",
       icon: (params.get("icon") ?? "true") === "true",
       text: (params.get("text") ?? "true") === "true",
     };
@@ -147,7 +148,13 @@
 
       for (const time of enabledTimes) {
         const div = document.createElement("div");
-        div.classList.add("flex", "items-center", "gap-2");
+        div.className = "flex items-center gap-2";
+        div.style.justifyContent =
+          options.align === "left"
+            ? "flex-start"
+            : options.align === "right"
+              ? "flex-end"
+              : options.align;
 
         if (options.icon) {
           const icon = document.createElement("i");
