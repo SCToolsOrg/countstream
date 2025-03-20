@@ -59,7 +59,7 @@
               placeholder="Search for a YouTube channel..."
               class="input"
             />
-            <button class="btn">Search</button>
+            <button class="btn w-full md:w-24">Search</button>
           </form>
         </div>
         <div
@@ -79,6 +79,10 @@
 
       document.getElementById("results").innerHTML =
         `<i data-lucide="loader-circle" class="h-10 w-10 animate-spin"></i>`;
+      document.querySelector("input").disabled = true;
+      document.querySelector(".btn").disabled = true;
+      document.querySelector(".btn").innerHTML =
+        `<i data-lucide="loader-circle" class="animate-spin"></i>`;
 
       lucide.createIcons();
 
@@ -90,22 +94,25 @@
       document.getElementById("results").innerHTML = data.list
         .map((result) => {
           return `
-          <a
-            href="/youtube/channel?id=${result[2]}"
-            class="flex w-full items-center gap-3 rounded-lg border bg-zinc-900 p-4 shadow transition-colors hover:bg-zinc-800"
-          >
-            <img
-              src="${result[1]}"
-              alt="${result[0]}"
-              class="size-12 rounded-full"
-            />
-            <div class="text-left">
-              <h1 class="text-2xl font-bold">${result[0]}</h1>
-            </div>
-          </a>  
-        `;
+            <a
+              href="/youtube/channel?id=${result[2]}"
+              class="flex w-full items-center gap-3 rounded-lg border bg-zinc-900 p-4 shadow transition-colors hover:bg-zinc-800"
+            >
+              <img
+                src="${result[1]}"
+                alt="${result[0]}"
+                class="size-12 rounded-full"
+              />
+              <div class="text-left">
+                <h1 class="text-2xl font-bold">${result[0]}</h1>
+              </div>
+            </a>  
+          `;
         })
         .join("");
+      document.querySelector("input").disabled = false;
+      document.querySelector(".btn").disabled = false;
+      document.querySelector(".btn").innerHTML = "Search";
     });
   </script>
 </html>
