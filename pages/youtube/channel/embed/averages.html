@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="@lib/styles.css" />
     <link rel="stylesheet" href="@lib/odometer.css" />
     <script src="https://unpkg.com/odometer@0.4.8/odometer.js"></script>
+    <script src="https://unpkg.com/dompurify@3.2.4/dist/purify.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
   </head>
-  <body>
-    <span id="count" class="odometer !leading-[1.2em] w-full">0</span>
-  </body>
+  <body></body>
   <script>
     const counts = [
       {
@@ -101,23 +101,14 @@
       },
     ];
 
-    const sizes = [
-      {
-        id: "small",
-        size: "18px",
-      },
-      {
-        id: "medium",
-        size: "36px",
-      },
-      {
-        id: "large",
-        size: "60px",
-      },
-      {
-        id: "extra-large",
-        size: "120pt",
-      },
+    const times = [
+      ["30s", 30],
+      ["1m", 60],
+      ["10m", 600],
+      ["1h", 3600],
+      ["6h", 21600],
+      ["12h", 43200],
+      ["24h", 86400],
     ];
 
     const params = new URLSearchParams(window.location.search);
@@ -137,27 +128,95 @@
     var api = params.get("api") ?? recommendedApi;
 
     const options = {
-      size: params.get("size") ?? sizes[0].id,
-      align: params.get("align") ?? "left",
+      ["time-types"]: params.get("time-types") ?? "24h",
+      icon: (params.get("icon") ?? "true") === "true",
+      text: (params.get("text") ?? "true") === "true",
     };
+    let enabledTimes = times.filter((t) =>
+      options["time-types"].includes(t[0]),
+    );
 
-    function updateOptions() {
-      document.getElementById("count").style.fontSize = sizes.find(
-        (s) => s.id === options.size,
-      )?.size;
-      document.getElementById("count").style.textAlign = options.align;
+    const history = [];
+
+    function calculateAverage(time) {
+      const average =
+        getCombn(history) /
+        history.length /
+        Math.floor(parseFloat("2000") / 1000);
+
+      const avg = Math.floor(average * time[1]);
+      return isNaN(avg) ? 0 : avg;
+    }
+
+    function updateElements() {
+      document.body.innerHTML = "";
+
+      for (const time of enabledTimes) {
+        const div = document.createElement("div");
+        div.classList.add("flex", "items-center", "gap-2");
+
+        if (options.icon) {
+          const icon = document.createElement("i");
+          icon.setAttribute("data-lucide", "hourglass");
+          div.appendChild(icon);
+        }
+
+        if (options.text) {
+          const p = document.createElement("p");
+          p.innerHTML = time[0] + ":";
+          div.appendChild(p);
+        }
+
+        const span = document.createElement("span");
+        span.id = time[0];
+        span.classList.add("text-2xl", "!leading-[1.2em]");
+        span.innerHTML = "0";
+        new Odometer({
+          el: span,
+          value: calculateAverage(time),
+        });
+
+        div.appendChild(span);
+
+        document.body.appendChild(div);
+      }
+
+      lucide.createIcons();
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      updateOptions();
+      updateElements();
     });
 
     window.addEventListener("message", (event) => {
       if (event.data.type === "option-update") {
         options[event.data.data.option] = event.data.data.value;
-        updateOptions();
+        if (event.data.data.option === "time-types") {
+          enabledTimes = times.filter((t) =>
+            options["time-types"].includes(t[0]),
+          );
+        }
+        updateElements();
       }
     });
+
+    function getCombn(arr) {
+      var count = 0;
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] == NaN) {
+          arr.splice(i, 1);
+        }
+      }
+      for (var i = 0; i < arr.length; i++) {
+        //console.log(i)
+        if (i == 0) {
+          count = count + (arr[i] - parseFloat(arr[i]));
+        } else {
+          count = count + (parseFloat(arr[i]) - parseFloat(arr[i - 1]));
+        }
+      }
+      return count;
+    }
 
     setInterval(() => {
       const apiInfo = apis.find((a) => a.id === api);
@@ -165,7 +224,12 @@
         .then((res) => res.json())
         .then((data) => {
           const parsedData = apiInfo.parseData(data, counts);
-          document.getElementById("count").innerHTML = parsedData[count];
+          history.push(parsedData[count]);
+          if (history.length >= 90) history.shift();
+
+          for (const time of enabledTimes) {
+            document.getElementById(time[0]).innerHTML = calculateAverage(time);
+          }
         });
     }, 2000);
   </script>

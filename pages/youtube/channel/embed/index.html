@@ -48,53 +48,10 @@
         <div class="card flex flex-col gap-4">
           <div class="space-y-2 text-center">
             <p class="font-semibold">Embed type</p>
-            <div class="flex flex-wrap items-center justify-center gap-3">
-              <div class="flex items-center gap-2">
-                <input
-                  type="radio"
-                  value="small"
-                  id="embed-small"
-                  name="embed"
-                />
-                <label for="embed-small">Small</label>
-              </div>
-              <div class="flex items-center gap-2">
-                <input
-                  type="radio"
-                  value="large"
-                  id="embed-large"
-                  name="embed"
-                />
-                <label for="embed-large">Large</label>
-              </div>
-              <div class="flex items-center gap-2">
-                <input
-                  type="radio"
-                  value="count"
-                  id="embed-count"
-                  name="embed"
-                />
-                <label for="embed-count">Count</label>
-              </div>
-              <div class="flex items-center gap-2">
-                <input
-                  type="radio"
-                  value="graph/highcharts"
-                  id="embed-graph/highcharts"
-                  name="embed"
-                />
-                <label for="embed-graph/highcharts">Graph (Highcharts)</label>
-              </div>
-              <div class="flex items-center gap-2">
-                <input
-                  type="radio"
-                  value="graph/plotly"
-                  id="embed-graph/plotly"
-                  name="embed"
-                />
-                <label for="embed-graph/plotly">Graph (Plotly)</label>
-              </div>
-            </div>
+            <div
+              id="embed-types"
+              class="flex flex-wrap items-center justify-center gap-3"
+            ></div>
           </div>
           <div class="space-y-2 text-center">
             <p class="font-semibold">API</p>
@@ -235,6 +192,54 @@
         ],
       },
       {
+        id: "averages",
+        options: [
+          {
+            id: "time-types",
+            name: "Times",
+            type: "checkboxes",
+            options: ["30s", "1m", "10m", "1h", "6h", "12h", "24h"],
+            default: ["24h"],
+          },
+          {
+            id: "icon",
+            name: "Icon",
+            type: "checkbox",
+            default: true,
+          },
+          {
+            id: "text",
+            name: "Text",
+            type: "checkbox",
+            default: true,
+          },
+        ],
+      },
+      {
+        id: "gains",
+        options: [
+          {
+            id: "time-types",
+            name: "Times",
+            type: "checkboxes",
+            options: ["30s", "1m", "10m", "1h", "6h", "12h", "24h"],
+            default: ["24h"],
+          },
+          {
+            id: "icon",
+            name: "Icon",
+            type: "checkbox",
+            default: true,
+          },
+          {
+            id: "text",
+            name: "Text",
+            type: "checkbox",
+            default: true,
+          },
+        ],
+      },
+      {
         id: "graph/highcharts",
         height: 400,
       },
@@ -276,8 +281,17 @@
 
     function capitalize(inputString) {
       const words = inputString.split("-");
-      const capitalizedWords = words.map(capitalizeWord);
-      return capitalizedWords.join(" ");
+      const capitalizedWords = words.map(capitalizeWord).join(" ");
+
+      const parts = capitalizedWords.split("/");
+      if (parts.length !== 2) {
+        return capitalizedWords; // Return original if not in expected format
+      }
+
+      const firstWord = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+      const secondWord = parts[1].charAt(0).toUpperCase() + parts[1].slice(1);
+
+      return `${firstWord} (${secondWord})`;
     }
 
     function updateEmbedUrl(embed) {
@@ -311,6 +325,14 @@
         });
       }
 
+      if (lastEmbed && embeds.find((e) => e.id === lastEmbed).options) {
+        const lastEmbedOptions = embeds.find((e) => e.id === lastEmbed).options;
+        for (const option of lastEmbedOptions) {
+          updateSearchParam(option.id, undefined, option.default);
+        }
+        document.getElementById("embed-options").innerHTML = "";
+      }
+
       if (embedData.options) {
         const options = document.getElementById("embed-options");
 
@@ -322,10 +344,6 @@
           title.className = "font-semibold text-center";
           title.textContent = option.name;
           wrapper.appendChild(title);
-
-          const radioGroup = document.createElement("div");
-          radioGroup.className =
-            "flex flex-wrap items-center justify-center gap-3";
 
           const value = params.get(option.id) ?? option.default;
           iframe.addEventListener("load", () => {
@@ -341,23 +359,81 @@
             }, 10);
           });
 
-          for (const o of option.options) {
-            const div = document.createElement("div");
-            div.className = "flex items-center gap-2";
+          if (option.type === "checkboxes") {
+            const checkboxGroup = document.createElement("div");
+            checkboxGroup.className =
+              "flex flex-wrap items-center justify-center gap-3";
 
-            const radio = document.createElement("input");
-            radio.type = "radio";
-            radio.name = option.id;
-            radio.id = `${option.id}-${o}`;
-            radio.value = o;
-            radio.checked = o === value;
-            radio.addEventListener("change", () => {
-              updateSearchParam(option.id, o, option.default);
+            for (const o of option.options) {
+              const div = document.createElement("div");
+              div.className = "flex items-center gap-2";
+
+              const checkbox = document.createElement("input");
+              checkbox.type = "checkbox";
+              checkbox.name = option.id;
+              checkbox.id = `${option.id}-${o}`;
+              checkbox.value = o;
+              checkbox.checked = value.includes(o);
+              checkbox.addEventListener("change", () => {
+                const enabled = Array.from(
+                  checkboxGroup.querySelectorAll(
+                    `input[name="${option.id}"]:checked`,
+                  ),
+                )
+                  .map((i) => i.id.replace(`${option.id}-`, ""))
+                  .join(",");
+                updateSearchParam(option.id, enabled, option.default.join(","));
+                iframe.contentWindow.postMessage({
+                  type: "option-update",
+                  data: {
+                    option: option.id,
+                    value: enabled,
+                  },
+                });
+                setTimeout(() => {
+                  iframe.height = iframe.contentDocument.body.scrollHeight;
+                }, 10);
+                updateEmbedUrl(embedData);
+              });
+
+              const label = document.createElement("label");
+              label.htmlFor = `${option.id}-${o}`;
+              label.textContent = capitalize(o);
+
+              div.appendChild(checkbox);
+              div.appendChild(label);
+
+              checkboxGroup.appendChild(div);
+            }
+
+            wrapper.appendChild(checkboxGroup);
+          } else if (option.type === "checkbox") {
+            const newTitle = document.createElement("label");
+            newTitle.className = "font-semibold text-center";
+            newTitle.htmlFor = option.id;
+            newTitle.textContent = option.name;
+
+            title.replaceWith(newTitle);
+
+            wrapper.className = "flex items-center justify-center gap-2";
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.name = option.id;
+            checkbox.id = option.id;
+            checkbox.value = value;
+            checkbox.checked = value;
+            checkbox.addEventListener("change", () => {
+              updateSearchParam(
+                option.id,
+                checkbox.checked === true ? "true" : "false",
+                option.default === true ? "true" : "false",
+              );
               iframe.contentWindow.postMessage({
                 type: "option-update",
                 data: {
                   option: option.id,
-                  value: o,
+                  value: checkbox.checked,
                 },
               });
               setTimeout(() => {
@@ -366,44 +442,91 @@
               updateEmbedUrl(embedData);
             });
 
-            const label = document.createElement("label");
-            label.htmlFor = `${option.id}-${o}`;
-            label.textContent = capitalize(o);
+            wrapper.appendChild(checkbox);
+          } else {
+            const radioGroup = document.createElement("div");
+            radioGroup.className =
+              "flex flex-wrap items-center justify-center gap-3";
 
-            div.appendChild(radio);
-            div.appendChild(label);
+            for (const o of option.options) {
+              const div = document.createElement("div");
+              div.className = "flex items-center gap-2";
 
-            radioGroup.appendChild(div);
+              const radio = document.createElement("input");
+              radio.type = "radio";
+              radio.name = option.id;
+              radio.id = `${option.id}-${o}`;
+              radio.value = o;
+              radio.checked = o === value;
+              radio.addEventListener("change", () => {
+                updateSearchParam(option.id, o, option.default);
+                iframe.contentWindow.postMessage({
+                  type: "option-update",
+                  data: {
+                    option: option.id,
+                    value: o,
+                  },
+                });
+                setTimeout(() => {
+                  iframe.height = iframe.contentDocument.body.scrollHeight;
+                }, 10);
+                updateEmbedUrl(embedData);
+              });
+
+              const label = document.createElement("label");
+              label.htmlFor = `${option.id}-${o}`;
+              label.textContent = capitalize(o);
+
+              div.appendChild(radio);
+              div.appendChild(label);
+
+              radioGroup.appendChild(div);
+            }
+            wrapper.appendChild(radioGroup);
           }
-          wrapper.appendChild(radioGroup);
 
           options.appendChild(wrapper);
         }
-      } else if (lastEmbed && embeds.find((e) => e.id === lastEmbed).options) {
-        const lastEmbedOptions = embeds.find((e) => e.id === lastEmbed).options;
-        for (const option of lastEmbedOptions) {
-          updateSearchParam(option.id, undefined, option.default);
-        }
-        document.getElementById("embed-options").innerHTML = "";
       }
 
       updateEmbedUrl(embedData);
 
       lastEmbed = embed;
+      embed = embedData.id;
     }
 
     document.addEventListener("DOMContentLoaded", () => {
       updateEmbed(embed);
 
-      for (const e of embeds) {
-        const radio = document.getElementById(`embed-${e.id}`);
-        if (!radio) continue;
+      // for (const e of embeds) {
+      //   const radio = document.getElementById(`embed-${e.id}`);
+      //   if (!radio) continue;
+      //
+      //
+      // }
 
+      for (const e of embeds) {
+        const div = document.createElement("div");
+        div.className = "flex items-center gap-2";
+
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = "embed";
+        radio.id = `embed-${e.id}`;
+        radio.value = e.id;
         radio.checked = e.id === embed;
         radio.addEventListener("change", () => {
           updateSearchParam("embed", e.id, embeds[0]);
           updateEmbed(e.id);
         });
+
+        const label = document.createElement("label");
+        label.htmlFor = `embed-${e.id}`;
+        label.textContent = capitalize(e.id);
+
+        div.appendChild(radio);
+        div.appendChild(label);
+        document.getElementById("embed-types").appendChild(div);
       }
     });
 
