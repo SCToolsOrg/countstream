@@ -87,33 +87,51 @@
 
       lucide.createIcons();
 
-      const res = await fetch(
-        `https://mixerno.space/api/youtube-channel-counter/search/${query}`,
-      );
-      const data = await res.json();
+      try {
+        const res = await fetch(`https://mixerno.space/api/youtube-channel-counter/search/${query}`);
 
-      document.getElementById("results").innerHTML = data.list
-        .map((result) => {
-          return `
-            <a
-              href="/youtube/channel?id=${result[2]}"
-              class="flex w-full items-center gap-3 rounded-lg border bg-zinc-900 p-4 shadow transition-colors hover:bg-zinc-800"
-            >
-              <img
-                src="${result[1]}"
-                alt="${result[0]}"
-                class="size-12 rounded-full"
-              />
-              <div class="text-left">
-                <h1 class="text-2xl font-bold">${DOMPurify.sanitize(result[0])}</h1>
-              </div>
-            </a>  
-          `;
-        })
-        .join("");
-      document.querySelector("input").disabled = false;
-      document.querySelector(".btn").disabled = false;
-      document.querySelector(".btn").innerHTML = "Search";
+        if (!res.ok) {
+          throw new Error(`Error: ${res.status} ${res.statusText}`);
+        }
+
+        const data = await res.json();
+
+        if (!data.list || !Array.isArray(data.list)) {
+          throw new Error("Unexpected API response format.");
+        }
+
+        document.getElementById("results").innerHTML = data.list
+          .map((result) => {
+            return `
+                  <a
+                      href="/youtube/channel?id=${result[2]}"
+                      class="flex w-full items-center gap-3 rounded-lg border bg-zinc-900 p-4 shadow transition-colors hover:bg-zinc-800"
+                  >
+                      <img
+                          src="${result[1]}"
+                          alt="${result[0]}"
+                          class="size-12 rounded-full"
+                      />
+                      <div class="text-left">
+                          <h1 class="text-2xl font-bold">${DOMPurify.sanitize(result[0])}</h1>
+                      </div>
+                  </a>  
+                  `;
+          })
+          .join("");
+      } catch (error) {
+        console.error("Failed to fetch results:", error);
+        document.getElementById("results").innerHTML = `
+              <div class="text-red-500">
+                  <i data-lucide="alert-circle" class="size-6"></i>
+                  <p>Failed to load results. Please try again.</p>
+              </div>`;
+      } finally {
+        document.querySelector("input").disabled = false;
+        document.querySelector(".btn").disabled = false;
+        document.querySelector(".btn").innerHTML = "Search";
+        lucide.createIcons();
+      }
     });
   </script>
 </html>
