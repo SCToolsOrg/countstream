@@ -46,6 +46,20 @@
 
     const apis = [
       {
+        id: "sctools",
+        name: "SCTools",
+        description:
+          "A state-of-the-art, insanely accurate API, made by GNZ as part of SCTools",
+        url: "https://ests.sctools.org/api/get/<id>",
+        stable: true,
+        accurate: true,
+        parseData: (data) => ({
+          subscribers: data.stats.estCount,
+          views: data.stats.viewCount,
+          videos: data.stats.videoCount,
+        }),
+      },
+      {
         id: "mixerno",
         name: "Mixerno.space",
         description:
@@ -128,7 +142,8 @@
     }
 
     const recommendedApi =
-      id === "UC-lHJZR3Gqxm24_Vd_AJ5Yw" ? "communitrics" : "mixerno";
+      // id === "UC-lHJZR3Gqxm24_Vd_AJ5Yw" ? "communitrics" : "mixerno";
+      "sctools";
     var api = params.get("api") ?? recommendedApi;
 
     document.addEventListener("DOMContentLoaded", async () => {
