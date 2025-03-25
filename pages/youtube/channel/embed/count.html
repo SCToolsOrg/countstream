@@ -28,6 +28,11 @@
         name: "Videos",
         icon: "camera",
       },
+      {
+        id: "goal",
+        name: "Goal",
+        icon: "party-popper",
+      },
     ];
 
     const apis = [
@@ -141,15 +146,22 @@
       window.location.href = "/youtube/channel/search";
     }
 
-    const count = params.get("count") ?? counts[0].id;
-    if (!counts.some((c) => c.id === count)) {
-      window.location.href = `/youtube/channel?id=${id}`;
-    }
-
     const recommendedApi =
       // id === "UC-lHJZR3Gqxm24_Vd_AJ5Yw" ? "communitrics" : "mixerno";
       "sctools";
     var api = params.get("api") ?? recommendedApi;
+
+    const count = params.get("count") ?? counts[0].id;
+    if (!counts.some((c) => c.id === count)) {
+      params.delete("count");
+      window.location.href = `/youtube/channel?${params}`;
+    }
+
+    const goalCount = params.get("goal-count") ?? counts[0].id;
+    if (!counts.some((c) => c.id === goalCount)) {
+      params.delete("goal-count");
+      window.location.href = `/youtube/channel?${params}`;
+    }
 
     const options = {
       size: params.get("size") ?? sizes[0].id,
@@ -174,12 +186,29 @@
       }
     });
 
+    function getGoal(count) {
+      if (!count) return 0;
+      count = parseFloat(count.toString());
+      if (10 > count) return 10 - count;
+      const e = "" + count;
+      return Math.abs(
+        count -
+          (e.length > 6
+            ? 1e6 * (Math.floor(count / 1e6) + 1)
+            : (parseInt(e.charAt(0)) + 1) * Math.pow(10, e.length - 1)),
+      );
+    }
+
     setInterval(() => {
       const apiInfo = apis.find((a) => a.id === api);
       fetch(apiInfo.url.replace("<id>", id))
         .then((res) => res.json())
         .then((data) => {
-          const parsedData = apiInfo.parseData(data, counts);
+          const originalParsedData = apiInfo.parseData(data, counts);
+          const parsedData = {
+            ...originalParsedData,
+            goal: getGoal(originalParsedData[goalCount]),
+          };
           document.getElementById("count").innerHTML = parsedData[count];
         });
     }, 2000);
