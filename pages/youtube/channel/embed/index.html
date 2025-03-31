@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="@lib/styles.css" />
     <link rel="stylesheet" href="@lib/odometer.css" />
     <script src="https://unpkg.com/odometer@0.4.8/odometer.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="http://unpkg.com/lucide@0.485.0/dist/umd/lucide.min.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         lucide.createIcons();
@@ -425,8 +425,8 @@
               checkbox.addEventListener("change", () => {
                 const enabled = Array.from(
                   checkboxGroup.querySelectorAll(
-                    `input[name="${option.id}"]:checked`,
-                  ),
+                    `input[name="${option.id}"]:checked`
+                  )
                 )
                   .map((i) => i.id.replace(`${option.id}-`, ""))
                   .join(",");
@@ -475,7 +475,7 @@
               updateSearchParam(
                 option.id,
                 checkbox.checked === true ? "true" : "false",
-                option.default === true ? "true" : "false",
+                option.default === true ? "true" : "false"
               );
               iframe.contentWindow.postMessage({
                 type: "option-update",
@@ -635,7 +635,7 @@
           path: newUrl,
         },
         "",
-        newUrl,
+        newUrl
       );
     }
 

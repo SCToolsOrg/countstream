@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -6,7 +6,7 @@
     <title>CountStream by SCTools</title>
     <link rel="stylesheet" href="@lib/styles.css" />
     <script src="https://unpkg.com/dompurify@3.2.4/dist/purify.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="http://unpkg.com/lucide@0.485.0/dist/umd/lucide.min.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         lucide.createIcons();
@@ -78,17 +78,21 @@
       const query = form.querySelector("input")?.value;
       if (!query || query.length === 0) return;
 
-      document.getElementById("results").innerHTML =
-        `<i data-lucide="loader-circle" class="h-10 w-10 animate-spin"></i>`;
+      document.getElementById(
+        "results"
+      ).innerHTML = `<i data-lucide="loader-circle" class="h-10 w-10 animate-spin"></i>`;
       document.querySelector("input").disabled = true;
       document.querySelector(".btn").disabled = true;
-      document.querySelector(".btn").innerHTML =
-        `<i data-lucide="loader-circle" class="animate-spin"></i>`;
+      document.querySelector(
+        ".btn"
+      ).innerHTML = `<i data-lucide="loader-circle" class="animate-spin"></i>`;
 
       lucide.createIcons();
 
       try {
-        const res = await fetch(`https://mixerno.space/api/youtube-channel-counter/search/${query}`);
+        const res = await fetch(
+          `https://mixerno.space/api/youtube-channel-counter/search/${query}`
+        );
 
         if (!res.ok) {
           throw new Error(`Error: ${res.status} ${res.statusText}`);
@@ -113,7 +117,9 @@
                           class="size-12 rounded-full"
                       />
                       <div class="text-left">
-                          <h1 class="text-2xl font-bold">${DOMPurify.sanitize(result[0])}</h1>
+                          <h1 class="text-2xl font-bold">${DOMPurify.sanitize(
+                            result[0]
+                          )}</h1>
                       </div>
                   </a>  
                   `;

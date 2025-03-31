@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -147,12 +147,15 @@
     var api = params.get("api") ?? recommendedApi;
 
     document.addEventListener("DOMContentLoaded", async () => {
-      fetch(`https://yt-api.tca-tech.workers.dev/channels/${id}`)
+      fetch(
+        `https://youtubeproxy.subscribercounter.nl/youtube/v3/channels/${id}`
+      )
         .then((res) => res.json())
         .then((data) => {
-          document.getElementById("avatar").src = data.user.avatar;
+          document.getElementById("avatar").src =
+            data.items[0].snippet.thumbnails.high.url;
           document.getElementById("name").innerHTML = DOMPurify.sanitize(
-            data.user.title,
+            data.items[0].snippet.title
           );
         });
     });
@@ -166,7 +169,7 @@
         count -
           (e.length > 6
             ? 1e6 * (Math.floor(count / 1e6) + 1)
-            : (parseInt(e.charAt(0)) + 1) * Math.pow(10, e.length - 1)),
+            : (parseInt(e.charAt(0)) + 1) * Math.pow(10, e.length - 1))
       );
     }
 
