@@ -155,15 +155,15 @@
 
       lucide.createIcons();
 
-      fetch(`https://yt-api.tca-tech.workers.dev/channels/${id}`)
+      fetch(`https://youtubeproxy.subscribercounter.nl/youtube/v3/channels/${id}`)
         .then((res) => res.json())
         .then((data) => {
-          document.getElementById("avatar").src = data.user.avatar;
+          document.getElementById("avatar").src = data.items[0].snippet.thumbnails.high.url;
           document.getElementById("name").innerHTML = DOMPurify.sanitize(
-            data.user.title,
+            data.items[0].snippet.title,
           );
           document.getElementById("handle").innerHTML = DOMPurify.sanitize(
-            data.user.handle,
+            data.items[0].snippet.customUrl,
           );
         });
     });
