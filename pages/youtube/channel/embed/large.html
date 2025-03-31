@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="@lib/odometer.css" />
     <script src="https://unpkg.com/odometer@0.4.8/odometer.js"></script>
     <script src="https://unpkg.com/dompurify@3.2.4/dist/purify.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="http://unpkg.com/lucide@0.485.0/dist/umd/lucide.min.js"></script>
   </head>
   <body>
     <div class="flex w-full flex-col items-center justify-center text-center">
@@ -149,21 +149,26 @@
 
     document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("count-subtitle").innerHTML = `
-              <i data-lucide="${counts.find((c) => c.id === count).icon}" class="h-4 w-4"></i>
+              <i data-lucide="${
+                counts.find((c) => c.id === count).icon
+              }" class="h-4 w-4"></i>
               ${counts.find((c) => c.id === count).name}
             `;
 
       lucide.createIcons();
 
-      fetch(`https://youtubeproxy.subscribercounter.nl/youtube/v3/channels/${id}`)
+      fetch(
+        `https://youtubeproxy.subscribercounter.nl/youtube/v3/channels/${id}`
+      )
         .then((res) => res.json())
         .then((data) => {
-          document.getElementById("avatar").src = data.items[0].snippet.thumbnails.high.url;
+          document.getElementById("avatar").src =
+            data.items[0].snippet.thumbnails.high.url;
           document.getElementById("name").innerHTML = DOMPurify.sanitize(
-            data.items[0].snippet.title,
+            data.items[0].snippet.title
           );
           document.getElementById("handle").innerHTML = DOMPurify.sanitize(
-            data.items[0].snippet.customUrl,
+            data.items[0].snippet.customUrl
           );
         });
     });
@@ -177,7 +182,7 @@
         count -
           (e.length > 6
             ? 1e6 * (Math.floor(count / 1e6) + 1)
-            : (parseInt(e.charAt(0)) + 1) * Math.pow(10, e.length - 1)),
+            : (parseInt(e.charAt(0)) + 1) * Math.pow(10, e.length - 1))
       );
     }
 
