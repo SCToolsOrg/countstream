@@ -3,19 +3,30 @@
   import Odometer from "$lib/components/odometer.svelte";
   import { Card } from "$lib/components/ui/card";
   import { Skeleton } from "$lib/components/ui/skeleton";
+  import Highcharts from "highcharts";
+  import Chart from "@highcharts/svelte";
   import type { PageProps } from "./$types";
+  import { graphOptions } from "$lib/graph-options";
 
   const { data }: PageProps = $props();
 
   const { count, countIndex, id } = data;
   const currentCount = count.counts[countIndex];
 
+  // svelte-ignore non_reactive_update
+  let chart: Highcharts.Chart | null;
   let counts = $state.raw<number[]>([]);
 
   $effect(() => {
     const update = async () => {
       const newCounts = await count.getCounts(id);
       counts = newCounts;
+
+      if (chart) {
+        if (chart.series[0].points.length >= 3600)
+          chart.series[0].data[0].remove();
+        chart.series[0].addPoint([Date.now(), Number(counts[countIndex])]);
+      }
     };
 
     update();
@@ -88,4 +99,15 @@
       {@render sideCount(count.counts[index], num, index)}
     {/each}
   </div>
+  <Card class="w-full">
+    {#await data.info}
+      <!-- promise is pending -->
+    {:then info}
+      <Chart
+        highcharts={Highcharts}
+        options={graphOptions(info.name)}
+        bind:chart
+      />
+    {/await}
+  </Card>
 </div>
