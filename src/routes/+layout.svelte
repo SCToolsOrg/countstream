@@ -1,5 +1,6 @@
 <script lang="ts">
   import "../app.css";
+  import "../odometer.css";
 
   let { children } = $props();
 </script>

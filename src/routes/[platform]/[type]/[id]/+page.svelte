@@ -1,15 +1,19 @@
 <script lang="ts">
+  import Odometer from "$lib/components/odometer.svelte";
   import { Card } from "$lib/components/ui/card";
   import { Skeleton } from "$lib/components/ui/skeleton";
   import type { PageProps } from "./$types";
 
   const { data }: PageProps = $props();
 
+  const { count, countIndex, id } = data;
+  const currentCount = count.counts[countIndex];
+
   let counts = $state.raw<number[]>([]);
 
   $effect(() => {
     const update = async () => {
-      const newCounts = await data.count.getCounts(data.id);
+      const newCounts = await count.getCounts(id);
       counts = newCounts;
     };
 
@@ -34,6 +38,13 @@
       <h1 class="mt-2 text-2xl">{user.name}</h1>
       <p class="text-muted-foreground text-sm">{user.handle}</p>
     {/await}
+    <Odometer
+      class="text-5xl !leading-[1.2em] sm:text-7xl xl:text-9xl"
+      value={counts[countIndex]}
+    />
+    <div class="text-muted-foreground flex items-center gap-1.5 text-sm">
+      <currentCount.icon class="h-4 w-4" />
+      {currentCount.name}
+    </div>
   </Card>
-  {counts[0]}
 </div>
