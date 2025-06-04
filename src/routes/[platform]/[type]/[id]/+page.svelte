@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from "$app/state";
   import Odometer from "$lib/components/odometer.svelte";
   import { Card } from "$lib/components/ui/card";
   import { Skeleton } from "$lib/components/ui/skeleton";
@@ -39,7 +40,7 @@
       <p class="text-muted-foreground text-sm">{user.handle}</p>
     {/await}
     <Odometer
-      class="font-count text-5xl !leading-[1.2em] sm:text-7xl xl:text-9xl"
+      class="font-count text-4xl !leading-[1.2em] sm:text-7xl xl:text-9xl"
       value={counts[countIndex]}
     />
     <div class="text-muted-foreground flex items-center gap-1.5 text-sm">
@@ -47,4 +48,44 @@
       {currentCount.name}
     </div>
   </Card>
+  <div
+    class="grid w-full grid-cols-1 justify-center gap-2 sm:grid-cols-2 lg:grid-cols-4"
+  >
+    {#snippet sideCount(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      c: any,
+      num: number,
+      index: number
+    )}
+      <button
+        onclick={() => {
+          const newParams = new URLSearchParams(page.url.searchParams);
+          if (index !== 0) newParams.set("count", index.toString());
+          else newParams.delete("count");
+          window.location.href =
+            window.location.origin +
+            page.url.pathname +
+            (newParams.toString().length > 0 ? `?${newParams}` : "");
+        }}
+      >
+        <Card
+          class="hover:bg-accent flex flex-col items-center justify-center gap-1 transition-colors"
+        >
+          <Odometer
+            value={num}
+            class="font-count text-2xl leading-[1.1em] 2xl:text-4xl"
+          />
+          <div class="text-muted-foreground flex items-center gap-1.5 text-sm">
+            <c.icon class="h-4 w-4" />
+            {c.name}
+          </div>
+        </Card>
+      </button>
+    {/snippet}
+    {#each counts
+      .map((c, i) => ({ num: c, index: i }))
+      .filter((_, i) => i !== countIndex) as { num, index } (index)}
+      {@render sideCount(count.counts[index], num, index)}
+    {/each}
+  </div>
 </div>
