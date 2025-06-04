@@ -46,6 +46,8 @@
     ]
   },
   "dependencies": {
+    "@fontsource-variable/dm-sans": "^5.2.5",
+    "@fontsource-variable/roboto": "^5.2.5",
     "odometer": "^0.4.8"
   }
 }

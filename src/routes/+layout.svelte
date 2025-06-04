@@ -1,4 +1,6 @@
 <script lang="ts">
+  import "@fontsource-variable/dm-sans";
+  import "@fontsource-variable/roboto";
   import "../app.css";
   import "../odometer.css";
 
@@ -14,7 +16,7 @@
       <h1 class="text-xl font-semibold">
         count<span class="text-primary">stream</span>
       </h1>
-      <sub>by SCTools</sub>
+      <sub class="text-muted-foreground">by SCTools</sub>
     </a>
   </header>
 </div>

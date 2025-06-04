@@ -6,7 +6,7 @@
 
 :root {
   --background: oklch(0.204 0.0238 291.7882);
-  --foreground: oklch(0.8863 0.015 290.2756);
+  --foreground: oklch(1 0 0);
   --card: oklch(0.2647 0.026 291.059);
   --card-foreground: oklch(0.8863 0.015 290.2756);
   --popover: oklch(0.2647 0.026 291.059);
@@ -37,9 +37,8 @@
   --sidebar-accent-foreground: oklch(0.8354 0.0083 293.8798);
   --sidebar-border: oklch(0.4253 0.0181 289.7812);
   --sidebar-ring: oklch(0.7069 0.1015 302.7848);
-  --font-sans: Inter, sans-serif;
-  --font-serif: Merriweather, serif;
-  --font-mono: JetBrains Mono, monospace;
+  --font-sans: "DM Sans Variable", "DM Sans", sans-serif;
+  --font-count: "Roboto Variable", "Roboto", sans-serif;
   --radius: 0.5rem;
   --shadow-2xs: 0px 4px 8px -1px hsl(0 0% 10.1961% / 0.05);
   --shadow-xs: 0px 4px 8px -1px hsl(0 0% 10.1961% / 0.05);
@@ -59,9 +58,6 @@
     0px 4px 8px -1px hsl(0 0% 10.1961% / 0.1),
     0px 8px 10px -2px hsl(0 0% 10.1961% / 0.1);
   --shadow-2xl: 0px 4px 8px -1px hsl(0 0% 10.1961% / 0.25);
-}
-
-.dark {
 }
 
 @theme inline {
@@ -99,8 +95,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
-  --font-serif: var(--font-serif);
+  --font-count: var(--font-count);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

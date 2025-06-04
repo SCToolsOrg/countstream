@@ -39,7 +39,7 @@
       <p class="text-muted-foreground text-sm">{user.handle}</p>
     {/await}
     <Odometer
-      class="text-5xl !leading-[1.2em] sm:text-7xl xl:text-9xl"
+      class="font-count text-5xl !leading-[1.2em] sm:text-7xl xl:text-9xl"
       value={counts[countIndex]}
     />
     <div class="text-muted-foreground flex items-center gap-1.5 text-sm">
