@@ -188,6 +188,8 @@
   setEmbedState({
     ...data,
     counts: () => counts,
+    icon: true,
+    text: true,
     ...Object.fromEntries(url.searchParams.entries()),
   });
 

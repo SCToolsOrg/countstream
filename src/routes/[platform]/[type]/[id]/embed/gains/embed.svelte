@@ -43,7 +43,7 @@
   const enabledTimes = $derived(
     times.filter((t) => (embedState.times ?? "24h").includes(t[0]))
   );
-  const align = embedState.align ?? "left";
+  const align = $derived(embedState.align ?? "left");
 
   let history = $state.raw<number[]>([]);
 
