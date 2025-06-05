@@ -6,6 +6,7 @@
   import Chart from "@highcharts/svelte";
   import type { PageProps } from "./$types";
   import { graphOptions } from "$lib/graph-options";
+  import { CustomizationDialog } from "$lib/components/customization";
 
   const { data }: PageProps = $props();
 
@@ -99,4 +100,5 @@
       bind:chart
     />
   </Card>
+  <CustomizationDialog class="!bg-card w-full" />
 </div>
