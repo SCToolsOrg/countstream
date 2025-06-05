@@ -35,7 +35,7 @@
   });
 </script>
 
-<div class="flex flex-col items-center gap-4">
+<div class="flex flex-col items-center gap-3">
   <Card class="flex w-full flex-col items-center justify-center text-center">
     {#await data.info}
       <Skeleton class="h-20 w-20 rounded-full" />

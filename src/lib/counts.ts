@@ -9,6 +9,13 @@ export interface Count {
   icon: string;
   smallIcon?: string;
   color: string;
+  search: (query: string) => Promise<
+    {
+      name: string;
+      id: string;
+      avatar: string;
+    }[]
+  >;
   getInfo: (id: string) => Promise<{
     name: string;
     avatar: string;
@@ -21,6 +28,17 @@ export interface Count {
   }[];
 }
 
+export function convertPlatformToName(platform: string) {
+  switch (platform) {
+    case "youtube":
+      return "YouTube";
+    case "tiktok":
+      return "TikTok";
+    default:
+      return platform.at(0)!.toUpperCase() + platform.slice(1).toLowerCase();
+  }
+}
+
 export const counts: Count[] = [
   {
     platform: "youtube",
@@ -28,6 +46,17 @@ export const counts: Count[] = [
     name: "YouTube Live Subscriber Counter",
     icon: "/youtube.png",
     color: colors.red[500],
+    search: async (query) => {
+      const res = await fetch(
+        `https://mixerno.space/api/youtube-channel-counter/search/${encodeURI(query)}`
+      );
+      const data = await res.json();
+      return data.list.map(([name, avatar, id]: [string, string, string]) => ({
+        name,
+        avatar,
+        id,
+      }));
+    },
     getInfo: async (id) => {
       const res = await fetch(
         `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${id}&key=AIzaSyBAqQyzfH8pLouP-JmNkfd_NUX2YYyI-2o`

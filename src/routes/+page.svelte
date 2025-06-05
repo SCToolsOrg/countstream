@@ -1,17 +1,6 @@
 <script lang="ts">
   import { Card } from "$lib/components/ui/card";
-  import { counts, type Count } from "$lib/counts";
-
-  function convertPlatformToName(platform: string) {
-    switch (platform) {
-      case "youtube":
-        return "YouTube";
-      case "tiktok":
-        return "TikTok";
-      default:
-        return platform.at(0)!.toUpperCase() + platform.slice(1).toLowerCase();
-    }
-  }
+  import { convertPlatformToName, counts, type Count } from "$lib/counts";
 
   const countsByPlatform = Object.values(
     counts.reduce(
