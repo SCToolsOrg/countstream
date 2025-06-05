@@ -27,7 +27,7 @@ export interface Customization {
 }
 
 export const defaultCustomization: Customization = {
-  banner: true,
+  banner: false,
   avatar: true,
   platformIcon: true,
   name: true,

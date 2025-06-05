@@ -18,8 +18,9 @@ export interface Count {
   >;
   getInfo: (id: string) => Promise<{
     name: string;
+    username?: string;
+    banner?: string;
     avatar: string;
-    handle?: string;
   } | null>;
   getCounts: (id: string) => Promise<number[]>;
   counts: {
@@ -66,8 +67,9 @@ export const counts: Count[] = [
 
       return {
         name: data.items[0].snippet.title,
-        handle: data.items[0].snippet.customUrl,
+        username: data.items[0].snippet.customUrl,
         avatar: data.items[0].snippet.thumbnails.high.url,
+        banner: `https://www.banner.yt/${id}`,
       };
     },
     getCounts: async (id) => {
