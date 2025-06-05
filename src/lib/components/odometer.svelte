@@ -64,4 +64,4 @@
   });
 </script>
 
-<div {...rest} bind:this={node}>{value}</div>
+<div {...rest} bind:this={node}>{(value ?? 0).toLocaleString()}</div>
