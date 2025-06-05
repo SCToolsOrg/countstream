@@ -5,7 +5,7 @@
     getKey,
     setCustomizationStore,
   } from "$lib/customization.svelte";
-  import { tick, type Snippet } from "svelte";
+  import { type Snippet } from "svelte";
 
   setCustomizationStore();
 
@@ -21,19 +21,15 @@
   function stringifyStyles(
     styles: Record<string, string | number | undefined>
   ) {
-    const arr = ["{"];
+    const arr = [];
     for (const [key, value] of Object.entries(styles)) {
       if (!value) continue;
       arr.push(`${key}: ${value.toString()};`);
     }
-    arr.push("}");
     return arr.join("");
   }
 
   $effect(() => {
-    const styleElement = document.createElement("style");
-    styleElement.id = "111counts-customization";
-
     const styles = {
       "--font-text": $customization.fontFamily,
       "--font-count": $customization.countFontFamily,
@@ -45,20 +41,12 @@
       "--up-color": $customization.odometerUpColor,
       "--down-color": $customization.odometerDownColor,
     };
-    styleElement.textContent = `:root ${stringifyStyles(styles)}`;
-
-    document.head.appendChild(styleElement);
+    document.body.style = stringifyStyles(styles);
 
     const shouldTransition = $customization.animateOdometerColor;
     if (shouldTransition)
       document.body.classList.add("transition-odometer-colors");
     else document.body.classList.remove("transition-odometer-colors");
-
-    return () => {
-      tick().then(() => {
-        document.getElementById("111counts-customization")?.remove();
-      });
-    };
   });
 
   const { children }: { children: Snippet } = $props();
