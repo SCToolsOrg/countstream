@@ -2,7 +2,6 @@
   import { page } from "$app/state";
   import Odometer from "$lib/components/odometer.svelte";
   import { Card } from "$lib/components/ui/card";
-  import { Skeleton } from "$lib/components/ui/skeleton";
   import Highcharts from "highcharts";
   import Chart from "@highcharts/svelte";
   import type { PageProps } from "./$types";
@@ -10,7 +9,7 @@
 
   const { data }: PageProps = $props();
 
-  const { count, countIndex, id } = data;
+  const { count, countIndex, info, id } = data;
   const currentCount = count.counts[countIndex];
 
   // svelte-ignore non_reactive_update
@@ -37,19 +36,13 @@
 
 <div class="flex flex-col items-center gap-3">
   <Card class="flex w-full flex-col items-center justify-center text-center">
-    {#await data.info}
-      <Skeleton class="h-20 w-20 rounded-full" />
-      <Skeleton class="mt-2 h-6 w-48 rounded-lg" />
-      <Skeleton class="mt-1 h-5 w-32 rounded-lg" />
-    {:then user}
-      <img
-        src={user.avatar}
-        alt={user.name + " avatar"}
-        class="h-20 w-20 rounded-full"
-      />
-      <h1 class="mt-2 text-2xl">{user.name}</h1>
-      <p class="text-muted-foreground text-sm">{user.handle}</p>
-    {/await}
+    <img
+      src={info.avatar}
+      alt={info.name + " avatar"}
+      class="h-20 w-20 rounded-full"
+    />
+    <h1 class="mt-2 text-2xl">{info.name}</h1>
+    <p class="text-muted-foreground text-sm">{info.handle}</p>
     <Odometer
       class="font-count text-4xl !leading-[1.2em] sm:text-7xl xl:text-9xl"
       value={counts[countIndex]}
@@ -100,14 +93,10 @@
     {/each}
   </div>
   <Card class="w-full">
-    {#await data.info}
-      <!-- promise is pending -->
-    {:then info}
-      <Chart
-        highcharts={Highcharts}
-        options={graphOptions(info.name)}
-        bind:chart
-      />
-    {/await}
+    <Chart
+      highcharts={Highcharts}
+      options={graphOptions(info.name)}
+      bind:chart
+    />
   </Card>
 </div>

@@ -16,12 +16,13 @@ export const load: PageLoad = async ({ params, url }) => {
   const currentCount = count.counts.find((_, i) => i === parseInt(countIndex));
   if (!currentCount) throw notFound();
 
+  const info = await count.getInfo(params.id);
+  if (!info) throw notFound();
+
   return {
-    platform: params.platform,
-    type: params.type,
     id: params.id,
     count,
     countIndex: parseInt(countIndex),
-    info: count.getInfo(params.id),
+    info,
   };
 };

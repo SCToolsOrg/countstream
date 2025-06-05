@@ -20,7 +20,7 @@ export interface Count {
     name: string;
     avatar: string;
     handle?: string;
-  }>;
+  } | null>;
   getCounts: (id: string) => Promise<number[]>;
   counts: {
     name: string;
@@ -62,6 +62,8 @@ export const counts: Count[] = [
         `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${id}&key=AIzaSyBAqQyzfH8pLouP-JmNkfd_NUX2YYyI-2o`
       );
       const data = await res.json();
+      if (!data?.items?.length) return null;
+
       return {
         name: data.items[0].snippet.title,
         handle: data.items[0].snippet.customUrl,
