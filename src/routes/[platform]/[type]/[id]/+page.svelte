@@ -60,7 +60,7 @@
     </div>
   </Card>
   <div
-    class="grid w-full grid-cols-1 justify-center gap-2 sm:grid-cols-2 lg:grid-cols-4"
+    class="grid w-full grid-cols-1 justify-center gap-3 sm:grid-cols-2 lg:grid-cols-4"
   >
     {#snippet sideCount(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -93,8 +93,8 @@
         </Card>
       </button>
     {/snippet}
-    {#each counts
-      .map((c, i) => ({ num: c, index: i }))
+    {#each count.counts
+      .map((_, i) => ({ num: counts[i] ?? 0, index: i }))
       .filter((_, i) => i !== countIndex) as { num, index } (index)}
       {@render sideCount(count.counts[index], num, index)}
     {/each}
