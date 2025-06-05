@@ -81,13 +81,13 @@ export function getCustomization(): Readable<Customization> {
       };
 
       const globalUnsub = customization().subscribe(setValue);
-      // const pageUnsub = customization("page").subscribe(setValue);
+      const pageUnsub = customization("page").subscribe(setValue);
       const unsub = cust.subscribe(run);
 
       return () => {
         unsub();
         globalUnsub();
-        // pageUnsub();
+        pageUnsub();
       };
     },
   };
