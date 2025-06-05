@@ -51,11 +51,11 @@
       <img
         src={info.avatar}
         alt={info.name + " avatar"}
-        class="h-20 w-20 rounded-full"
+        class="mb-2 h-20 w-20 rounded-full"
       />
     {/if}
     {#if $customization.name}
-      <h1 class="mt-2 text-2xl">{info.name}</h1>
+      <h1 class="text-2xl">{info.name}</h1>
     {/if}
     {#if $customization.username}
       <p class="text-muted-foreground text-sm">{info.username}</p>
