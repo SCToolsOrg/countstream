@@ -1,8 +1,8 @@
 import { counts } from "$lib/counts";
 import { notFound } from "$lib/utils";
-import type { PageLoad } from "./$types";
+import type { LayoutLoad } from "./$types";
 
-export const load: PageLoad = async ({ params, url }) => {
+export const load: LayoutLoad = async ({ params, url }) => {
   const { searchParams } = url;
 
   let countIndex = searchParams.get("count");

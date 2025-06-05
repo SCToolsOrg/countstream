@@ -59,18 +59,22 @@ export const counts: Count[] = [
       }));
     },
     getInfo: async (id) => {
-      const res = await fetch(
-        `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${id}&key=AIzaSyBAqQyzfH8pLouP-JmNkfd_NUX2YYyI-2o`
-      );
-      const data = await res.json();
-      if (!data?.items?.length) return null;
+      try {
+        const res = await fetch(
+          `https://api.subscriberwars.space/youtube/channel/${id}`
+        );
+        const data = await res.json();
+        if (!data) return null;
 
-      return {
-        name: data.items[0].snippet.title,
-        username: data.items[0].snippet.customUrl,
-        avatar: data.items[0].snippet.thumbnails.high.url,
-        banner: `https://www.banner.yt/${id}`,
-      };
+        return {
+          name: data.title,
+          username: data.slug,
+          avatar: data.icon,
+          banner: `https://www.banner.yt/${id}`,
+        };
+      } catch {
+        return null;
+      }
     },
     getCounts: async (id) => {
       const res = await fetch(`https://ests.sctools.org/api/get/${id}`);
