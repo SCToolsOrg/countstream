@@ -3,9 +3,6 @@
   import { Card } from "$lib/components/ui/card";
   import { Input } from "$lib/components/ui/input";
   import type { PageProps } from "../$types";
-  import SmallEmbed from "./small/embed.svelte";
-  import LargeEmbed from "./large/embed.svelte";
-  import CountEmbed from "./count/embed.svelte";
   import {
     getEmbedState,
     setEmbedState,
@@ -16,6 +13,14 @@
   import { page } from "$app/state";
   import * as RadioGroup from "$lib/components/ui/radio-group";
   import { goto } from "$app/navigation";
+  import { Checkbox } from "$lib/components/ui/checkbox";
+  import { Label } from "$lib/components/ui/label";
+
+  import SmallEmbed from "./small/embed.svelte";
+  import LargeEmbed from "./large/embed.svelte";
+  import CountEmbed from "./count/embed.svelte";
+  import AveragesEmbed from "./averages/embed.svelte";
+  import GainsEmbed from "./gains/embed.svelte";
 
   const url = page.url;
 
@@ -28,7 +33,7 @@
       | {
           type: "checkboxes";
           options: string[];
-          default: string;
+          default: string[];
         }
       | {
           type: "checkbox";
@@ -65,10 +70,70 @@
         },
       ],
     },
+    averages: {
+      component: AveragesEmbed,
+      options: [
+        {
+          id: "align",
+          name: "Align",
+          options: ["left", "center", "right"],
+          default: "left",
+        },
+        {
+          id: "times",
+          name: "Times",
+          type: "checkboxes",
+          options: ["30s", "1m", "10m", "1h", "6h", "12h", "24h"],
+          default: ["24h"],
+        },
+        {
+          id: "icon",
+          name: "Icon",
+          type: "checkbox",
+          default: true,
+        },
+        {
+          id: "text",
+          name: "Text",
+          type: "checkbox",
+          default: true,
+        },
+      ],
+    },
+    gains: {
+      component: GainsEmbed,
+      options: [
+        {
+          id: "align",
+          name: "Align",
+          options: ["left", "center", "right"],
+          default: "left",
+        },
+        {
+          id: "times",
+          name: "Times",
+          type: "checkboxes",
+          options: ["30s", "1m", "10m", "1h", "6h", "12h", "24h"],
+          default: ["24h"],
+        },
+        {
+          id: "icon",
+          name: "Icon",
+          type: "checkbox",
+          default: true,
+        },
+        {
+          id: "text",
+          name: "Text",
+          type: "checkbox",
+          default: true,
+        },
+      ],
+    },
   };
 
   let currentEmbedKey = $state(
-    url.searchParams.get("embed") ?? Object.keys(embeds)[0]
+    url.searchParams.get("type") ?? Object.keys(embeds)[0]
   );
   const currentEmbed = $derived(embeds[currentEmbedKey]);
 
@@ -123,6 +188,7 @@
   setEmbedState({
     ...data,
     counts: () => counts,
+    ...Object.fromEntries(url.searchParams.entries()),
   });
 
   $effect(() => {
@@ -143,7 +209,6 @@
     } else {
       newParams.delete(key);
     }
-
     return newParams;
   }
 
@@ -207,14 +272,90 @@
         {#each Object.keys(embeds) as embed (embed)}
           <div class="flex items-center gap-2">
             <RadioGroup.Item id={`embed-${embed}`} value={embed} />
-            <label for={`embed-${embed}`}>{capitalize(embed)}</label>
+            <Label for={`embed-${embed}`}>{capitalize(embed)}</Label>
           </div>
         {/each}
       </RadioGroup.Root>
     </div>
     {#if currentEmbed.options}
       {#each currentEmbed.options as option (option.id)}
-        {#if "type" in option}{:else}
+        {#if "type" in option}
+          {#if option.type === "checkboxes"}
+            <div class="space-y-2 text-center">
+              <p class="font-semibold">{option.name}</p>
+              <div class="flex flex-wrap items-center justify-center gap-3">
+                {#each option.options as o (o)}
+                  <div class="flex items-center gap-2">
+                    <Checkbox
+                      id="{option.id}-{o}"
+                      checked={(
+                        getEmbedState()[option.id] ??
+                        url.searchParams.get(option.id) ??
+                        option.default
+                      ).includes(o)}
+                      onCheckedChange={(v) => {
+                        let newValue = [
+                          ...(getEmbedState()[option.id]?.split(",") ??
+                            option.default),
+                        ];
+                        if (v) {
+                          newValue.push(o);
+                        } else {
+                          newValue = newValue.filter((i: string) => i !== o);
+                        }
+
+                        updateEmbedState((state) => {
+                          state[option.id] = newValue.join(",");
+                          return state;
+                        });
+
+                        const newParams = createNewParams(
+                          option.id,
+                          newValue.join(","),
+                          option.default.join(",")
+                        );
+                        goto(
+                          `/${data.count.platform}/${data.count.type}/${data.id}/embed${newParams.size > 0 ? `?${newParams}` : ""}`
+                        );
+                      }}
+                    />
+                    <Label for="{option.id}-{o}">{capitalize(o)}</Label>
+                  </div>
+                {/each}
+              </div>
+            </div>
+          {:else if option.type === "checkbox"}
+            <div class="flex items-center justify-center gap-2">
+              <Label for={option.id} class="text-base font-semibold"
+                >{option.name}</Label
+              >
+              <Checkbox
+                id={option.id}
+                bind:checked={
+                  () =>
+                    getEmbedState()[option.id] ??
+                    url.searchParams.get(option.id) ??
+                    option.default,
+                  (newValue) => {
+                    updateEmbedState((state) => {
+                      state[option.id] = newValue;
+                      return state;
+                    });
+
+                    const newParams = createNewParams(
+                      option.id,
+                      newValue.toString(),
+                      option.default.toString()
+                    );
+                    goto(
+                      `/${data.count.platform}/${data.count.type}/${data.id}/embed${newParams.size > 0 ? `?${newParams}` : ""}`
+                    );
+                  }
+                }
+              />
+            </div>
+          {/if}
+        {:else}
           <div class="space-y-2 text-center">
             <p class="font-semibold">{option.name}</p>
             <RadioGroup.Root
@@ -244,7 +385,7 @@
               {#each option.options as o (o)}
                 <div class="flex items-center gap-2">
                   <RadioGroup.Item id={`${option.id}-${o}`} value={o} />
-                  <label for={`${option.id}-${o}`}>{capitalize(o)}</label>
+                  <Label for={`${option.id}-${o}`}>{capitalize(o)}</Label>
                 </div>
               {/each}
             </RadioGroup.Root>
