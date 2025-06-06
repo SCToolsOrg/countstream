@@ -7,6 +7,7 @@
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
   import { CustomizationProvider } from "$lib/components/customization";
   import { page } from "$app/state";
+  import Info from "@lucide/svelte/icons/info";
 
   const queryClient = new QueryClient();
 
@@ -36,6 +37,14 @@
       </div>
     {/if}
     <main class={!isEmbed ? "mx-auto w-full p-4 md:w-[90%]" : ""}>
+      {#if !isEmbed}
+        <div
+          class="mb-4 rounded-lg border border-yellow-300 bg-yellow-700/50 px-3 pt-3 pb-2 text-center text-sm text-yellow-300"
+        >
+          <Info class="mr-1.5 mb-1 inline size-4" />
+          CountStream is currently in beta. Expect some bugs and missing features.
+        </div>
+      {/if}
       {@render children()}
     </main>
   </CustomizationProvider>
