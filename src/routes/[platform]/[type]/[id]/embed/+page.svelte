@@ -196,10 +196,10 @@
   let counts = $state.raw<number[]>([]);
 
   setEmbedState({
+    ...$query,
     ...data,
     counts: () => counts,
     customization: {},
-    ...$query,
   });
 
   $effect(() => {
