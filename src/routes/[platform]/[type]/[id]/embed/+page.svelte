@@ -20,6 +20,7 @@
   import CountEmbed from "./count/embed.svelte";
   import AveragesEmbed from "./averages/embed.svelte";
   import GainsEmbed from "./gains/embed.svelte";
+  import { page } from "$app/state";
 
   const query = queryParameters();
 
@@ -139,6 +140,7 @@
   const currentEmbed = $derived(embeds[$currentEmbedKey]);
 
   const { data }: PageProps = $props();
+  const { count, countIndex } = data;
 
   let embedWrapper: HTMLDivElement;
   let embedHeight = $state<number>(0);
@@ -356,4 +358,41 @@
       {/each}
     {/if}
   </Card>
+  <div
+    class="grid w-full grid-cols-1 justify-center gap-3 sm:grid-cols-2 lg:grid-cols-4"
+  >
+    {#snippet sideCount(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      c: any,
+      index: number
+    )}
+      <button
+        onclick={() => {
+          if (index === countIndex) return;
+
+          const newParams = new URLSearchParams(page.url.searchParams);
+          if (index !== 0) newParams.set("count", index.toString());
+          else newParams.delete("count");
+          window.location.href =
+            window.location.origin +
+            page.url.pathname +
+            (newParams.toString().length > 0 ? `?${newParams}` : "");
+        }}
+      >
+        <Card
+          class="{index === countIndex
+            ? 'bg-accent'
+            : 'hover:bg-accent'} flex flex-col items-center justify-center gap-1 transition-colors"
+        >
+          <div class="text-muted-foreground flex items-center gap-1.5 text-sm">
+            <c.icon class="size-4" />
+            {c.name}
+          </div>
+        </Card>
+      </button>
+    {/snippet}
+    {#each count.counts.map((_, i) => ({ index: i })) as { index } (index)}
+      {@render sideCount(count.counts[index], index)}
+    {/each}
+  </div>
 </div>
