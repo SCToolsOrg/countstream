@@ -23,7 +23,9 @@
   <CustomizationProvider>
     {#if !isEmbed}
       <div class="border-b">
-        <header class="mx-auto flex w-full max-w-7xl justify-between px-4 py-3">
+        <header
+          class="mx-auto flex w-full justify-between px-4 py-3 md:w-[90%]"
+        >
           <a
             href="/"
             class="flex items-center gap-1 transition-opacity hover:opacity-75"
