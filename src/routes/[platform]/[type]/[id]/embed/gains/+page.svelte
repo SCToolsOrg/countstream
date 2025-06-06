@@ -16,6 +16,9 @@
   setEmbedState({
     ...data,
     counts: () => counts,
+    customization: url.searchParams.has("customization")
+      ? JSON.parse(url.searchParams.get("customization")!)
+      : undefined,
     align,
     times,
     icon,

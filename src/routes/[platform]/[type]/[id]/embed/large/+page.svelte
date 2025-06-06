@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from "$app/state";
   import { setEmbedState } from "../state.svelte";
   import type { PageProps } from "./$types";
   import Embed from "./embed.svelte";
@@ -7,9 +8,13 @@
 
   let counts = $state.raw<number[]>([]);
 
+  const { url } = page;
   setEmbedState({
     ...data,
     counts: () => counts,
+    customization: url.searchParams.has("customization")
+      ? JSON.parse(url.searchParams.get("customization")!)
+      : undefined,
   });
 
   const { count, id } = data;

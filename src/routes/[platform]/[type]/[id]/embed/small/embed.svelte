@@ -1,10 +1,12 @@
 <script lang="ts">
   import Odometer from "$lib/components/odometer.svelte";
+  import CustomizationProvider from "../customization-provider.svelte";
   import { getEmbedState } from "../state.svelte";
 
   const { countIndex, info, counts } = getEmbedState();
 </script>
 
+<CustomizationProvider />
 <div class="flex items-center gap-2">
   <img
     src={info.avatar}

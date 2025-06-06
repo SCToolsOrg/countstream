@@ -5,7 +5,7 @@
     getKey,
     setCustomizationStore,
   } from "$lib/customization.svelte";
-  import { tick, type Snippet } from "svelte";
+  import { type Snippet } from "svelte";
 
   setCustomizationStore();
 

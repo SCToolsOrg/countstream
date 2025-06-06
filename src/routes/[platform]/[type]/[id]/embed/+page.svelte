@@ -14,13 +14,15 @@
   import { Checkbox } from "$lib/components/ui/checkbox";
   import { Label } from "$lib/components/ui/label";
   import { queryParam, queryParameters } from "sveltekit-search-params";
+  import { page } from "$app/state";
+  import CustomizationDialog from "./customization-dialog.svelte";
 
   import SmallEmbed from "./small/embed.svelte";
   import LargeEmbed from "./large/embed.svelte";
   import CountEmbed from "./count/embed.svelte";
   import AveragesEmbed from "./averages/embed.svelte";
   import GainsEmbed from "./gains/embed.svelte";
-  import { page } from "$app/state";
+  import { getCustomization } from "./customization.svelte";
 
   const query = queryParameters();
 
@@ -165,14 +167,19 @@
   }
 
   const embedUrl = $derived.by(() => {
+    const embedState = getEmbedState();
+
     const params = new URLSearchParams();
     if (currentEmbed.options) {
       for (const option of currentEmbed.options) {
-        const value = getEmbedState()[option.id];
+        const value = embedState[option.id];
         if (typeof value !== "undefined" && value !== option.default)
           params.set(option.id, value);
       }
     }
+
+    const obj = JSON.stringify(embedState.customization);
+    if (obj !== "{}") params.set("customization", obj);
 
     return `${window.location.origin}/${data.count.platform}/${data.count.type}/${data.id}/embed/${$currentEmbedKey}${params.size > 0 ? `?${params}` : ""}`;
   });
@@ -191,6 +198,7 @@
   setEmbedState({
     ...data,
     counts: () => counts,
+    customization: {},
     ...$query,
   });
 
@@ -220,7 +228,7 @@
 </script>
 
 <div class="space-y-4">
-  <div bind:this={embedWrapper}>
+  <div bind:this={embedWrapper} class="embed bg-background">
     <currentEmbed.component />
   </div>
   <Card class="space-y-2">
@@ -394,5 +402,8 @@
     {#each count.counts.map((_, i) => ({ index: i })) as { index } (index)}
       {@render sideCount(count.counts[index], index)}
     {/each}
+  </div>
+  <div class="flex items-center justify-center">
+    <CustomizationDialog class="!bg-card" />
   </div>
 </div>

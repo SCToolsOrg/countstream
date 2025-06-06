@@ -1,11 +1,13 @@
 <script lang="ts">
   import Odometer from "$lib/components/odometer.svelte";
+  import CustomizationProvider from "../customization-provider.svelte";
   import { getEmbedState } from "../state.svelte";
 
   const { count, countIndex, info, counts } = getEmbedState();
   const currentCount = count.counts[countIndex];
 </script>
 
+<CustomizationProvider />
 <div class="flex w-full flex-col items-center justify-center text-center">
   <img
     src={info.avatar}

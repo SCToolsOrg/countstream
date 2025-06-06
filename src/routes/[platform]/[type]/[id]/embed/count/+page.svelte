@@ -14,6 +14,9 @@
   setEmbedState({
     ...data,
     counts: () => counts,
+    customization: url.searchParams.has("customization")
+      ? JSON.parse(url.searchParams.get("customization")!)
+      : undefined,
     size,
     align,
   });
@@ -31,4 +34,6 @@
   });
 </script>
 
-<Embed />
+<div class="embed">
+  <Embed />
+</div>

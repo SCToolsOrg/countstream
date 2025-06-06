@@ -3,6 +3,7 @@
   import { untrack } from "svelte";
   import { getEmbedState } from "../state.svelte";
   import Hourglass from "@lucide/svelte/icons/hourglass";
+  import CustomizationProvider from "../customization-provider.svelte";
 
   const times = [
     ["30s", 30],
@@ -59,6 +60,7 @@
   });
 </script>
 
+<CustomizationProvider />
 {#each enabledTimes as time (time)}
   <div
     class="flex items-center gap-2"

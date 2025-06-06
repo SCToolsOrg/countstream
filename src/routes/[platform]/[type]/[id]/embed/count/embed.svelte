@@ -1,5 +1,6 @@
 <script lang="ts">
   import Odometer from "$lib/components/odometer.svelte";
+  import CustomizationProvider from "../customization-provider.svelte";
   import { getEmbedState } from "../state.svelte";
 
   const embedState = getEmbedState();
@@ -14,6 +15,7 @@
   };
 </script>
 
+<CustomizationProvider />
 <Odometer
   class="font-count w-full !leading-[1.2em]"
   style="font-size: {sizes[
