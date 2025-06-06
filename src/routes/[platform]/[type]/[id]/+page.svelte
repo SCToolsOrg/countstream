@@ -9,6 +9,7 @@
   import { CustomizationDialog } from "$lib/components/customization";
   import { getCustomization } from "$lib/customization.svelte";
   import { buttonVariants } from "$lib/components/ui/button";
+  import AppWindow from "@lucide/svelte/icons/app-window";
 
   const { data }: PageProps = $props();
 
@@ -143,7 +144,10 @@
       class={buttonVariants({
         class: "!bg-card",
         variant: "outline",
-      })}>Embed</a
+      })}
     >
+      <AppWindow class="size-4" />
+      Embed
+    </a>
   </div>
 </div>

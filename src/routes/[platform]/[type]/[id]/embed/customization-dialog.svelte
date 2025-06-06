@@ -11,6 +11,7 @@
   import ColorPicker from "svelte-awesome-color-picker";
   import { getCustomization } from "./customization.svelte";
   import { updateEmbedState } from "./state.svelte";
+  import Palette from "@lucide/svelte/icons/palette";
 
   const buttonProps: ButtonProps = $props();
 
@@ -109,9 +110,10 @@
 <Dialog.Root>
   <Dialog.Trigger>
     {#snippet child({ props })}
-      <Button {...buttonProps} {...props} variant="outline"
-        >Customization</Button
-      >
+      <Button {...buttonProps} {...props} variant="outline">
+        <Palette class="size-4" />
+        Customize
+      </Button>
     {/snippet}
   </Dialog.Trigger>
   <Dialog.Content
