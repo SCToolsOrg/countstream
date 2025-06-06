@@ -44,6 +44,8 @@
     times.filter((t) => (embedState.times ?? "24h").includes(t[0]))
   );
   const align = $derived(embedState.align ?? "left");
+  const icon = $derived(embedState.icon ?? true);
+  const text = $derived(embedState.text ?? true);
 
   let history = $state.raw<number[]>([]);
 
@@ -66,8 +68,12 @@
         ? 'flex-end'
         : 'center'}"
   >
-    <Hourglass />
-    <p>{time[0]}:</p>
+    {#if icon}
+      <Hourglass />
+    {/if}
+    {#if text}
+      <p>{time[0]}:</p>
+    {/if}
     <Odometer
       value={calculateGain(time)}
       class="font-count text-2xl !leading-[1.2em]"

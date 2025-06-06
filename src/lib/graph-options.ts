@@ -48,7 +48,7 @@ export const graphOptions = (name: string): Options => ({
   },
   credits: {
     enabled: true,
-    text: "111counts",
+    text: "CountStream by SCTools",
     href: "/",
     style: {
       color: "var(--muted-foreground)",

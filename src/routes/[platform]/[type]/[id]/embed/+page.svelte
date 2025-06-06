@@ -10,11 +10,10 @@
   } from "./state.svelte";
   import Check from "@lucide/svelte/icons/check";
   import type { Component } from "svelte";
-  import { page } from "$app/state";
   import * as RadioGroup from "$lib/components/ui/radio-group";
-  import { goto } from "$app/navigation";
   import { Checkbox } from "$lib/components/ui/checkbox";
   import { Label } from "$lib/components/ui/label";
+  import { queryParam, queryParameters } from "sveltekit-search-params";
 
   import SmallEmbed from "./small/embed.svelte";
   import LargeEmbed from "./large/embed.svelte";
@@ -22,7 +21,7 @@
   import AveragesEmbed from "./averages/embed.svelte";
   import GainsEmbed from "./gains/embed.svelte";
 
-  const url = page.url;
+  const query = queryParameters();
 
   type Embed = {
     component: Component;
@@ -132,10 +131,12 @@
     },
   };
 
-  let currentEmbedKey = $state(
-    url.searchParams.get("type") ?? Object.keys(embeds)[0]
-  );
-  const currentEmbed = $derived(embeds[currentEmbedKey]);
+  let currentEmbedKey = queryParam("type", {
+    encode: (value: string) => value,
+    decode: (value: string | null) => value,
+    defaultValue: Object.keys(embeds)[0],
+  });
+  const currentEmbed = $derived(embeds[$currentEmbedKey]);
 
   const { data }: PageProps = $props();
 
@@ -171,7 +172,7 @@
       }
     }
 
-    return `${window.location.origin}/${data.count.platform}/${data.count.type}/${data.id}/embed/${currentEmbedKey}${params.size > 0 ? `?${params}` : ""}`;
+    return `${window.location.origin}/${data.count.platform}/${data.count.type}/${data.id}/embed/${$currentEmbedKey}${params.size > 0 ? `?${params}` : ""}`;
   });
 
   let hasCopied = $state(false);
@@ -188,9 +189,7 @@
   setEmbedState({
     ...data,
     counts: () => counts,
-    icon: true,
-    text: true,
-    ...Object.fromEntries(url.searchParams.entries()),
+    ...$query,
   });
 
   $effect(() => {
@@ -202,27 +201,6 @@
     update();
     const interval = setInterval(update, 2000);
     return () => clearInterval(interval);
-  });
-
-  function createNewParams(key: string, value: string, defaultValue: string) {
-    const newParams = new URLSearchParams(url.searchParams);
-    if (value !== defaultValue) {
-      newParams.set(key, value);
-    } else {
-      newParams.delete(key);
-    }
-    return newParams;
-  }
-
-  $effect(() => {
-    const newParams = createNewParams(
-      "type",
-      currentEmbedKey,
-      Object.keys(embeds)[0]
-    );
-    goto(
-      `/${data.count.platform}/${data.count.type}/${data.id}/embed${newParams.size > 0 ? `?${newParams}` : ""}`
-    );
   });
 
   $effect(() => {
@@ -269,7 +247,7 @@
       <p class="font-semibold">Embed type</p>
       <RadioGroup.Root
         class="flex flex-wrap items-center justify-center gap-3"
-        bind:value={currentEmbedKey}
+        bind:value={$currentEmbedKey}
       >
         {#each Object.keys(embeds) as embed (embed)}
           <div class="flex items-center gap-2">
@@ -292,11 +270,12 @@
                       id="{option.id}-{o}"
                       checked={(
                         getEmbedState()[option.id] ??
-                        url.searchParams.get(option.id) ??
+                        $query[option.id] ??
                         option.default
                       ).includes(o)}
                       onCheckedChange={(v) => {
-                        let newValue = [
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        let newValue: any = [
                           ...(getEmbedState()[option.id]?.split(",") ??
                             option.default),
                         ];
@@ -306,19 +285,14 @@
                           newValue = newValue.filter((i: string) => i !== o);
                         }
 
+                        newValue = newValue.join(",");
+
                         updateEmbedState((state) => {
-                          state[option.id] = newValue.join(",");
+                          state[option.id] = newValue;
                           return state;
                         });
 
-                        const newParams = createNewParams(
-                          option.id,
-                          newValue.join(","),
-                          option.default.join(",")
-                        );
-                        goto(
-                          `/${data.count.platform}/${data.count.type}/${data.id}/embed${newParams.size > 0 ? `?${newParams}` : ""}`
-                        );
+                        $query[option.id] = newValue;
                       }}
                     />
                     <Label for="{option.id}-{o}">{capitalize(o)}</Label>
@@ -336,7 +310,7 @@
                 bind:checked={
                   () =>
                     getEmbedState()[option.id] ??
-                    url.searchParams.get(option.id) ??
+                    $query[option.id] ??
                     option.default,
                   (newValue) => {
                     updateEmbedState((state) => {
@@ -344,14 +318,7 @@
                       return state;
                     });
 
-                    const newParams = createNewParams(
-                      option.id,
-                      newValue.toString(),
-                      option.default.toString()
-                    );
-                    goto(
-                      `/${data.count.platform}/${data.count.type}/${data.id}/embed${newParams.size > 0 ? `?${newParams}` : ""}`
-                    );
+                    $query[option.id] = newValue;
                   }
                 }
               />
@@ -365,7 +332,7 @@
               bind:value={
                 () =>
                   getEmbedState()[option.id] ??
-                  url.searchParams.get(option.id) ??
+                  $query[option.id] ??
                   option.default,
                 (newValue) => {
                   updateEmbedState((state) => {
@@ -373,14 +340,7 @@
                     return state;
                   });
 
-                  const newParams = createNewParams(
-                    option.id,
-                    newValue,
-                    option.default
-                  );
-                  goto(
-                    `/${data.count.platform}/${data.count.type}/${data.id}/embed${newParams.size > 0 ? `?${newParams}` : ""}`
-                  );
+                  $query[option.id] = newValue;
                 }
               }
             >

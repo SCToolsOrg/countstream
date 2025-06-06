@@ -8,6 +8,7 @@
   import { graphOptions } from "$lib/graph-options";
   import { CustomizationDialog } from "$lib/components/customization";
   import { getCustomization } from "$lib/customization.svelte";
+  import { buttonVariants } from "$lib/components/ui/button";
 
   const { data }: PageProps = $props();
 
@@ -135,5 +136,14 @@
       bind:chart
     />
   </Card>
-  <CustomizationDialog class="!bg-card w-full" />
+  <div class="flex items-center gap-2">
+    <CustomizationDialog class="!bg-card" />
+    <a
+      href="/{count.platform}/{count.type}/{id}/embed"
+      class={buttonVariants({
+        class: "!bg-card",
+        variant: "outline",
+      })}>Embed</a
+    >
+  </div>
 </div>

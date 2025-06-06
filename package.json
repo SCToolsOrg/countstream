@@ -54,6 +54,7 @@
     "@tanstack/svelte-query": "^5.80.5",
     "highcharts": "^11.4.8",
     "odometer": "^0.4.8",
-    "svelte-awesome-color-picker": "^4.0.2"
+    "svelte-awesome-color-picker": "^4.0.2",
+    "sveltekit-search-params": "^3.0.0"
   }
 }
