@@ -64,7 +64,7 @@
       {#each $search.data as item (item.id)}
         <a href={`/${count.platform}/${count.type}/${item.id}`}>
           <Card
-            class="hover:bg-accent flex items-center gap-2 transition-colors"
+            class="hover:bg-accent flex items-center gap-3 transition-colors"
           >
             <img
               src={item.avatar}
@@ -73,7 +73,7 @@
               height={56}
               class="size-14 rounded-full object-cover"
             />
-            <p class="truncate text-2xl font-bold">{item.name}</p>
+            <p class="truncate text-2xl font-semibold">{item.name}</p>
           </Card>
         </a>
       {/each}
