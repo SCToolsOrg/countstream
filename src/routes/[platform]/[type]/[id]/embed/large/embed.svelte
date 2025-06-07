@@ -17,7 +17,7 @@
   <h1 class="mt-2 text-2xl">{info.name}</h1>
   <p class="text-muted-foreground text-sm">{info.username}</p>
   <Odometer
-    class="font-count text-5xl !leading-[1.2em] sm:text-7xl xl:text-9xl"
+    class="font-count text-5xl sm:text-7xl xl:text-9xl"
     value={counts()[countIndex] ?? 0}
   />
   <div class="text-muted-foreground flex items-center gap-1.5 text-sm">

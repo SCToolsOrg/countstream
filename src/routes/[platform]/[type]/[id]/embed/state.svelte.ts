@@ -1,11 +1,10 @@
-import { page } from "$app/state";
-import type { Count } from "$lib/counts";
+import type { Count, Info } from "$lib/counts";
 
 type EmbedState = {
   count: Count;
   countIndex: number;
   counts: () => number[];
-  info: Exclude<Awaited<ReturnType<Count["getInfo"]>>, null>;
+  info: Info;
   id: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;

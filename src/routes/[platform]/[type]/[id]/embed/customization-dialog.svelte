@@ -138,6 +138,7 @@
         {@render customInput("Text Font", "fontFamily")}
         {@render customInput("Count Font", "countFontFamily")}
         {@render customInput("Count Font Weight", "countFontWeight")}
+        {@render customInput("Count Line Height", "countLineHeight")}
         {@render customInput("Odometer Speed", "odometerSpeed")}
         {@render customColorInput("Background Color", "backgroundColor")}
         {@render customColorInput("Card Color", "cardColor")}

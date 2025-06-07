@@ -17,6 +17,7 @@ export interface Customization {
   fontFamily: string;
   countFontFamily: string;
   countFontWeight: number;
+  countLineHeight: string;
   odometerSpeed: number;
   backgroundColor?: string;
   cardColor?: string;
@@ -39,6 +40,7 @@ export const defaultCustomization: Customization = {
   fontFamily: '"DM Sans Variable", "DM Sans", sans-serif',
   countFontFamily: '"Roboto Variable", "Roboto", sans-serif',
   countFontWeight: 400,
+  countLineHeight: "1.2em",
   odometerSpeed: 2,
   backgroundColor: "#171521",
   cardColor: "#252331",
@@ -64,13 +66,12 @@ export const customization = (type: "global" | "page" = "global") =>
   getContext<CustomizationStore>(`customization:${type}`);
 
 export function getCustomization(): Readable<Customization> {
-  const cust = writable(defaultCustomization);
+  const cust = writable(structuredClone(defaultCustomization));
 
   return {
     subscribe: (run) => {
       const setValue = (c: Partial<Customization>) => {
-        cust.update(() => {
-          const cust = structuredClone(defaultCustomization);
+        cust.update((cust) => {
           for (const key of Object.keys(defaultCustomization)) {
             if (typeof (c as any)[key] !== "undefined") {
               (cust as any)[key] = (c as any)[key];

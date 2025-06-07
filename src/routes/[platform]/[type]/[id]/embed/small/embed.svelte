@@ -17,9 +17,6 @@
   />
   <div class="flex flex-col">
     <p>{info.name}</p>
-    <Odometer
-      value={counts()[countIndex]}
-      class="font-count text-[50px] !leading-[1.2em]"
-    />
+    <Odometer value={counts()[countIndex]} class="font-count text-[50px]" />
   </div>
 </div>

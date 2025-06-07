@@ -17,7 +17,7 @@
 
 <CustomizationProvider />
 <Odometer
-  class="font-count w-full !leading-[1.2em]"
+  class="font-count w-full"
   style="font-size: {sizes[
     embedState.size ?? 'medium'
   ]}; text-align: {embedState.align ?? 'left'}"

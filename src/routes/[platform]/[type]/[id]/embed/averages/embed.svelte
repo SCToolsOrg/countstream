@@ -79,9 +79,6 @@
     {#if text}
       <p>{time[0]}:</p>
     {/if}
-    <Odometer
-      value={calculateAverage(time)}
-      class="font-count text-2xl !leading-[1.2em]"
-    />
+    <Odometer value={calculateAverage(time)} class="font-count text-2xl" />
   </div>
 {/each}

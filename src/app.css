@@ -114,7 +114,8 @@
 @utility font-count {
   font-family: var(--font-count, "Roboto Variable", "Roboto", sans-serif);
   font-weight: var(--font-count-weight, 400);
-  color: var(--count-color);
+  color: var(--count-color, white);
+  line-height: var(--count-line-height, 1.2em) !important;
 }
 
 @layer base {

@@ -68,7 +68,7 @@
       <p class="text-muted-foreground text-sm">{info.username}</p>
     {/if}
     <Odometer
-      class="font-count text-4xl !leading-[1.2em] sm:text-7xl xl:text-9xl"
+      class="font-count text-4xl sm:text-7xl xl:text-9xl"
       value={counts[countIndex]}
     />
     {#if $customization.countName || $customization.countIcon}

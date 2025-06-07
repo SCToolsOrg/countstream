@@ -37,6 +37,7 @@
       "--font-sans": $customization.fontFamily,
       "--font-count": $customization.countFontFamily,
       "--font-count-weight": $customization.countFontWeight,
+      "--count-line-height": $customization.countLineHeight,
       "--speed": `${$customization.odometerSpeed}s`,
       "--background": $customization.backgroundColor,
       "--card": $customization.cardColor,

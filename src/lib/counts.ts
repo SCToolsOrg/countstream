@@ -2,6 +2,13 @@ import { Camera, Eye, Users } from "@lucide/svelte";
 import type { Component } from "svelte";
 import colors from "tailwindcss/colors";
 
+export interface Info {
+  name: string;
+  username?: string;
+  banner?: string;
+  avatar: string;
+}
+
 export interface Count {
   platform: string;
   type: string;
@@ -18,12 +25,7 @@ export interface Count {
   >;
   getInfo: (id: string) => Promise<
     | {
-        data: {
-          name: string;
-          username?: string;
-          banner?: string;
-          avatar: string;
-        };
+        data: Info;
         error: null;
       }
     | {
