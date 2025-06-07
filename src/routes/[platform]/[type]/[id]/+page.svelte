@@ -58,7 +58,7 @@
       <img
         src={info.avatar}
         alt={info.name + " avatar"}
-        class="mb-2 h-20 w-20 rounded-full"
+        class="mb-2 size-20 rounded-full object-cover"
       />
     {/if}
     {#if $customization.name}

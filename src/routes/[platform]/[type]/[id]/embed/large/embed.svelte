@@ -12,7 +12,7 @@
   <img
     src={info.avatar}
     alt={info.name + " avatar"}
-    class="h-20 w-20 rounded-full"
+    class="size-20 rounded-full object-cover"
   />
   <h1 class="mt-2 text-2xl">{info.name}</h1>
   <p class="text-muted-foreground text-sm">{info.username}</p>

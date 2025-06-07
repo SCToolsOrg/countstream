@@ -71,7 +71,7 @@
               alt={item.name}
               width={56}
               height={56}
-              class="rounded-full"
+              class="size-14 rounded-full object-cover"
             />
             <p class="truncate text-2xl font-bold">{item.name}</p>
           </Card>

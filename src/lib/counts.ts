@@ -1,4 +1,4 @@
-import { Camera, Eye, Users } from "@lucide/svelte";
+import { Camera, Eye, MessageSquare, ThumbsUp, Users } from "@lucide/svelte";
 import type { Component } from "svelte";
 import colors from "tailwindcss/colors";
 
@@ -16,6 +16,7 @@ export interface Count {
   icon: string;
   smallIcon?: string;
   color: string;
+  avatarType?: "square";
   search: (query: string) => Promise<
     {
       name: string;
@@ -128,6 +129,82 @@ export const counts: Count[] = [
       {
         name: "Videos",
         icon: Camera,
+      },
+    ],
+  },
+  {
+    platform: "youtube",
+    type: "video",
+    name: "YouTube Live View Counter",
+    icon: "/youtube.png",
+    avatarType: "square",
+    color: colors.red[500],
+    search: async (query) => {
+      const res = await fetch(
+        `https://mixerno.space/api/youtube-video-counter/search/${encodeURI(query)}`
+      );
+      const data = await res.json();
+      return data.list.map(([name, avatar, id]: [string, string, string]) => ({
+        name,
+        avatar,
+        id,
+      }));
+    },
+    getInfo: async (id) => {
+      try {
+        const res = await fetch(
+          `https://api.subscriberwars.space/youtube/video/${id}`
+        );
+        const data = await res.json();
+        if (!data?.items?.length)
+          return {
+            data: null,
+            error: null,
+          };
+
+        return {
+          data: {
+            name: data.items[0].snippet.title,
+            avatar: data.items[0].snippet.thumbnails.medium.url,
+            banner: `https://www.banner.yt/${id}`,
+          },
+          error: null,
+        };
+      } catch {
+        return {
+          data: null,
+          error: null,
+        };
+      }
+    },
+    getCounts: async (id) => {
+      const res = await fetch(
+        `https://mixerno.space/api/youtube-video-counter/user/${id}`
+      );
+      const { counts } = await res.json();
+      return [
+        counts[0].count,
+        parseInt(counts[2].count),
+        parseInt(counts[3].count),
+        parseInt(counts[5].count),
+      ];
+    },
+    counts: [
+      {
+        name: "Views (EST)",
+        icon: Eye,
+      },
+      {
+        name: "Views (API)",
+        icon: Eye,
+      },
+      {
+        name: "Likes",
+        icon: ThumbsUp,
+      },
+      {
+        name: "Comments",
+        icon: MessageSquare,
       },
     ],
   },

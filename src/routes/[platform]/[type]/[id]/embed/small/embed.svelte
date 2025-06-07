@@ -13,7 +13,7 @@
     alt={info.name + " avatar"}
     width={90}
     height={90}
-    class="rounded-full"
+    class="size-[90px] rounded-full object-cover"
   />
   <div class="flex flex-col">
     <p>{info.name}</p>
