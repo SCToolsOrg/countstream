@@ -208,4 +208,75 @@ export const counts: Count[] = [
       },
     ],
   },
+  {
+    platform: "youtube",
+    type: "stream",
+    name: "YouTube Live Viewer Counter",
+    icon: "/youtube.png",
+    avatarType: "square",
+    color: colors.red[500],
+    search: async (query) => {
+      const res = await fetch(
+        `https://mixerno.space/api/youtube-stream-counter/search/${encodeURI(query)}`
+      );
+      const data = await res.json();
+      return data.list.map(([name, avatar, id]: [string, string, string]) => ({
+        name,
+        avatar,
+        id,
+      }));
+    },
+    getInfo: async (id) => {
+      try {
+        const res = await fetch(
+          `https://api.subscriberwars.space/youtube/video/${id}`
+        );
+        const data = await res.json();
+        if (!data?.items?.length)
+          return {
+            data: null,
+            error: null,
+          };
+
+        return {
+          data: {
+            name: data.items[0].snippet.title,
+            avatar: data.items[0].snippet.thumbnails.medium.url,
+            banner: `https://www.banner.yt/${id}`,
+          },
+          error: null,
+        };
+      } catch {
+        return {
+          data: null,
+          error: null,
+        };
+      }
+    },
+    getCounts: async (id) => {
+      const res = await fetch(
+        `https://mixerno.space/api/youtube-stream-counter/user/${id}`
+      );
+      const { counts } = await res.json();
+      return [
+        parseInt(counts[0].count),
+        parseInt(counts[2].count),
+        parseInt(counts[4].count),
+      ];
+    },
+    counts: [
+      {
+        name: "Viewers",
+        icon: Eye,
+      },
+      {
+        name: "Likes",
+        icon: ThumbsUp,
+      },
+      {
+        name: "Total Views",
+        icon: Eye,
+      },
+    ],
+  },
 ];
