@@ -34,7 +34,7 @@
         height={64}
         class="z-50 h-16 object-contain"
       />
-      <h1 class="text-3xl font-bold">{count.name}</h1>
+      <h1 class="text-3xl font-bold tracking-tight">{count.name}</h1>
     </div>
     <form
       onsubmit={(ev) => {

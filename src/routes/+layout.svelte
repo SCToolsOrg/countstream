@@ -36,7 +36,7 @@
             href="/"
             class="flex items-center gap-1 transition-opacity hover:opacity-75"
           >
-            <h1 class="text-xl font-bold">
+            <h1 class="text-xl font-bold tracking-tighter">
               count<span class="text-primary">stream</span>
             </h1>
             <sub class="text-muted-foreground">by SCTools</sub>
