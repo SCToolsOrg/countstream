@@ -66,7 +66,7 @@ export const graphOptions = (name: string): Options => ({
       let r =
         // @ts-expect-error runs on client
         Highcharts.dateFormat("%A %b %e, %H:%M:%S", new Date(this.x)) +
-        '<br><span style="color:var(--primary)">\u25CF </span>' +
+        '<br><span style="color:var(--graph-color);">\u25CF </span>' +
         // @ts-expect-error runs on client
         this.points[0].series.name +
         ": <b>" +
@@ -91,7 +91,7 @@ export const graphOptions = (name: string): Options => ({
     {
       showInLegend: false,
       marker: { enabled: false },
-      color: "var(--primary)",
+      color: "var(--graph-color)",
       lineWidth: 3,
       type: "line",
       name,

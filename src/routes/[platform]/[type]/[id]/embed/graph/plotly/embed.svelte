@@ -1,5 +1,6 @@
 <script lang="ts">
   import CustomizationProvider from "../../customization-provider.svelte";
+  import { getCustomization } from "../../customization.svelte";
   import { getEmbedState, isEmbed } from "../../state.svelte";
   import { untrack } from "svelte";
 
@@ -15,9 +16,13 @@
     }
   });
 
+  const customization = getCustomization();
+
   function updateChart(history: [number, number][]) {
-    // @ts-expect-error window global
-    Plotly.newPlot(
+    if (!("Plotly" in window)) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window.Plotly as any).newPlot(
       chart,
       [
         {
@@ -29,7 +34,7 @@
           },
           line: {
             width: 4,
-            color: "#ad91d5",
+            color: $customization.graphColor,
           },
         },
       ],
@@ -73,7 +78,11 @@
   $effect(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     embedState.clean;
+    const unsub = customization.subscribe(() => {});
+
     updateChart(untrack(() => history));
+
+    return () => unsub();
   });
 
   $effect(() => {

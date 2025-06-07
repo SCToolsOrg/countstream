@@ -25,6 +25,7 @@
       "--background": $customization.backgroundColor,
       "--card": $customization.cardColor,
       "--count-color": $customization.countColor,
+      "--graph-color": $customization.graphColor,
       "--up-color": $customization.odometerUpColor,
       "--down-color": $customization.odometerDownColor,
     };

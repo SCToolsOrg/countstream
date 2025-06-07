@@ -165,6 +165,7 @@
         {@render customColorInput("Background Color", "backgroundColor")}
         {@render customColorInput("Card Color", "cardColor")}
         {@render customColorInput("Count Color", "countColor")}
+        {@render customColorInput("Graph Color", "graphColor")}
         {@render customColorInput("Odometer Up Color", "odometerUpColor")}
         {@render customColorInput("Odometer Down Color", "odometerDownColor")}
         {@render customToggle("Animate Odometer Color", "animateOdometerColor")}

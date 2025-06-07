@@ -122,19 +122,8 @@
     <Dialog.Header>
       <Dialog.Title>Customization</Dialog.Title>
     </Dialog.Header>
-    <div class="grid h-full grid-cols-1 gap-3 md:grid-cols-4">
+    <div class="h-full">
       <div class="space-y-2">
-        {@render customToggle("Banner", "banner")}
-        {@render customToggle("Avatar", "avatar")}
-        {@render customToggle("Platform Icon", "platformIcon")}
-        {@render customToggle("Name", "name")}
-        {@render customToggle("Username", "username")}
-        {@render customToggle("Count Name", "countName")}
-        {@render customToggle("Count Icon", "countIcon")}
-        {@render customToggle("Side Counts", "sideCounts")}
-        {@render customToggle("Graph", "graph")}
-      </div>
-      <div class="col-span-3 space-y-2">
         {@render customInput("Text Font", "fontFamily")}
         {@render customInput("Count Font", "countFontFamily")}
         {@render customInput("Count Font Weight", "countFontWeight")}
@@ -143,6 +132,7 @@
         {@render customColorInput("Background Color", "backgroundColor")}
         {@render customColorInput("Card Color", "cardColor")}
         {@render customColorInput("Count Color", "countColor")}
+        {@render customColorInput("Graph Color", "graphColor")}
         {@render customColorInput("Odometer Up Color", "odometerUpColor")}
         {@render customColorInput("Odometer Down Color", "odometerDownColor")}
         {@render customToggle("Animate Odometer Color", "animateOdometerColor")}

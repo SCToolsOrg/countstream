@@ -21,9 +21,10 @@ export interface Customization {
   countFontWeight: number;
   countLineHeight: string;
   odometerSpeed: number;
-  backgroundColor?: string;
-  cardColor?: string;
-  countColor?: string;
+  backgroundColor: string;
+  cardColor: string;
+  countColor: string;
+  graphColor: string;
   odometerUpColor?: string;
   odometerDownColor?: string;
   animateOdometerColor: boolean;
@@ -49,6 +50,7 @@ export const defaultCustomization: Customization = {
   backgroundColor: "#171521",
   cardColor: "#252331",
   countColor: "#ffffff",
+  graphColor: "#ad91d5",
   odometerUpColor: undefined,
   odometerDownColor: undefined,
   animateOdometerColor: false,
