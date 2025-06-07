@@ -17,6 +17,7 @@
   import { page } from "$app/state";
   import CustomizationDialog from "./customization-dialog.svelte";
   import { times } from "$lib/gains";
+  import { useCounts } from "../counts.svelte";
 
   import SmallEmbed from "./small/embed.svelte";
   import LargeEmbed from "./large/embed.svelte";
@@ -26,7 +27,6 @@
   import HighchartsGraphEmbed from "./graph/highcharts/embed.svelte";
   import ProgressEmbed from "./progress/embed.svelte";
   import PlotlyGraphEmbed from "./graph/plotly/embed.svelte";
-  import { calculateGoal } from "$lib/goal";
 
   const query = queryParameters();
 
@@ -178,8 +178,6 @@
   });
   const currentEmbed = $derived(embeds[$currentEmbedKey]);
 
-  const goalCount = parseInt(page.url.searchParams.get("goal-count") ?? "0");
-
   const { data }: PageProps = $props();
   const { count, countIndex } = data;
 
@@ -236,24 +234,13 @@
     }, 1000);
   }
 
-  let counts = $state.raw<number[]>([]);
+  const counts = useCounts(count, data.id);
 
   setEmbedState({
     ...$query,
     ...data,
-    counts: () => counts,
+    counts: () => $counts,
     customization: {},
-  });
-
-  $effect(() => {
-    const update = async () => {
-      const newCounts = await data.count.getCounts(data.id);
-      counts = [...newCounts, calculateGoal(newCounts[goalCount])];
-    };
-
-    update();
-    const interval = setInterval(update, 2000);
-    return () => clearInterval(interval);
   });
 
   $effect(() => {

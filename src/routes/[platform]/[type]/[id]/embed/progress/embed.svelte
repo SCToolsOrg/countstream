@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { calculateGoal, calculateProgress } from "$lib/progress";
+  import {
+    calculateGoal,
+    calculateMilestones,
+    calculateProgress,
+  } from "$lib/goal";
   import CustomizationProvider from "../customization-provider.svelte";
   import { getEmbedState } from "../state.svelte";
 
@@ -8,6 +12,7 @@
   const { countIndex, counts } = embedState;
 
   const text = $derived(embedState.text ?? true);
+  const milestones = $derived(calculateMilestones(counts()[countIndex]));
 </script>
 
 <CustomizationProvider />
@@ -19,9 +24,7 @@
   <div class="mt-0.5 flex justify-between text-sm">
     <p>
       {#if counts()[countIndex]}
-        {(
-          Math.floor(counts()[countIndex] / 100_000) * 100_000
-        ).toLocaleString()}
+        {milestones.currentMilestone.toLocaleString()}
       {:else}
         <!-- eslint-disable-next-line svelte/no-useless-mustaches -->
         {"‍"}
@@ -29,7 +32,7 @@
     </p>
     <p class="w-full text-right">
       {#if counts()[countIndex]}
-        {calculateGoal(counts()[countIndex], 100_000).toLocaleString()}
+        {milestones.nextMilestone.toLocaleString()}
       {:else}
         <!-- eslint-disable-next-line svelte/no-useless-mustaches -->
         {"‍"}

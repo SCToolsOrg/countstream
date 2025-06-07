@@ -13,19 +13,16 @@
   import Hourglass from "@lucide/svelte/icons/hourglass";
   import { calculateAverage, calculateGain } from "$lib/gains";
   import { untrack } from "svelte";
-  import { calculateGoal, calculateProgress } from "$lib/goal";
+  import { calculateProgress } from "$lib/goal";
+  import { useCounts } from "./counts.svelte";
 
   const { data }: PageProps = $props();
 
   const { count, countIndex, info, id } = data;
-
-  const goalCount = parseInt(page.url.searchParams.get("goal-count") ?? "0");
-
   const currentCount = count.counts[countIndex];
 
   // svelte-ignore non_reactive_update
   let chart: Highcharts.Chart;
-  let counts = $state.raw<number[]>([]);
 
   const times = [
     ["1m", 60],
@@ -34,27 +31,17 @@
   ] as const;
 
   let history = $state.raw<number[]>([]);
+  const counts = useCounts(count, id, (counts) => {
+    const num = counts[countIndex];
+    const newHistory = [...untrack(() => history), num];
+    if (newHistory.length >= 43200) newHistory.shift();
+    history = newHistory;
 
-  $effect(() => {
-    const update = async () => {
-      const newCounts = await count.getCounts(id);
-      counts = [...newCounts, calculateGoal(newCounts[goalCount])];
-
-      const num = newCounts[countIndex];
-      const newHistory = [...untrack(() => history), num];
-      if (newHistory.length >= 43200) newHistory.shift();
-      history = newHistory;
-
-      if (chart) {
-        if (chart.series[0].points.length >= 1800)
-          chart.series[0].data[0].remove();
-        chart.series[0].addPoint([Date.now(), Number(counts[countIndex])]);
-      }
-    };
-
-    update();
-    const interval = setInterval(update, 2000);
-    return () => clearInterval(interval);
+    if (chart) {
+      if (chart.series[0].points.length >= 1800)
+        chart.series[0].data[0].remove();
+      chart.series[0].addPoint([Date.now(), Number(counts[countIndex])]);
+    }
   });
 
   const customization = getCustomization();
@@ -84,7 +71,7 @@
     {/if}
     <Odometer
       class="font-count text-4xl sm:text-7xl xl:text-9xl"
-      value={counts[countIndex]}
+      value={$counts[countIndex]}
     />
     {#if $customization.countName || $customization.countIcon}
       <div class="text-muted-foreground flex items-center gap-1.5 text-sm">
@@ -101,7 +88,7 @@
     <div class="w-full">
       <div
         class="h-1 bg-white transition-[width]"
-        style="width: {calculateProgress(counts[countIndex])}%"
+        style="width: {calculateProgress($counts[countIndex])}%"
       ></div>
     </div>
   {/if}
@@ -211,7 +198,7 @@
         </button>
       {/snippet}
       {#each count.counts
-        .map((_, i) => ({ num: counts[i] ?? 0, index: i }))
+        .map((_, i) => ({ num: $counts[i] ?? 0, index: i }))
         .filter((_, i) => i !== countIndex) as { num, index } (index)}
         {@render sideCount(count.counts[index], num, index)}
       {/each}

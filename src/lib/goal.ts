@@ -16,10 +16,16 @@ function calculateMilestoneIncrement(num: number) {
   return milestoneIncrement;
 }
 
-export function calculateGoal(num: number) {
+export function calculateMilestones(num: number) {
   const milestoneIncrement = calculateMilestoneIncrement(num);
+  const currentMilestone = num - (num % milestoneIncrement);
   const nextMilestone =
     Math.ceil(num / milestoneIncrement) * milestoneIncrement;
+  return { currentMilestone, nextMilestone };
+}
+
+export function calculateGoal(num: number) {
+  const { nextMilestone } = calculateMilestones(num);
   return nextMilestone - num;
 }
 
