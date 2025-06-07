@@ -18,16 +18,28 @@
 
 <CustomizationProvider />
 <div
-  class="h-1 bg-white"
+  class="h-1 bg-white transition-[width]"
   style="width: {calculateProgress(counts()[countIndex])}%"
 ></div>
-{#if text && counts()[countIndex]}
+{#if text}
   <div class="mt-0.5 flex justify-between text-sm">
     <p>
-      {(Math.floor(counts()[countIndex] / 100_000) * 100_000).toLocaleString()}
+      {#if counts()[countIndex]}
+        {(
+          Math.floor(counts()[countIndex] / 100_000) * 100_000
+        ).toLocaleString()}
+      {:else}
+        <!-- eslint-disable-next-line svelte/no-useless-mustaches -->
+        {" "}
+      {/if}
     </p>
     <p class="w-full text-right">
-      {calculateGoal(counts()[countIndex], 100_000).toLocaleString()}
+      {#if counts()[countIndex]}
+        {calculateGoal(counts()[countIndex], 100_000).toLocaleString()}
+      {:else}
+        <!-- eslint-disable-next-line svelte/no-useless-mustaches -->
+        {" "}
+      {/if}
     </p>
   </div>
 {/if}
