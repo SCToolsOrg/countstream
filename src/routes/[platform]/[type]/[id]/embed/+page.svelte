@@ -16,7 +16,6 @@
   import { queryParam, queryParameters } from "sveltekit-search-params";
   import { page } from "$app/state";
   import CustomizationDialog from "./customization-dialog.svelte";
-  import { getGoal } from "$lib/utils";
   import { times } from "$lib/gains";
 
   import SmallEmbed from "./small/embed.svelte";
@@ -27,6 +26,7 @@
   import HighchartsGraphEmbed from "./graph/highcharts/embed.svelte";
   import ProgressEmbed from "./progress/embed.svelte";
   import PlotlyGraphEmbed from "./graph/plotly/embed.svelte";
+  import { calculateGoal } from "$lib/goal";
 
   const query = queryParameters();
 
@@ -248,7 +248,7 @@
   $effect(() => {
     const update = async () => {
       const newCounts = await data.count.getCounts(data.id);
-      counts = [...newCounts, getGoal(newCounts[goalCount])];
+      counts = [...newCounts, calculateGoal(newCounts[goalCount])];
     };
 
     update();

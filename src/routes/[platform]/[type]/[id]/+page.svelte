@@ -11,10 +11,9 @@
   import { buttonVariants } from "$lib/components/ui/button";
   import AppWindow from "@lucide/svelte/icons/app-window";
   import Hourglass from "@lucide/svelte/icons/hourglass";
-  import { getGoal } from "$lib/utils";
   import { calculateAverage, calculateGain } from "$lib/gains";
   import { untrack } from "svelte";
-  import { calculateProgress } from "$lib/progress";
+  import { calculateGoal, calculateProgress } from "$lib/goal";
 
   const { data }: PageProps = $props();
 
@@ -39,7 +38,7 @@
   $effect(() => {
     const update = async () => {
       const newCounts = await count.getCounts(id);
-      counts = [...newCounts, getGoal(newCounts[goalCount])];
+      counts = [...newCounts, calculateGoal(newCounts[goalCount])];
 
       const num = newCounts[countIndex];
       const newHistory = [...untrack(() => history), num];

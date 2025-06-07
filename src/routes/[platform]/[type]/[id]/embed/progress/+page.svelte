@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from "$app/state";
-  import { getGoal } from "$lib/utils";
+  import { calculateGoal } from "$lib/goal";
   import { setEmbedState } from "../state.svelte";
   import type { PageProps } from "./$types";
   import Embed from "./embed.svelte";
@@ -25,7 +25,7 @@
   $effect(() => {
     const update = async () => {
       const newCounts = await count.getCounts(id);
-      counts = [...newCounts, getGoal(newCounts[goalCount])];
+      counts = [...newCounts, calculateGoal(newCounts[goalCount])];
     };
 
     update();
