@@ -17,7 +17,7 @@
 
   $effect(() => {
     const styles = {
-      "--font-text": $customization.fontFamily,
+      "--font-sans": $customization.fontFamily,
       "--font-count": $customization.countFontFamily,
       "--font-count-weight": $customization.countFontWeight,
       "--speed": `${$customization.odometerSpeed}s`,
