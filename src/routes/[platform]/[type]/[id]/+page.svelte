@@ -14,6 +14,7 @@
   import { getGoal } from "$lib/utils";
   import { calculateAverage, calculateGain } from "$lib/gains";
   import { untrack } from "svelte";
+  import { calculateProgress } from "$lib/progress";
 
   const { data }: PageProps = $props();
 
@@ -97,6 +98,14 @@
       </div>
     {/if}
   </Card>
+  {#if $customization.progress}
+    <div class="w-full">
+      <div
+        class="h-1 bg-white transition-[width]"
+        style="width: {calculateProgress(counts[countIndex])}%"
+      ></div>
+    </div>
+  {/if}
   {#if $customization.averages}
     <div
       class="grid w-full grid-cols-1 justify-center gap-3 sm:grid-cols-2 md:grid-cols-3"

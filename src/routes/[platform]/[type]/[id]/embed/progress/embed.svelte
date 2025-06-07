@@ -1,15 +1,9 @@
 <script lang="ts">
+  import { calculateGoal, calculateProgress } from "$lib/progress";
   import CustomizationProvider from "../customization-provider.svelte";
   import { getEmbedState } from "../state.svelte";
 
   const embedState = getEmbedState();
-
-  const calculateGoal = (num: number, amount: number) => {
-    return Math.floor(num / amount) * amount + amount;
-  };
-
-  const calculateProgress = (count: number) =>
-    ((100000 - (calculateGoal(count, 100000) - count)) / 100000) * 100;
 
   const { countIndex, counts } = embedState;
 

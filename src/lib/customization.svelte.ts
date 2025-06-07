@@ -12,6 +12,7 @@ export interface Customization {
   username: boolean;
   countName: boolean;
   countIcon: boolean;
+  progress: boolean;
   sideCounts: boolean;
   graph: boolean;
   averages: boolean;
@@ -38,6 +39,7 @@ export const defaultCustomization: Customization = {
   username: true,
   countName: true,
   countIcon: true,
+  progress: false,
   sideCounts: true,
   graph: true,
   averages: false,

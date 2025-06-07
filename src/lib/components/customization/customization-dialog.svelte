@@ -151,6 +151,7 @@
         {@render customToggle("Username", "username")}
         {@render customToggle("Count Name", "countName")}
         {@render customToggle("Count Icon", "countIcon")}
+        {@render customToggle("Progress", "progress")}
         {@render customToggle("Side Counts", "sideCounts")}
         {@render customToggle("Graph", "graph")}
         {@render customToggle("Averages", "averages")}
