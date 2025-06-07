@@ -30,7 +30,7 @@
         ).toLocaleString()}
       {:else}
         <!-- eslint-disable-next-line svelte/no-useless-mustaches -->
-        {" "}
+        {"‍"}
       {/if}
     </p>
     <p class="w-full text-right">
@@ -38,7 +38,7 @@
         {calculateGoal(counts()[countIndex], 100_000).toLocaleString()}
       {:else}
         <!-- eslint-disable-next-line svelte/no-useless-mustaches -->
-        {" "}
+        {"‍"}
       {/if}
     </p>
   </div>
