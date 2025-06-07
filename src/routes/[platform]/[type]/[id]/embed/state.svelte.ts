@@ -1,3 +1,4 @@
+import { page } from "$app/state";
 import type { Count } from "$lib/counts";
 
 type EmbedState = {
@@ -17,4 +18,11 @@ export const getEmbedState = () => embedState;
 export const setEmbedState = (newState: EmbedState) => (embedState = newState);
 export const updateEmbedState = (run: (value: EmbedState) => EmbedState) => {
   embedState = run(embedState);
+};
+
+let isEmbedState = $state.raw(false);
+
+export const isEmbed = () => isEmbedState;
+export const setIsEmbed = (newState: boolean) => {
+  isEmbedState = newState;
 };

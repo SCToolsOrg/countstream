@@ -22,7 +22,8 @@
   import CountEmbed from "./count/embed.svelte";
   import AveragesEmbed from "./averages/embed.svelte";
   import GainsEmbed from "./gains/embed.svelte";
-  import { getCustomization } from "./customization.svelte";
+  import HighchartsGraphEmbed from "./graph/highcharts/embed.svelte";
+  import PlotlyGraphEmbed from "./graph/plotly/embed.svelte";
 
   const query = queryParameters();
 
@@ -132,6 +133,28 @@
         },
       ],
     },
+    "graph/highcharts": {
+      component: HighchartsGraphEmbed,
+      options: [
+        {
+          id: "clean",
+          name: "Clean Mode",
+          type: "checkbox",
+          default: false,
+        },
+      ],
+    },
+    "graph/plotly": {
+      component: PlotlyGraphEmbed,
+      options: [
+        {
+          id: "clean",
+          name: "Clean Mode",
+          type: "checkbox",
+          default: false,
+        },
+      ],
+    },
   };
 
   let currentEmbedKey = queryParam("type", {
@@ -227,6 +250,12 @@
   });
 </script>
 
+<svelte:head>
+  <script
+    src="https://cdn.plot.ly/plotly-2.4.2.min.js"
+    type="text/javascript"
+  ></script>
+</svelte:head>
 <div class="space-y-4">
   <div bind:this={embedWrapper} class="embed bg-background">
     <currentEmbed.component />

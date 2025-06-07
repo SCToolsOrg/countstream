@@ -6,22 +6,28 @@
 
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
   import { CustomizationProvider } from "$lib/components/customization";
-  import { page } from "$app/state";
   import Info from "@lucide/svelte/icons/info";
+  import {
+    isEmbed,
+    setIsEmbed,
+  } from "./[platform]/[type]/[id]/embed/state.svelte";
+  import { page } from "$app/state";
 
   const queryClient = new QueryClient();
 
   let { children } = $props();
 
-  const isEmbed = $derived.by(() => {
+  $effect(() => {
     const split = page.url.pathname.split("/");
-    return !page.error && split.at(-2) === "embed";
+    setIsEmbed(
+      !page.error && (split.at(-2) === "embed" || split.at(-3) === "embed")
+    );
   });
 </script>
 
 <QueryClientProvider client={queryClient}>
   <CustomizationProvider>
-    {#if !isEmbed}
+    {#if !isEmbed()}
       <div class="border-b">
         <header
           class="mx-auto flex w-full justify-between px-4 py-3 md:w-[90%]"
@@ -38,8 +44,8 @@
         </header>
       </div>
     {/if}
-    <main class={!isEmbed ? "mx-auto w-full p-4 md:w-[90%]" : ""}>
-      {#if !isEmbed}
+    <main class={!isEmbed() ? "mx-auto w-full p-4 md:w-[90%]" : ""}>
+      {#if !isEmbed()}
         <div
           class="mb-4 rounded-lg border border-yellow-300 bg-yellow-700/50 px-3 pt-3 pb-2 text-center text-sm text-yellow-300"
         >

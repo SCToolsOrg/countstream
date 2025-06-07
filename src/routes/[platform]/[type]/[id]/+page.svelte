@@ -26,7 +26,7 @@
       counts = newCounts;
 
       if (chart) {
-        if (chart.series[0].points.length >= 3600)
+        if (chart.series[0].points.length >= 1800)
           chart.series[0].data[0].remove();
         chart.series[0].addPoint([Date.now(), Number(counts[countIndex])]);
       }
