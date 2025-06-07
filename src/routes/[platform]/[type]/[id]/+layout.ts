@@ -1,6 +1,7 @@
 import { counts } from "$lib/counts";
 import { notFound } from "$lib/utils";
 import type { LayoutLoad } from "./$types";
+import PartyPopper from "@lucide/svelte/icons/party-popper";
 
 export const load: LayoutLoad = async ({ params, url }) => {
   const { searchParams } = url;
@@ -13,8 +14,14 @@ export const load: LayoutLoad = async ({ params, url }) => {
   );
   if (!count) throw notFound();
 
-  const currentCount = count.counts.find((_, i) => i === parseInt(countIndex));
-  if (!currentCount) throw notFound();
+  const countList = [
+    ...count.counts,
+    {
+      name: "Goal",
+      icon: PartyPopper,
+    },
+  ];
+  count.counts = countList;
 
   const info = await count.getInfo(params.id);
   if (!info) throw notFound();

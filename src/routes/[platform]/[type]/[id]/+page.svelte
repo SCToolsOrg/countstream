@@ -10,20 +10,25 @@
   import { getCustomization } from "$lib/customization.svelte";
   import { buttonVariants } from "$lib/components/ui/button";
   import AppWindow from "@lucide/svelte/icons/app-window";
+  import PartyPopper from "@lucide/svelte/icons/party-popper";
+  import { getGoal } from "$lib/utils";
 
   const { data }: PageProps = $props();
 
   const { count, countIndex, info, id } = data;
+
+  const goalCount = parseInt(page.url.searchParams.get("goal-count") ?? "0");
+
   const currentCount = count.counts[countIndex];
 
   // svelte-ignore non_reactive_update
-  let chart: Highcharts.Chart | null;
+  let chart: Highcharts.Chart;
   let counts = $state.raw<number[]>([]);
 
   $effect(() => {
     const update = async () => {
       const newCounts = await count.getCounts(id);
-      counts = newCounts;
+      counts = [...newCounts, getGoal(newCounts[goalCount])];
 
       if (chart) {
         if (chart.series[0].points.length >= 1800)

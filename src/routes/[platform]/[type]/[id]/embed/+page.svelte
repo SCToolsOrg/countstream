@@ -16,6 +16,7 @@
   import { queryParam, queryParameters } from "sveltekit-search-params";
   import { page } from "$app/state";
   import CustomizationDialog from "./customization-dialog.svelte";
+  import PartyPopper from "@lucide/svelte/icons/party-popper";
 
   import SmallEmbed from "./small/embed.svelte";
   import LargeEmbed from "./large/embed.svelte";
@@ -25,6 +26,7 @@
   import HighchartsGraphEmbed from "./graph/highcharts/embed.svelte";
   import ProgressEmbed from "./progress/embed.svelte";
   import PlotlyGraphEmbed from "./graph/plotly/embed.svelte";
+  import { getGoal } from "$lib/utils";
 
   const query = queryParameters();
 
@@ -176,6 +178,8 @@
   });
   const currentEmbed = $derived(embeds[$currentEmbedKey]);
 
+  const goalCount = parseInt(page.url.searchParams.get("goal-count") ?? "0");
+
   const { data }: PageProps = $props();
   const { count, countIndex } = data;
 
@@ -205,6 +209,10 @@
     const embedState = getEmbedState();
 
     const params = new URLSearchParams();
+    if (countIndex !== 0) {
+      params.set("count", countIndex.toString());
+    }
+
     if (currentEmbed.options) {
       for (const option of currentEmbed.options) {
         const value = embedState[option.id];
@@ -240,7 +248,7 @@
   $effect(() => {
     const update = async () => {
       const newCounts = await data.count.getCounts(data.id);
-      counts = newCounts;
+      counts = [...newCounts, getGoal(newCounts[goalCount])];
     };
 
     update();

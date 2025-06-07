@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from "$app/state";
+  import { getGoal } from "$lib/utils";
   import { setEmbedState } from "../state.svelte";
   import type { PageProps } from "./$types";
   import Embed from "./embed.svelte";
@@ -9,6 +10,8 @@
   const { url } = page;
   const size = url.searchParams.get("size") ?? "medium";
   const align = url.searchParams.get("align") ?? "left";
+
+  const goalCount = parseInt(page.url.searchParams.get("goal-count") ?? "0");
 
   let counts = $state.raw<number[]>([]);
   setEmbedState({
@@ -25,7 +28,7 @@
   $effect(() => {
     const update = async () => {
       const newCounts = await count.getCounts(id);
-      counts = newCounts;
+      counts = [...newCounts, getGoal(newCounts[goalCount])];
     };
 
     update();
