@@ -16,12 +16,21 @@ export interface Count {
       avatar: string;
     }[]
   >;
-  getInfo: (id: string) => Promise<{
-    name: string;
-    username?: string;
-    banner?: string;
-    avatar: string;
-  } | null>;
+  getInfo: (id: string) => Promise<
+    | {
+        data: {
+          name: string;
+          username?: string;
+          banner?: string;
+          avatar: string;
+        };
+        error: null;
+      }
+    | {
+        data: null;
+        error: string | null;
+      }
+  >;
   getCounts: (id: string) => Promise<number[]>;
   counts: {
     name: string;
@@ -59,21 +68,36 @@ export const counts: Count[] = [
       }));
     },
     getInfo: async (id) => {
+      if (!id.startsWith("UC") || id.length !== 24)
+        return {
+          data: null,
+          error: "Invalid channel ID",
+        };
       try {
         const res = await fetch(
           `https://api.subscriberwars.space/youtube/channel/${id}`
         );
         const data = await res.json();
-        if (!data) return null;
+        if (!data)
+          return {
+            data: null,
+            error: null,
+          };
 
         return {
-          name: data.title,
-          username: data.slug,
-          avatar: data.icon,
-          banner: `https://www.banner.yt/${id}`,
+          data: {
+            name: data.title,
+            username: data.slug,
+            avatar: data.icon,
+            banner: `https://www.banner.yt/${id}`,
+          },
+          error: null,
         };
       } catch {
-        return null;
+        return {
+          data: null,
+          error: null,
+        };
       }
     },
     getCounts: async (id) => {

@@ -1,5 +1,6 @@
 import { counts } from "$lib/counts";
 import { notFound } from "$lib/utils";
+import { error } from "@sveltejs/kit";
 import type { LayoutLoad } from "./$types";
 import PartyPopper from "@lucide/svelte/icons/party-popper";
 
@@ -24,12 +25,15 @@ export const load: LayoutLoad = async ({ params, url }) => {
   count.counts = countList;
 
   const info = await count.getInfo(params.id);
-  if (!info) throw notFound();
+  if (!info.data) {
+    if (!info.error) throw notFound();
+    else throw error(404, info.error);
+  }
 
   return {
     id: params.id,
     count,
     countIndex: parseInt(countIndex),
-    info,
+    info: info.data,
   };
 };
