@@ -22,7 +22,7 @@
   style="width: {calculateProgress(counts()[countIndex])}%"
 ></div>
 {#if text}
-  <div class="flex justify-between">
+  <div class="mt-0.5 flex justify-between text-sm">
     <p>
       {(Math.floor(counts()[countIndex] / 100_000) * 100_000).toLocaleString()}
     </p>
