@@ -23,6 +23,7 @@
   import AveragesEmbed from "./averages/embed.svelte";
   import GainsEmbed from "./gains/embed.svelte";
   import HighchartsGraphEmbed from "./graph/highcharts/embed.svelte";
+  import ProgressEmbed from "./progress/embed.svelte";
   import PlotlyGraphEmbed from "./graph/plotly/embed.svelte";
 
   const query = queryParameters();
@@ -70,6 +71,17 @@
           name: "Align",
           options: ["left", "center", "right"],
           default: "left",
+        },
+      ],
+    },
+    progress: {
+      component: ProgressEmbed,
+      options: [
+        {
+          id: "text",
+          name: "Text",
+          type: "checkbox",
+          default: true,
         },
       ],
     },
