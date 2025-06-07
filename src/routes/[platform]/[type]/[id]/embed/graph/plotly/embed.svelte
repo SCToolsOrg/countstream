@@ -78,11 +78,10 @@
   $effect(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     embedState.clean;
-    const unsub = customization.subscribe(() => {});
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    $customization;
 
     updateChart(untrack(() => history));
-
-    return () => unsub();
   });
 
   $effect(() => {
