@@ -10,19 +10,21 @@ export const load: LayoutLoad = async ({ params, url }) => {
   let countIndex = searchParams.get("count");
   if (!countIndex) countIndex = "0";
 
-  const count = counts.find(
+  let count = counts.find(
     (c) => c.platform === params.platform && c.type === params.type
   );
   if (!count) throw notFound();
 
-  const countList = [
-    ...count.counts,
-    {
-      name: "Goal",
-      icon: PartyPopper,
-    },
-  ];
-  count.counts = countList;
+  count = {
+    ...count,
+    counts: [
+      ...count.counts,
+      {
+        name: "Goal",
+        icon: PartyPopper,
+      },
+    ],
+  };
 
   const info = await count.getInfo(params.id);
   if (!info.data) {
