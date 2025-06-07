@@ -10,8 +10,10 @@
   import { getCustomization } from "$lib/customization.svelte";
   import { buttonVariants } from "$lib/components/ui/button";
   import AppWindow from "@lucide/svelte/icons/app-window";
-  import PartyPopper from "@lucide/svelte/icons/party-popper";
+  import Hourglass from "@lucide/svelte/icons/hourglass";
   import { getGoal } from "$lib/utils";
+  import { calculateAverage, calculateGain } from "$lib/gains";
+  import { untrack } from "svelte";
 
   const { data }: PageProps = $props();
 
@@ -25,10 +27,23 @@
   let chart: Highcharts.Chart;
   let counts = $state.raw<number[]>([]);
 
+  const times = [
+    ["1m", 60],
+    ["1h", 3600],
+    ["24h", 86400],
+  ] as const;
+
+  let history = $state.raw<number[]>([]);
+
   $effect(() => {
     const update = async () => {
       const newCounts = await count.getCounts(id);
       counts = [...newCounts, getGoal(newCounts[goalCount])];
+
+      const num = newCounts[countIndex];
+      const newHistory = [...untrack(() => history), num];
+      if (newHistory.length >= 43200) newHistory.shift();
+      history = newHistory;
 
       if (chart) {
         if (chart.series[0].points.length >= 1800)
@@ -82,6 +97,68 @@
       </div>
     {/if}
   </Card>
+  {#if $customization.averages}
+    <div
+      class="grid w-full grid-cols-1 justify-center gap-3 sm:grid-cols-2 md:grid-cols-3"
+    >
+      {#snippet average(time: (typeof times)[number])}
+        <Card
+          class="hover:bg-accent flex flex-col items-center justify-center gap-1 transition-colors"
+        >
+          <Odometer
+            value={calculateAverage(history.slice(-90), time)}
+            class="font-count text-2xl leading-[1.1em] 2xl:text-4xl"
+          />
+          {#if $customization.countName || $customization.countIcon}
+            <div
+              class="text-muted-foreground flex items-center gap-1.5 text-sm"
+            >
+              {#if $customization.countIcon}
+                <Hourglass class="size-4" />
+              {/if}
+              {#if $customization.countName}
+                Average / {time[0]}
+              {/if}
+            </div>
+          {/if}
+        </Card>
+      {/snippet}
+      {#each times as time (time[0])}
+        {@render average(time)}
+      {/each}
+    </div>
+  {/if}
+  {#if $customization.gains}
+    <div
+      class="grid w-full grid-cols-1 justify-center gap-3 sm:grid-cols-2 md:grid-cols-3"
+    >
+      {#snippet gain(time: (typeof times)[number])}
+        <Card
+          class="hover:bg-accent flex flex-col items-center justify-center gap-1 transition-colors"
+        >
+          <Odometer
+            value={calculateGain(history, time)}
+            class="font-count text-2xl leading-[1.1em] 2xl:text-4xl"
+          />
+          {#if $customization.countName || $customization.countIcon}
+            <div
+              class="text-muted-foreground flex items-center gap-1.5 text-sm"
+            >
+              {#if $customization.countIcon}
+                <Hourglass class="size-4" />
+              {/if}
+              {#if $customization.countName}
+                Gains / {time[0]}
+              {/if}
+            </div>
+          {/if}
+        </Card>
+      {/snippet}
+      {#each times as time (time[0])}
+        {@render gain(time)}
+      {/each}
+    </div>
+  {/if}
   {#if $customization.sideCounts}
     <div
       class="grid w-full grid-cols-1 justify-center gap-3 sm:grid-cols-2 lg:grid-cols-4"

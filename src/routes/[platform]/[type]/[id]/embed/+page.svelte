@@ -16,7 +16,8 @@
   import { queryParam, queryParameters } from "sveltekit-search-params";
   import { page } from "$app/state";
   import CustomizationDialog from "./customization-dialog.svelte";
-  import PartyPopper from "@lucide/svelte/icons/party-popper";
+  import { getGoal } from "$lib/utils";
+  import { times } from "$lib/gains";
 
   import SmallEmbed from "./small/embed.svelte";
   import LargeEmbed from "./large/embed.svelte";
@@ -26,7 +27,6 @@
   import HighchartsGraphEmbed from "./graph/highcharts/embed.svelte";
   import ProgressEmbed from "./progress/embed.svelte";
   import PlotlyGraphEmbed from "./graph/plotly/embed.svelte";
-  import { getGoal } from "$lib/utils";
 
   const query = queryParameters();
 
@@ -100,7 +100,7 @@
           id: "times",
           name: "Times",
           type: "checkboxes",
-          options: ["30s", "1m", "10m", "1h", "6h", "12h", "24h"],
+          options: times.map((time) => time[0]),
           default: ["24h"],
         },
         {
@@ -130,7 +130,7 @@
           id: "times",
           name: "Times",
           type: "checkboxes",
-          options: ["30s", "1m", "10m", "1h", "6h", "12h", "24h"],
+          options: times.map((time) => time[0]),
           default: ["24h"],
         },
         {

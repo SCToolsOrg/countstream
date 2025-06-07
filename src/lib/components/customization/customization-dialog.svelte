@@ -153,6 +153,8 @@
         {@render customToggle("Count Icon", "countIcon")}
         {@render customToggle("Side Counts", "sideCounts")}
         {@render customToggle("Graph", "graph")}
+        {@render customToggle("Averages", "averages")}
+        {@render customToggle("Gains", "gains")}
       </div>
       <div class="col-span-3 space-y-2">
         {@render customInput("Text Font", "fontFamily")}

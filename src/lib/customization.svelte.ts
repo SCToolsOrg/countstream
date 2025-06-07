@@ -14,6 +14,8 @@ export interface Customization {
   countIcon: boolean;
   sideCounts: boolean;
   graph: boolean;
+  averages: boolean;
+  gains: boolean;
   fontFamily: string;
   countFontFamily: string;
   countFontWeight: number;
@@ -37,6 +39,8 @@ export const defaultCustomization: Customization = {
   countIcon: true,
   sideCounts: true,
   graph: true,
+  averages: false,
+  gains: false,
   fontFamily: '"DM Sans Variable", "DM Sans", sans-serif',
   countFontFamily: '"Roboto Variable", "Roboto", sans-serif',
   countFontWeight: 400,

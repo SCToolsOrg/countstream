@@ -4,39 +4,7 @@
   import { getEmbedState } from "../state.svelte";
   import Hourglass from "@lucide/svelte/icons/hourglass";
   import CustomizationProvider from "../customization-provider.svelte";
-
-  const times = [
-    ["30s", 30],
-    ["1m", 60],
-    ["10m", 600],
-    ["1h", 3600],
-    ["6h", 21600],
-    ["12h", 43200],
-    ["24h", 86400],
-  ] as const;
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function getCombn(arr: any[]) {
-    var count = 0;
-    for (let i = 0; i < arr.length; i++) {
-      if (isNaN(arr[i])) {
-        arr.splice(i, 1);
-      }
-    }
-    for (let i = 0; i < arr.length; i++) {
-      //console.log(i)
-      if (i == 0) {
-        count = count + (arr[i] - parseFloat(arr[i]));
-      } else {
-        count = count + (parseFloat(arr[i]) - parseFloat(arr[i - 1]));
-      }
-    }
-    return count;
-  }
-
-  function calculateGain(time: (typeof times)[number]) {
-    return getCombn(history.slice(-Math.round(time[1] / 2)));
-  }
+  import { calculateGain, times } from "$lib/gains";
 
   const embedState = getEmbedState();
   const { countIndex, counts } = embedState;
@@ -76,6 +44,9 @@
     {#if text}
       <p>{time[0]}:</p>
     {/if}
-    <Odometer value={calculateGain(time)} class="font-count text-2xl" />
+    <Odometer
+      value={calculateGain(history, time)}
+      class="font-count text-2xl"
+    />
   </div>
 {/each}
