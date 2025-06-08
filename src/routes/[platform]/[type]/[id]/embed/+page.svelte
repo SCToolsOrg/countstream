@@ -234,12 +234,13 @@
     }, 1000);
   }
 
-  const counts = useCounts(count, data.id);
+  const { counts, isStudio } = useCounts(count, data.id);
 
   setEmbedState({
     ...$query,
     ...data,
     counts: () => $counts,
+    isStudio: () => $isStudio,
     customization: {},
   });
 

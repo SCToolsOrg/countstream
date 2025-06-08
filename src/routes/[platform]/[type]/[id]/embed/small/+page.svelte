@@ -1,6 +1,5 @@
 <script lang="ts">
   import { page } from "$app/state";
-  import { calculateGoal } from "$lib/goal";
   import { useCounts } from "../../counts.svelte";
   import { setEmbedState } from "../state.svelte";
   import type { PageProps } from "./$types";
@@ -9,7 +8,7 @@
   const { url } = page;
   const { data }: PageProps = $props();
 
-  const counts = useCounts(data.count, data.id);
+  const { counts } = useCounts(data.count, data.id);
   setEmbedState({
     ...data,
     counts: () => $counts,

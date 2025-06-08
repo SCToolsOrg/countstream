@@ -11,7 +11,7 @@
   const size = url.searchParams.get("size") ?? "medium";
   const align = url.searchParams.get("align") ?? "left";
 
-  const counts = useCounts(data.count, data.id);
+  const { counts } = useCounts(data.count, data.id);
   setEmbedState({
     ...data,
     counts: () => $counts,
