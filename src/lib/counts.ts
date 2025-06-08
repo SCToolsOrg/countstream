@@ -390,7 +390,7 @@ export const counts: Count[] = [
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return data.items.map((item: any) => ({
         name: item.title,
-        id: data.id,
+        id: item.id,
         avatar: item.pfp,
       }));
     },
