@@ -13,7 +13,7 @@
   const icon = (url.searchParams.get("icon") ?? "true") === "true";
   const text = (url.searchParams.get("icon") ?? "true") === "true";
 
-  const counts = useCounts(data.count, data.id);
+  const { counts } = useCounts(data.count, data.id);
   setEmbedState({
     ...data,
     counts: () => $counts,

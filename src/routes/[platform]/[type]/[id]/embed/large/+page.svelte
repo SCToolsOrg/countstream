@@ -8,10 +8,11 @@
   const { url } = page;
   const { data }: PageProps = $props();
 
-  const counts = useCounts(data.count, data.id);
+  const { counts, isStudio } = useCounts(data.count, data.id);
   setEmbedState({
     ...data,
     counts: () => $counts,
+    isStudio: () => $isStudio,
     customization: url.searchParams.has("customization")
       ? JSON.parse(url.searchParams.get("customization")!)
       : undefined,

@@ -3,7 +3,7 @@
   import CustomizationProvider from "../customization-provider.svelte";
   import { getEmbedState } from "../state.svelte";
 
-  const { count, countIndex, info, counts } = getEmbedState();
+  const { count, countIndex, info, counts, isStudio } = getEmbedState();
   const currentCount = count.counts[countIndex];
 </script>
 
@@ -22,6 +22,10 @@
   />
   <div class="text-muted-foreground flex items-center gap-1.5 text-sm">
     <currentCount.icon class="h-4 w-4" />
-    {currentCount.name}
+    {count.platform === "youtube" && count.type === "channel"
+      ? isStudio()
+        ? currentCount.name.replace("EST", "STUDIO")
+        : currentCount.name
+      : currentCount.name}
   </div>
 </div>

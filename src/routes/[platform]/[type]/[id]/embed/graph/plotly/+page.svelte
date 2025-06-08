@@ -11,7 +11,7 @@
   const { url } = page;
   const clean = (url.searchParams.get("clean") ?? "false") === "true";
 
-  const counts = useCounts(data.count, data.id);
+  const { counts } = useCounts(data.count, data.id);
   setEmbedState({
     ...data,
     counts: () => $counts,

@@ -31,7 +31,7 @@
   ] as const;
 
   let history = $state.raw<number[]>([]);
-  const counts = useCounts(count, id, (counts) => {
+  const { counts, isStudio } = useCounts(count, id, (counts) => {
     const num = counts[countIndex];
     const newHistory = [...untrack(() => history), num];
     if (newHistory.length >= 43200) newHistory.shift();
@@ -79,7 +79,11 @@
           <currentCount.icon class="h-4 w-4" />
         {/if}
         {#if $customization.countName}
-          {currentCount.name}
+          {count.platform === "youtube" && count.type === "channel"
+            ? $isStudio
+              ? currentCount.name.replace("EST", "STUDIO")
+              : currentCount.name
+            : currentCount.name}
         {/if}
       </div>
     {/if}
