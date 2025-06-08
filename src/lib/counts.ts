@@ -28,8 +28,9 @@ export interface Count {
   search: (query: string) => Promise<
     {
       name: string;
-      id: string;
       avatar: string;
+      username?: string;
+      id: string;
     }[]
   >;
   getInfo: (id: string) => Promise<
@@ -390,8 +391,9 @@ export const counts: Count[] = [
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return data.items.map((item: any) => ({
         name: item.title,
-        id: item.id,
         avatar: item.pfp,
+        id: item.id,
+        username: "@" + item.uid,
       }));
     },
     getInfo: async (id: string) => {

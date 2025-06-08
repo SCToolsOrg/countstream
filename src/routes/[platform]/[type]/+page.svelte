@@ -53,30 +53,41 @@
       <Button type="submit" disabled={$search.isPending}>Search</Button>
     </form>
   </Card>
-  {#if $search.isPending}
-    <Loader2 class="mx-auto h-16 w-16 animate-spin" />
-  {:else if $search.isError}
-    <div class="bg-destructive px-3 py-2 text-white dark:text-black">
-      {$search.error.message}
-    </div>
-  {:else if $search.isSuccess}
-    <div class="mx-auto flex w-full max-w-xl flex-col gap-4 text-center">
-      {#each $search.data as item (item.id)}
-        <a href={`/${count.platform}/${count.type}/${item.id}`}>
-          <Card
-            class="hover:bg-accent flex items-center gap-3 transition-colors"
-          >
-            <img
-              src={item.avatar}
-              alt={item.name}
-              width={56}
-              height={56}
-              class="size-14 rounded-full object-cover"
-            />
-            <p class="truncate text-2xl font-semibold">{item.name}</p>
-          </Card>
-        </a>
-      {/each}
-    </div>
-  {/if}
+  <div class="mx-auto w-full max-w-xl">
+    {#if $search.isPending}
+      <Loader2 class="mx-auto h-16 w-16 animate-spin" />
+    {:else if $search.isError}
+      <div
+        class="bg-destructive text-destructive-foreground rounded-md px-3 py-2"
+      >
+        {$search.error.message}
+      </div>
+    {:else if $search.isSuccess}
+      <div class="flex flex-col gap-4">
+        {#each $search.data as item (item.id)}
+          <a href={`/${count.platform}/${count.type}/${item.id}`}>
+            <Card
+              class="hover:bg-accent flex items-center gap-3 transition-colors"
+            >
+              <img
+                src={item.avatar}
+                alt={item.name}
+                width={56}
+                height={56}
+                class="size-14 rounded-full object-cover"
+              />
+              {#if item.username}
+                <div class="flex flex-col gap-0.5">
+                  <p class="truncate text-2xl font-semibold">{item.name}</p>
+                  <p class="text-sm">{item.username}</p>
+                </div>
+              {:else}
+                <p class="truncate text-2xl font-semibold">{item.name}</p>
+              {/if}
+            </Card>
+          </a>
+        {/each}
+      </div>
+    {/if}
+  </div>
 </div>
