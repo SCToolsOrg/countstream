@@ -44,7 +44,7 @@
   >
     {#each countsByPlatform as platform (platform.name)}
       <Card
-        class="flex flex-col items-center justify-center gap-1 overflow-hidden text-center"
+        class="flex flex-col items-center gap-1 overflow-hidden text-center"
       >
         <img
           src={platform.icon}

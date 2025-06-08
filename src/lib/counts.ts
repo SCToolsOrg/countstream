@@ -1,6 +1,15 @@
-import { Camera, Eye, MessageSquare, ThumbsUp, Users } from "@lucide/svelte";
+import {
+  Camera,
+  Eye,
+  Heart,
+  Image,
+  List,
+  MessageSquare,
+  Rss,
+  ThumbsUp,
+  Users,
+} from "@lucide/svelte";
 import type { Component } from "svelte";
-import colors from "tailwindcss/colors";
 
 export interface Info {
   name: string;
@@ -15,7 +24,6 @@ export interface Count {
   name: string;
   icon: string;
   smallIcon?: string;
-  color: string;
   avatarType?: "square";
   search: (query: string) => Promise<
     {
@@ -58,7 +66,6 @@ export const counts: Count[] = [
     type: "channel",
     name: "YouTube Live Subscriber Counter",
     icon: "/youtube.png",
-    color: colors.red[500],
     search: async (query) => {
       const res = await fetch(
         `https://mixerno.space/api/youtube-channel-counter/search/${encodeURI(query)}`
@@ -138,7 +145,6 @@ export const counts: Count[] = [
     name: "YouTube Live View Counter",
     icon: "/youtube.png",
     avatarType: "square",
-    color: colors.red[500],
     search: async (query) => {
       const res = await fetch(
         `https://mixerno.space/api/youtube-video-counter/search/${encodeURI(query)}`
@@ -214,7 +220,6 @@ export const counts: Count[] = [
     name: "YouTube Live Viewer Counter",
     icon: "/youtube.png",
     avatarType: "square",
-    color: colors.red[500],
     search: async (query) => {
       const res = await fetch(
         `https://mixerno.space/api/youtube-stream-counter/search/${encodeURI(query)}`
@@ -276,6 +281,89 @@ export const counts: Count[] = [
       {
         name: "Total Views",
         icon: Eye,
+      },
+    ],
+  },
+  {
+    platform: "twitter",
+    type: "user",
+    name: "Twitter Live Follower Counter",
+    icon: "/twitter.png",
+    search: async (query) => {
+      const res = await fetch(
+        `https://mixerno.space/api/twitter-user-counter/search/${encodeURI(query)}`
+      );
+      const data = await res.json();
+      return data.list.map(([name, avatar, id]: [string, string, string]) => ({
+        name,
+        avatar,
+        id,
+      }));
+    },
+    getInfo: async (username: string) => {
+      try {
+        const res = await fetch(
+          `https://backend.mixerno.space/api/twitter/twitter/${username}`
+        );
+        const data = await res.json();
+        const result = data?.data?.user?.result;
+        if (!result) return { data: null, error: null };
+
+        return {
+          data: {
+            name: result.legacy.name ?? result.legacy.screen_name,
+            username: `@` + result.legacy.screen_name,
+            avatar: result.legacy.profile_image_url_https.replace(
+              "_normal",
+              "_400x400"
+            ),
+            banner: result.legacy.profile_banner_url,
+          },
+          error: null,
+        };
+      } catch {
+        return { data: null, error: null };
+      }
+    },
+    getCounts: async (username: string) => {
+      const res = await fetch(
+        `https://backend.mixerno.space/api/twitter/twitter/${username}`
+      );
+      const data = await res.json();
+      const result = data?.data?.user?.result;
+      return [
+        result.legacy.followers_count,
+        result.legacy.friends_count,
+        result.legacy.favourites_count,
+        result.legacy.listed_count,
+        result.legacy.statuses_count,
+        result.legacy.media_count,
+      ];
+    },
+    counts: [
+      {
+        name: "Followers",
+        icon: Users,
+      },
+      {
+        name: "Following",
+        icon: Users,
+      },
+      {
+        name: "Liked Tweets",
+        icon: Heart,
+      },
+      {
+        name: "Lists",
+        icon: List,
+      },
+      {
+        name: "Tweets",
+        icon: Rss,
+      },
+      {
+        name: "Media",
+        icon: Image,
       },
     ],
   },
