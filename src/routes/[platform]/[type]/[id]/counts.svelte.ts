@@ -45,7 +45,12 @@ export function useCounts(
 
   $effect(() => {
     const update = async () => {
-      if (typeof studio === "undefined") return;
+      if (
+        count.platform === "youtube" &&
+        count.type === "channel" &&
+        typeof studio === "undefined"
+      )
+        return;
 
       let newCounts: number[];
       if (
