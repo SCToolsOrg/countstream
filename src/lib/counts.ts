@@ -71,6 +71,8 @@ export const counts: Count[] = [
         `https://mixerno.space/api/youtube-channel-counter/search/${encodeURI(query)}`
       );
       const data = await res.json();
+      if (!data?.list?.length) return [];
+
       return data.list.map(([name, avatar, id]: [string, string, string]) => ({
         name,
         avatar,
@@ -150,6 +152,8 @@ export const counts: Count[] = [
         `https://mixerno.space/api/youtube-video-counter/search/${encodeURI(query)}`
       );
       const data = await res.json();
+      if (!data?.list?.length) return [];
+
       return data.list.map(([name, avatar, id]: [string, string, string]) => ({
         name,
         avatar,
@@ -225,6 +229,8 @@ export const counts: Count[] = [
         `https://mixerno.space/api/youtube-stream-counter/search/${encodeURI(query)}`
       );
       const data = await res.json();
+      if (!data?.list?.length) return [];
+
       return data.list.map(([name, avatar, id]: [string, string, string]) => ({
         name,
         avatar,
@@ -294,6 +300,8 @@ export const counts: Count[] = [
         `https://mixerno.space/api/twitter-user-counter/search/${encodeURI(query)}`
       );
       const data = await res.json();
+      if (!data?.list?.length) return [];
+
       return data.list.map(([name, avatar, id]: [string, string, string]) => ({
         name,
         avatar,
@@ -364,6 +372,68 @@ export const counts: Count[] = [
       {
         name: "Media",
         icon: Image,
+      },
+    ],
+  },
+  {
+    platform: "tiktok",
+    type: "user",
+    name: "TikTok Live Follower Counter",
+    icon: "/tiktok.png",
+    search: async (query: string) => {
+      const res = await fetch(
+        `https://api.subscriberwars.space/search/tiktok/channel/${encodeURI(query)}`
+      );
+      const data = await res.json();
+      if (!data?.items?.length) return [];
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return data.items.map((item: any) => ({
+        name: item.title,
+        id: data.id,
+        avatar: item.pfp,
+      }));
+    },
+    getInfo: async (id: string) => {
+      try {
+        const res = await fetch(
+          `https://api.subscriberwars.space/tiktok/channel/${id}`
+        );
+        const data = await res.json();
+        return {
+          data: {
+            name: data.nickname ?? data.username,
+            username: "@" + data.username,
+            avatar: data.pfp,
+          },
+          error: null,
+        };
+      } catch {
+        return {
+          data: null,
+          error: null,
+        };
+      }
+    },
+    getCounts: async (id: string) => {
+      const res = await fetch(
+        `https://api.subscriberwars.space/tiktok/channel/${id}`
+      );
+      const data = await res.json();
+      return [data.followers, data.following, data.likes];
+    },
+    counts: [
+      {
+        name: "Followers",
+        icon: Users,
+      },
+      {
+        name: "Following",
+        icon: Users,
+      },
+      {
+        name: "Likes",
+        icon: Heart,
       },
     ],
   },
