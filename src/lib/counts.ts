@@ -9,6 +9,7 @@ import {
   ThumbsUp,
   Users,
 } from "@lucide/svelte";
+import { error } from "@sveltejs/kit";
 import type { Component } from "svelte";
 
 export interface Info {
@@ -33,16 +34,7 @@ export interface Count {
       id: string;
     }[]
   >;
-  getInfo: (id: string) => Promise<
-    | {
-        data: Info;
-        error: null;
-      }
-    | {
-        data: null;
-        error: string | null;
-      }
-  >;
+  getInfo: (id: string) => Promise<Info | null>;
   getCounts: (id: string) => Promise<number[]>;
   counts: {
     name: string;
@@ -82,35 +74,22 @@ export const counts: Count[] = [
     },
     getInfo: async (id) => {
       if (!id.startsWith("UC") || id.length !== 24)
-        return {
-          data: null,
-          error: "Invalid channel ID",
-        };
+        throw error(404, "Invalid channel ID");
       try {
         const res = await fetch(
           `https://api.subscriberwars.space/youtube/channel/${id}`
         );
         const data = await res.json();
-        if (!data)
-          return {
-            data: null,
-            error: null,
-          };
+        if (!data) return null;
 
         return {
-          data: {
-            name: data.title,
-            username: data.slug,
-            avatar: data.icon,
-            banner: `https://www.banner.yt/${id}`,
-          },
-          error: null,
+          name: data.title,
+          username: data.slug,
+          avatar: data.icon,
+          banner: `https://www.banner.yt/${id}`,
         };
       } catch {
-        return {
-          data: null,
-          error: null,
-        };
+        return null;
       }
     },
     getCounts: async (id) => {
@@ -167,25 +146,15 @@ export const counts: Count[] = [
           `https://api.subscriberwars.space/youtube/video/${id}`
         );
         const data = await res.json();
-        if (!data?.items?.length)
-          return {
-            data: null,
-            error: null,
-          };
+        if (!data?.items?.length) return null;
 
         return {
-          data: {
-            name: data.items[0].snippet.title,
-            avatar: data.items[0].snippet.thumbnails.medium.url,
-            banner: `https://www.banner.yt/${id}`,
-          },
-          error: null,
+          name: data.items[0].snippet.title,
+          avatar: data.items[0].snippet.thumbnails.medium.url,
+          banner: `https://www.banner.yt/${id}`,
         };
       } catch {
-        return {
-          data: null,
-          error: null,
-        };
+        return null;
       }
     },
     getCounts: async (id) => {
@@ -244,25 +213,15 @@ export const counts: Count[] = [
           `https://api.subscriberwars.space/youtube/video/${id}`
         );
         const data = await res.json();
-        if (!data?.items?.length)
-          return {
-            data: null,
-            error: null,
-          };
+        if (!data?.items?.length) return null;
 
         return {
-          data: {
-            name: data.items[0].snippet.title,
-            avatar: data.items[0].snippet.thumbnails.medium.url,
-            banner: `https://www.banner.yt/${id}`,
-          },
-          error: null,
+          name: data.items[0].snippet.title,
+          avatar: data.items[0].snippet.thumbnails.medium.url,
+          banner: `https://www.banner.yt/${id}`,
         };
       } catch {
-        return {
-          data: null,
-          error: null,
-        };
+        return null;
       }
     },
     getCounts: async (id) => {
@@ -316,22 +275,19 @@ export const counts: Count[] = [
         );
         const data = await res.json();
         const result = data?.data?.user?.result;
-        if (!result) return { data: null, error: null };
+        if (!result) return null;
 
         return {
-          data: {
-            name: result.legacy.name ?? result.legacy.screen_name,
-            username: `@` + result.legacy.screen_name,
-            avatar: result.legacy.profile_image_url_https.replace(
-              "_normal",
-              "_400x400"
-            ),
-            banner: result.legacy.profile_banner_url,
-          },
-          error: null,
+          name: result.legacy.name ?? result.legacy.screen_name,
+          username: `@` + result.legacy.screen_name,
+          avatar: result.legacy.profile_image_url_https.replace(
+            "_normal",
+            "_400x400"
+          ),
+          banner: result.legacy.profile_banner_url,
         };
       } catch {
-        return { data: null, error: null };
+        return null;
       }
     },
     getCounts: async (username: string) => {
@@ -403,18 +359,12 @@ export const counts: Count[] = [
         );
         const data = await res.json();
         return {
-          data: {
-            name: data.nickname ?? data.username,
-            username: "@" + data.username,
-            avatar: data.pfp,
-          },
-          error: null,
+          name: data.nickname ?? data.username,
+          username: "@" + data.username,
+          avatar: data.pfp,
         };
       } catch {
-        return {
-          data: null,
-          error: null,
-        };
+        return null;
       }
     },
     getCounts: async (id: string) => {
