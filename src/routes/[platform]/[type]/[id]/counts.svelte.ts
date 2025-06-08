@@ -90,7 +90,12 @@ export function useCounts(
 
     update();
     const interval = setInterval(update, 2000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (studioInterval) {
+        clearInterval(studioInterval);
+      }
+    };
   });
 
   return {
