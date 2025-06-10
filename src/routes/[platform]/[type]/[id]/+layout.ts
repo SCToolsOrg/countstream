@@ -3,6 +3,10 @@ import { notFound } from "$lib/utils";
 import type { LayoutLoad } from "./$types";
 import PartyPopper from "@lucide/svelte/icons/party-popper";
 
+export const ssr = false;
+export const csr = true;
+export const prerender = false;
+
 export const load: LayoutLoad = async ({ params, url }) => {
   const { searchParams } = url;
 
