@@ -15,8 +15,7 @@
 
   const queryClient = new QueryClient();
 
-  let { children } = $props();
-
+  const { children } = $props();
   $effect(() => {
     const split = page.url.pathname.split("/");
     setIsEmbed(
@@ -34,12 +33,9 @@
         >
           <a
             href="/"
-            class="flex items-center gap-1 transition-opacity hover:opacity-75"
+            class="text-xl font-bold tracking-tighter transition-opacity hover:opacity-75"
           >
-            <h1 class="text-xl font-bold tracking-tighter">
-              count<span class="text-primary">stream</span>
-            </h1>
-            <sub class="text-muted-foreground">by SCTools</sub>
+            count<span class="text-primary">stream</span>
           </a>
         </header>
       </div>

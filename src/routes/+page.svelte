@@ -29,12 +29,9 @@
 
 <div class="space-y-4">
   <div class="space-y-1">
-    <div class="flex items-end justify-center gap-1 text-center">
-      <h1 class="text-4xl font-bold tracking-tighter">
-        count<span class="text-primary">stream</span>
-      </h1>
-      <sub class="text-muted-foreground mb-3.5">by SCTools</sub>
-    </div>
+    <h1 class="text-center text-4xl font-bold tracking-tighter">
+      count<span class="text-primary">stream</span>
+    </h1>
     <p class="text-center text-sm">
       The live count website made for streamers by streamers.
     </p>
