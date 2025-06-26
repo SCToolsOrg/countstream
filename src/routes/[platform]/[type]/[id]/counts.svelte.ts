@@ -3,6 +3,14 @@ import type { Count } from "$lib/counts";
 import { calculateGoal } from "$lib/goal";
 import { writable } from "svelte/store";
 
+const jsalStatsChannels = [
+  "UCrZKnWgOaYTTc7sc1KsVXZw",
+  "UCUXNOmIdsoyd5fh5TZHHO5Q",
+  "UCxLIJccyaRQDeyu6RzUsPuw",
+  "UCd15dSPPT-EhTXekA7_UNAQ",
+  "UCewMTclBJZPaNEfbf-qYMGA",
+];
+
 export function useCounts(
   count: Count,
   id: string,
@@ -30,7 +38,7 @@ export function useCounts(
 
   $effect(() => {
     if (count.platform === "youtube" && count.type === "channel") {
-      if (id === "UCX6OQ3DkcsbYNE6H8uQQuVA") {
+      if (id === "UCX6OQ3DkcsbYNE6H8uQQuVA" || jsalStatsChannels.includes(id)) {
         isStudio.set(true);
       } else {
         check();
@@ -52,33 +60,44 @@ export function useCounts(
       )
         return;
 
-      let newCounts: number[];
-      if (
-        count.platform === "youtube" &&
-        count.type === "channel" &&
-        studio &&
-        id !== "UCX6OQ3DkcsbYNE6H8uQQuVA"
-      ) {
+      let newCounts: number[] = [];
+      if (count.platform === "youtube" && count.type === "channel" && studio) {
         if (studioInterval) {
           clearInterval(studioInterval);
           studioInterval = undefined;
         }
 
-        const res = await fetch(
-          `https://api-v2.nextcounts.com/api/youtube/channel/${id}`
-        );
-        const data = await res.json();
-        isStudio.set(data.verifiedSubCount);
+        if (jsalStatsChannels.includes(id)) {
+          const [subCounts, data] = await Promise.all([
+            fetch("https://studio.jsalstats.xyz/subcount"),
+            fetch(`https://backend.mixerno.space/api/youtube/estv3/${id}`),
+          ]).then((responses) =>
+            Promise.all(responses.map((res) => res.json()))
+          );
 
-        const abbreviateNumber = (num: number) =>
-          num.toString().slice(0, 3) +
-          new Array(num.toString().length - 3).fill("0").join("");
-        newCounts = [
-          data.subcount,
-          abbreviateNumber(data.subcount),
-          data.viewcount,
-          data.videos,
-        ];
+          newCounts = [
+            subCounts[id],
+            data.items[0].statistics.subscriberCountAPI,
+            data.items[0].statistics.viewCountAPI,
+            data.items[0].statistics.videoCount,
+          ];
+        } else if (id !== "UCX6OQ3DkcsbYNE6H8uQQuVA") {
+          const res = await fetch(
+            `https://api-v2.nextcounts.com/api/youtube/channel/${id}`
+          );
+          const data = await res.json();
+          isStudio.set(data.verifiedSubCount);
+
+          const abbreviateNumber = (num: number) =>
+            num.toString().slice(0, 3) +
+            new Array(num.toString().length - 3).fill("0").join("");
+          newCounts = [
+            data.subcount,
+            abbreviateNumber(data.subcount),
+            data.viewcount,
+            data.videos,
+          ];
+        }
       } else {
         newCounts = await count.getCounts(id);
         studioInterval = setInterval(check, 5 * 60 * 1000);
