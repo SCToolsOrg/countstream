@@ -60,8 +60,13 @@ export function useCounts(
       )
         return;
 
-      let newCounts: number[] = [];
-      if (count.platform === "youtube" && count.type === "channel" && studio) {
+      let newCounts: number[];
+      if (
+        count.platform === "youtube" &&
+        count.type === "channel" &&
+        studio &&
+        id !== "UCX6OQ3DkcsbYNE6H8uQQuVA"
+      ) {
         if (studioInterval) {
           clearInterval(studioInterval);
           studioInterval = undefined;
@@ -81,7 +86,7 @@ export function useCounts(
             data.items[0].statistics.viewCountAPI,
             data.items[0].statistics.videoCount,
           ];
-        } else if (id !== "UCX6OQ3DkcsbYNE6H8uQQuVA") {
+        } else {
           const res = await fetch(
             `https://api-v2.nextcounts.com/api/youtube/channel/${id}`
           );
