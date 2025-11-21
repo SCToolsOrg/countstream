@@ -77,15 +77,15 @@ export const counts: Count[] = [
         throw error(404, "Invalid channel ID");
       try {
         const res = await fetch(
-          `https://api.subscriberwars.space/youtube/channel/${id}`
+          `https://yt.sctools.org/youtube/v3/channels?part=snippet&id=${id}`
         );
         const data = await res.json();
-        if (!data) return null;
+        if (!data?.items?.[0]) return null;
 
         return {
-          name: data.title,
-          username: data.slug,
-          avatar: data.icon,
+          name: data.items[0].snippet.title,
+          username: data.items[0].snippet.customUrl,
+          avatar: data.items[0].snippet.thumbnails.high.url,
           banner: `https://www.banner.yt/${id}`,
         };
       } catch {
@@ -143,7 +143,7 @@ export const counts: Count[] = [
     getInfo: async (id) => {
       try {
         const res = await fetch(
-          `https://api.subscriberwars.space/youtube/video/${id}`
+          `https://yt.sctools.org/youtube/v3/videos?part=snippet&id=${id}`
         );
         const data = await res.json();
         if (!data?.items?.length) return null;
@@ -151,7 +151,6 @@ export const counts: Count[] = [
         return {
           name: data.items[0].snippet.title,
           avatar: data.items[0].snippet.thumbnails.medium.url,
-          banner: `https://www.banner.yt/${id}`,
         };
       } catch {
         return null;
@@ -210,7 +209,7 @@ export const counts: Count[] = [
     getInfo: async (id) => {
       try {
         const res = await fetch(
-          `https://api.subscriberwars.space/youtube/video/${id}`
+          `https://yt.sctools.org/youtube/v3/videos?part=snippet&id=${id}`
         );
         const data = await res.json();
         if (!data?.items?.length) return null;
@@ -218,7 +217,6 @@ export const counts: Count[] = [
         return {
           name: data.items[0].snippet.title,
           avatar: data.items[0].snippet.thumbnails.medium.url,
-          banner: `https://www.banner.yt/${id}`,
         };
       } catch {
         return null;
