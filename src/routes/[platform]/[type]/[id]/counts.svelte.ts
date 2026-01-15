@@ -3,14 +3,6 @@ import type { Count } from "$lib/counts";
 import { calculateGoal } from "$lib/goal";
 import { writable } from "svelte/store";
 
-const jsalStatsChannels = [
-  "UCrZKnWgOaYTTc7sc1KsVXZw",
-  "UCUXNOmIdsoyd5fh5TZHHO5Q",
-  "UCxLIJccyaRQDeyu6RzUsPuw",
-  "UCd15dSPPT-EhTXekA7_UNAQ",
-  "UCewMTclBJZPaNEfbf-qYMGA",
-];
-
 export function useCounts(
   count: Count,
   id: string,
@@ -41,9 +33,6 @@ export function useCounts(
   return {
     counts: {
       subscribe: counts.subscribe,
-    },
-    isStudio: {
-      subscribe: isStudio.subscribe,
     },
   };
 }
