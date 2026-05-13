@@ -17,6 +17,9 @@ export interface Info {
   username?: string;
   banner?: string;
   avatar: string;
+  channelName?: string;
+  channelAvatar?: string;
+  videoId?: string;
 }
 
 export interface Count {
@@ -34,8 +37,10 @@ export interface Count {
       id: string;
     }[]
   >;
-  getInfo: (id: string) => Promise<Info | null>;
-  getCounts: (id: string) => Promise<number[]>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getInfo: (id: string, ...args: any[]) => Promise<Info | null>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getCounts: (id: string, ...args: any[]) => Promise<number[]>;
   counts: {
     name: string;
     icon: Component;
@@ -157,6 +162,91 @@ export const counts: Count[] = [
       }
     },
     getCounts: async (id) => {
+      const res = await fetch(
+        `https://mixerno.space/api/youtube-video-counter/user/${id}`
+      );
+      const { counts } = await res.json();
+      return [
+        counts[0].count,
+        parseInt(counts[2].count),
+        parseInt(counts[3].count),
+        parseInt(counts[5].count),
+      ];
+    },
+    counts: [
+      {
+        name: "Views (EST)",
+        icon: Eye,
+      },
+      {
+        name: "Views (API)",
+        icon: Eye,
+      },
+      {
+        name: "Likes",
+        icon: ThumbsUp,
+      },
+      {
+        name: "Comments",
+        icon: MessageSquare,
+      },
+    ],
+  },
+  {
+    platform: "youtube",
+    type: "latest-video",
+    name: "YouTube Latest Video View Counter",
+    icon: "/youtube.png",
+    avatarType: "square",
+    search: async (query) => {
+      const res = await fetch(
+        `https://mixerno.space/api/youtube-channel-counter/search/${encodeURI(query)}`
+      );
+      const data = await res.json();
+      if (!data?.list?.length) return [];
+
+      return data.list.map(([name, avatar, id]: [string, string, string]) => ({
+        name,
+        avatar,
+        id,
+      }));
+    },
+    getInfo: async (id: string, videoType: string = "UU") => {
+      try {
+        const playlistId = id.replace("UC", videoType);
+        const res = await fetch(
+          `https://yt.sctools.org/youtube/v3/playlistItems?playlistId=${playlistId}&part=snippet&fields=items/snippet/resourceId/videoId&maxResults=1`
+        );
+        const data = await res.json();
+        if (!data?.items?.length) return null;
+
+        const videoId = data.items[0].snippet.resourceId.videoId;
+
+        const [videoRes, channelRes] = await Promise.all([
+          fetch(`https://api.subscriberwars.space/youtube/video/${videoId}`),
+          fetch(`https://api.subscriberwars.space/youtube/channel/${id}`),
+        ]);
+
+        const [videoData, channelData] = await Promise.all([
+          videoRes.json(),
+          channelRes.json(),
+        ]);
+
+        if (!videoData?.items?.length) return null;
+
+        return {
+          name: videoData.items[0].snippet.title,
+          avatar: videoData.items[0].snippet.thumbnails.medium.url,
+          banner: `https://www.banner.yt/${videoId}`,
+          channelName: channelData.title,
+          channelAvatar: channelData.icon,
+          videoId,
+        };
+      } catch {
+        return null;
+      }
+    },
+    getCounts: async (id: string) => {
       const res = await fetch(
         `https://mixerno.space/api/youtube-video-counter/user/${id}`
       );

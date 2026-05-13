@@ -29,7 +29,8 @@ export const load: LayoutLoad = async ({ params, url }) => {
     ],
   };
 
-  const info = await count.getInfo(params.id);
+  const videoType = searchParams.get("videoType") ?? "UU";
+  const info = await count.getInfo(params.id, videoType);
   if (!info) throw notFound();
 
   return {
