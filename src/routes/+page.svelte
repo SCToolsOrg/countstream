@@ -8,7 +8,6 @@
         acc[obj.platform] ??= {
           name: obj.platform,
           icon: obj.icon,
-          color: obj.color,
           counts: [],
         };
         acc[obj.platform].counts.push(obj);
@@ -19,7 +18,6 @@
         {
           name: string;
           icon: string;
-          color: string;
           counts: Count[];
         }
       >

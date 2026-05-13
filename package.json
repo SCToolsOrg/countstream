@@ -16,13 +16,13 @@
   "devDependencies": {
     "@eslint/compat": "^1.2.5",
     "@eslint/js": "^9.18.0",
-    "@internationalized/date": "^3.8.1",
-    "@lucide/svelte": "^0.511.0",
+    "@internationalized/date": "^3.12.1",
+    "@lucide/svelte": "^1.14.0",
     "@sveltejs/adapter-static": "^3.0.8",
     "@sveltejs/kit": "^2.16.0",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
     "@tailwindcss/vite": "^4.0.0",
-    "bits-ui": "^2.4.1",
+    "bits-ui": "^2.18.1",
     "clsx": "^2.1.1",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
@@ -54,6 +54,7 @@
     "@tanstack/svelte-query": "^5.80.5",
     "highcharts": "^11.4.8",
     "odometer": "^0.4.8",
+    "shadcn-svelte": "^1.2.7",
     "svelte-awesome-color-picker": "^4.0.2",
     "sveltekit-search-params": "^3.0.0"
   }

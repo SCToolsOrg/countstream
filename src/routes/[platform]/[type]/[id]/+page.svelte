@@ -2,6 +2,7 @@
   import { page } from "$app/state";
   import Odometer from "$lib/components/odometer.svelte";
   import { Card } from "$lib/components/ui/card";
+  import * as Select from "$lib/components/ui/select/index.js";
   import Highcharts from "highcharts";
   import Chart from "@highcharts/svelte";
   import type { PageProps } from "./$types";
@@ -21,6 +22,31 @@
   const { count, countIndex, info, id } = data;
   const currentCount = count.counts[countIndex];
 
+  const isLatestVideo =
+    count.platform === "youtube" && count.type === "latest-video";
+
+  const videoTypes = [
+    { value: "UU", label: "All" },
+    { value: "UULF", label: "Longform" },
+    { value: "UUSH", label: "Shorts" },
+    { value: "UULV", label: "Livestreams" },
+  ];
+
+  let selectedVideoType = $state(
+    page.url.searchParams.get("videoType") || "UU"
+  );
+
+  function handleVideoTypeChange(value: string) {
+    const newValue = value ?? "UU";
+    const newParams = new URLSearchParams(page.url.searchParams);
+    if (newValue !== "UU") newParams.set("videoType", newValue);
+    else newParams.delete("videoType");
+    window.location.href =
+      window.location.origin +
+      page.url.pathname +
+      (newParams.toString().length > 0 ? `?${newParams}` : "");
+  }
+
   // svelte-ignore non_reactive_update
   let chart: Highcharts.Chart;
 
@@ -31,18 +57,30 @@
   ] as const;
 
   let history = $state.raw<number[]>([]);
-  const { counts, isStudio } = useCounts(count, id, (counts) => {
-    const num = counts[countIndex];
-    const newHistory = [...untrack(() => history), num];
-    if (newHistory.length >= 43200) newHistory.shift();
-    history = newHistory;
+  const { counts, isStudio } = useCounts(
+    count,
+    id,
+    info,
+    (counts, isNewVideo) => {
+      if (isNewVideo) {
+        history = [];
+        if (chart) {
+          chart.series[0].setData([]);
+        }
+      }
 
-    if (chart) {
-      if (chart.series[0].points.length >= 1800)
-        chart.series[0].data[0].remove();
-      chart.series[0].addPoint([Date.now(), Number(counts[countIndex])]);
+      const num = counts[countIndex];
+      const newHistory = [...untrack(() => history), num];
+      if (newHistory.length >= 43200) newHistory.shift();
+      history = newHistory;
+
+      if (chart) {
+        if (chart.series[0].points.length >= 1800)
+          chart.series[0].data[0].remove();
+        chart.series[0].addPoint([Date.now(), Number(counts[countIndex])]);
+      }
     }
-  });
+  );
 
   const customization = getCustomization();
 </script>
@@ -65,6 +103,16 @@
     {/if}
     {#if $customization.name}
       <h1 class="text-2xl">{info.name}</h1>
+    {/if}
+    {#if isLatestVideo && info.channelName && info.channelAvatar}
+      <div class="text-muted-foreground flex items-center gap-2 text-sm">
+        <img
+          src={info.channelAvatar}
+          alt={info.channelName}
+          class="size-5 rounded-full object-cover"
+        />
+        <span>{info.channelName}</span>
+      </div>
     {/if}
     {#if $customization.username}
       <p class="text-muted-foreground text-sm">{info.username}</p>
@@ -231,4 +279,20 @@
       Embed
     </a>
   </div>
+  {#if isLatestVideo}
+    <Select.Root
+      type="single"
+      value={selectedVideoType}
+      onValueChange={handleVideoTypeChange}
+    >
+      <Select.Trigger class="w-[180px]">
+        {videoTypes.find((type) => type.value === selectedVideoType)?.label}
+      </Select.Trigger>
+      <Select.Content>
+        {#each videoTypes as type (type.value)}
+          <Select.Item value={type.value}>{type.label}</Select.Item>
+        {/each}
+      </Select.Content>
+    </Select.Root>
+  {/if}
 </div>
