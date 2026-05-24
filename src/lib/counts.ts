@@ -346,20 +346,20 @@ export const counts: Count[] = [
       return data.items.map((item: any) => ({
         name: item.title,
         avatar: item.pfp,
-        id: item.id,
+        id: item.uid,
         username: "@" + item.uid,
       }));
     },
     getInfo: async (id: string) => {
       try {
         const res = await fetch(
-          `https://api.subscriberwars.space/tiktok/channel/${id}`
+          `https://socialcounts-api.falchus.com/tiktok/user/${id}`
         );
         const data = await res.json();
         return {
-          name: data.nickname ?? data.username,
-          username: "@" + data.username,
-          avatar: data.pfp,
+          name: data.name ?? data.id,
+          username: "@" + data.id,
+          avatar: data.picture,
         };
       } catch {
         return null;
@@ -367,10 +367,10 @@ export const counts: Count[] = [
     },
     getCounts: async (id: string) => {
       const res = await fetch(
-        `https://api.subscriberwars.space/tiktok/channel/${id}`
+        `https://socialcounts-api.falchus.com/tiktok/user/${id}`
       );
       const data = await res.json();
-      return [data.followers, data.following, data.likes];
+      return [data.statistics.subs, data.statistics.videos, data.statistics.likes];
     },
     counts: [
       {
@@ -378,8 +378,8 @@ export const counts: Count[] = [
         icon: Users,
       },
       {
-        name: "Following",
-        icon: Users,
+        name: "Videos",
+        icon: Camera,
       },
       {
         name: "Likes",
