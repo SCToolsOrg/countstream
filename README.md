@@ -1,3 +1,7 @@
+# CountStream is now basepoint
+
+As of 2026-08-16, Countstream is being archived in favour of basepoint. Track more platforms, compare statistics side by side, and create richer custom embeds with basepoint. Check it out at [basepoint.live](https://basepoint.live).
+
 # CountStream
 
 The live count website made for streamers by streamers.
